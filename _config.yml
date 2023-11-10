@@ -13,7 +13,7 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Lukas Graz
+title: Statistical Consulting
 email: lukas.graz@stat.math.ethz.ch
 description: >- # this means to ignore newlines until "baseurl:"   Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
   Statistical Consulting, Exploration and Blogging by Lukas Graz
@@ -57,28 +57,22 @@ plugins:
   - jekyll-include-cache
 
 author:
-  name   : "First Lastname"
+  name   : "Lukas Graz"
   avatar : "/assets/images/bio-photo.jpg"
-  bio    : "My awesome biography constrained to a sentence or two goes here."
+  bio    : "After studying Mathematics and Statistics at ETH, you can now find me working at the Statistical Consulting Unit of ETH."
   links:
     - label: "Website"
       icon: "fas fa-fw fa-link"
       url: "https://lgraz.github.io/"
-    - label: "Twitter"
-      icon: "fab fa-fw fa-twitter-square"
-      url: "https://twitter.com/benbalter"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/LGraz"
-    - label: "Instagram"
+    - label: "TODO431234113451345"
       icon: "fab fa-fw fa-instagram"
       url: "https://instagram.com/"
 
 footer:
   links:
-    - label: "Twitter"
-      icon: "fab fa-fw fa-twitter-square"
-      url: "https://twitter.com/"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/LGraz"
