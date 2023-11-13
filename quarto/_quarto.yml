@@ -18,10 +18,6 @@ format:
 
 number-sections: true
 
-R_init_project: '`r ({
-  # knitr::opts_knit$set(base.dir = "~/Git/LGraz.github.io/", base.url = "/")
-  # knitr::opts_chunk$set(fig.path = paste0("assets/R-images/", .proj_title, "/"))
-  print("R init project")
-  NULL})`'
+
 
 

@@ -6,7 +6,7 @@ R_init: '`r ({
 layout: post
 title: '`r stringr::str_to_title(.proj_title)`'
 author: Lukas Graz
-date: '`r Sys.Date()`'
+date: '`r 2023-11-13`'
 #abstract: MY FANCY ABSTRACT
 
 # format:

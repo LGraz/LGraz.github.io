@@ -6,7 +6,7 @@ R_init: '`r ({
 layout: post
 title: '`r stringr::str_to_title(.proj_title)`'
 author: Lukas Graz
-date: '`r Sys.Date()`'
+date: '`r 2023-11-13`'
 #abstract: MY FANCY ABSTRACT
 
 # format:
@@ -38,7 +38,9 @@ date: '`r Sys.Date()`'
 # knitr::opts_chunk[['set']](cache = TRUE, autodep = TRUE)
 
 knitr::opts_knit$set(base.dir = "~/Git/LGraz.github.io/", base.url = "/")
+.proj_title <- base::gsub("_", " ", base::gsub("\\.[rqmarkdown]+", "", knitr::current_input(), ignore.case = TRUE))
 knitr::opts_chunk$set(fig.path = paste0("assets/R-images/", .proj_title, "/"))
+
 ``` 
 
 
