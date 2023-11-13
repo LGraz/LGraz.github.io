@@ -1,0 +1,21 @@
+project:
+  title: "quarto"
+  output-dir: ../_posts
+  execute-dir: file 
+
+knitr:
+  opts_chunk:
+    fig.path: "~/Git/LGraz.github.io/assets/"   
+
+execute: 
+  echo: true
+  warning: true
+  keep-md: true
+
+number-sections: true
+
+R_init_project: '`r ({
+  # knitr::opts_knit$set(base.dir = "~/Git/LGraz.github.io/", base.url = "/")
+  # knitr::opts_chunk$set(fig.path = paste0("assets/R-images/", .proj_title, "/"))
+  print("R init project")
+  NULL})`'

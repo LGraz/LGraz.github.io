@@ -1,0 +1,59 @@
+---
+R_init: '`r ({
+  .proj_title <- base::gsub("_", " ", base::gsub("\\.[rqmarkdown]+", "", knitr::current_input(), ignore.case = TRUE))
+  2
+  NULL})`'
+layout: post
+title: '`r stringr::str_to_title(.proj_title)`'
+author: Lukas Graz
+date: '`r Sys.Date()`'
+#abstract: MY FANCY ABSTRACT
+
+format:
+  gfm:
+    keep-yaml: true
+  # pdf:
+  #   df-print: default
+  #   toc: false
+  #   toc-depth: 2
+  #   number-sections: false
+  #   colorlinks: true
+  #   fig-width: 6.5
+  #   fig-height: 4.5
+  #   keep-tex: true
+  # html: {}
+knit: |
+  (function(input, ...) {
+    stop("not evaluated")
+    rmarkdown::render(
+      input,
+      output_file = paste0(
+        xfun::sans_ext(input), '-', Sys.Date(), '_XX.md'
+      ),
+      envir = globalenv()
+    )
+  })
+---
+
+
+```{r setup, cache=FALSE, echo=FALSE} 
+# knitr::opts_chunk[['set']](cache = TRUE, autodep = TRUE)
+
+knitr::opts_knit$set(base.dir = "~/Git/LGraz.github.io/", base.url = "/")
+knitr::opts_chunk$set(fig.path = paste0("assets/R-images/", .proj_title, "/"))
+``` 
+
+
+```{r load_packages, message = FALSE, warning = FALSE}
+library(lmerTest)
+```
+
+
+
+```{r main}
+plot(cars)
+summary(cars)
+```
+
+
+
