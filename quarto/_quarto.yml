@@ -1,0 +1,23 @@
+project:
+  title: "quarto"
+  execute-dir: file 
+  post-render: bash -c "mv $QUARTO_PROJECT_OUTPUT_FILES ~/Git/LGraz.github.io/_posts"
+
+knitr:
+  opts_chunk:
+    fig.path: "~/Git/LGraz.github.io/assets/"   
+
+execute: 
+  echo: true
+  warning: true
+  keep-md: true
+  keep-yaml: true
+
+format:
+  gfm+yaml_metadata_block
+
+number-sections: true
+
+
+
+
