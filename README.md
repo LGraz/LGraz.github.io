@@ -1,3 +1,11 @@
+# MY ADAPTATION
+- for local I copied the `_includes`, `_layouts` and `_sass` direcotries here
+
+- paste `<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>` on the top of `_include`
+
+
+---
+
 # Minimal Mistakes remote theme starter
 
 Click [**Use this template**](https://github.com/mmistakes/mm-github-pages-starter/generate) button above for the quickest method of getting started with the [Minimal Mistakes Jekyll theme](https://github.com/mmistakes/minimal-mistakes).
