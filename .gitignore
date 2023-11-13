@@ -11,7 +11,3 @@ _layouts
 _sass
 
 
-# R-related
-.quarto/
-quarto_files
-/_posts/*.html

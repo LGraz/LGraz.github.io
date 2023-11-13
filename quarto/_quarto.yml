@@ -1,7 +1,7 @@
 project:
   title: "quarto"
-  output-dir: ../_posts
   execute-dir: file 
+  post-render: bash -c "mv $QUARTO_PROJECT_OUTPUT_FILES ~/Git/LGraz.github.io/_posts"
 
 knitr:
   opts_chunk:
@@ -11,6 +11,10 @@ execute:
   echo: true
   warning: true
   keep-md: true
+  keep-yaml: true
+
+format:
+  gfm+yaml_metadata_block
 
 number-sections: true
 
@@ -19,3 +23,5 @@ R_init_project: '`r ({
   # knitr::opts_chunk$set(fig.path = paste0("assets/R-images/", .proj_title, "/"))
   print("R init project")
   NULL})`'
+
+
