@@ -1,3 +1,8 @@
+# To Do
+- link url to githubpage
+- tell github about it (settings)
+- set up "google search console" 
+
 # MY ADAPTATION
 - for local I copied the `_includes`, `_layouts` and `_sass` direcotries here
 
@@ -6,6 +11,7 @@
 
 ## setup
 ``` bash
+# install `ruby` first
 gem install jekyll bundler
 bundle install --path vendor/bundle
 bundle exec jekyll serve
