@@ -1,11 +1,11 @@
 project:
   title: "quarto"
   execute-dir: file 
-  post-render: bash -c "mv $QUARTO_PROJECT_OUTPUT_FILES ~/Git/LGraz.github.io/_posts"
-
-knitr:
-  opts_chunk:
-    fig.path: "~/Git/LGraz.github.io/assets/"   
+  post-render: 
+    - Rscript move_md_and_adjust_paths.R
+    - insert_date_to_fname.sh
+    - sed -i '1i <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>'
+  # post-render: bash -c "mv $QUARTO_PROJECT_OUTPUT_FILES ~/Git/LGraz.github.io/_posts"
 
 execute: 
   echo: true
