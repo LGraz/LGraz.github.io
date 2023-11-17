@@ -20,7 +20,7 @@ for file in ../_posts/*.md; do
 
             # Print a message to the console showing the old and new file names
             echo "  $filename to $date-$filename"
-
+            
             # Rename the file by prepending the date to the filename
             mv "$file" "../_posts/$date-$filename"
         fi

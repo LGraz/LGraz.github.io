@@ -12,9 +12,16 @@ execute:
   warning: true
   keep-md: true
   keep-yaml: true
+  freeze: auto  # re-render only when source changes
 
 format:
   gfm+yaml_metadata_block
+  pdf:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    colorlinks: true
+    highlight-style: github
 
 number-sections: true
 
