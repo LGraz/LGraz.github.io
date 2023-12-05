@@ -1,6 +1,4 @@
 # To Do
-- link url to githubpage
-- tell github about it (settings)
 - set up "google search console" 
 
 # MY ADAPTATION
