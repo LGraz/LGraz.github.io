@@ -8,6 +8,7 @@ output.files <- Sys.getenv("QUARTO_PROJECT_OUTPUT_FILES")
 output.files <- strsplit(output.files, "\n")[[1]]
 # only consider the .md files
 md.files  <- output.files[grepl(".md$", output.files)]
+cat("output.files:\n", output.files, "\n\n-------------------")
 stopifnot(length(md.files) > 0)
 
 

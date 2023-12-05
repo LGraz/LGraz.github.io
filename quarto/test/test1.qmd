@@ -1,7 +1,6 @@
 ---
 # layout: post
-title: '`r ({
-  .proj_title <- base::gsub("_", " ", base::gsub("\\.[rqmarkdown]+", "", knitr::current_input(), ignore.case = TRUE));   stringr::str_to_title(.proj_title) })`'
+title: TEST 1
 author: Lukas Graz
 date: 2023-11-14
 #abstract: MY FANCY ABSTRACT
@@ -29,31 +28,24 @@ date: 2023-11-14
 #     )
 #   })
 ---
-
 <!-- MATH EQUATION SUPPORT -->
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
 
 $$
 E = m c ^2
 $$
 
-``` r
+```{r load_packages, message = FALSE, warning = FALSE}
 library(lmerTest)
 ```
 
-``` r
+
+
+```{r main}
 plot(cars)
-```
-
-![](../../quarto/testB/test2_files/figure-commonmark/main-1.png)
-
-``` r
 summary(cars)
 ```
 
-         speed           dist    
-     Min.   : 4.0   Min.   :  2  
-     1st Qu.:12.0   1st Qu.: 26  
-     Median :15.0   Median : 36  
-     Mean   :15.4   Mean   : 43  
-     3rd Qu.:19.0   3rd Qu.: 56  
-     Max.   :25.0   Max.   :120  
+
+

@@ -4,24 +4,36 @@ project:
   post-render: 
     - Rscript move_md_and_adjust_paths.R
     - insert_date_to_fname.sh
-    - sed -i '1i <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>'
+    # - sed -i '1i <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>'
   # post-render: bash -c "mv $QUARTO_PROJECT_OUTPUT_FILES ~/Git/LGraz.github.io/_posts"
+  render:
+    - test/test1.qmd
+    - T-test_vs_Wilcoxon_vs_MedianTest/t-test_vs_wilcoxon.rmd
 
 execute: 
   echo: true
+  cache: false
   warning: true
   keep-md: true
   keep-yaml: true
   freeze: auto  # re-render only when source changes
 
 format:
-  gfm+yaml_metadata_block
-  pdf:
-    toc: true
-    toc-depth: 2
-    number-sections: true
-    colorlinks: true
-    highlight-style: github
+  # gfm: 
+  #   keep-yaml: true
+  gfm+yaml_metadata_block: 
+    comment: '##'
+  # pdf:
+  #   keep-md: true
+  #   keep-yaml: true
+  #   # variant: gfm
+  #   toc: true
+  #   toc-depth: 2
+  #   number-sections: true
+  #   colorlinks: true
+  #   highlight-style: github
+  # md:
+  #   keep-yaml: true
 
 number-sections: true
 

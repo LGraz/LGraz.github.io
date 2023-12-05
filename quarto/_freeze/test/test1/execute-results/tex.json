@@ -1,0 +1,14 @@
+{
+  "hash": "df8eaf0067fb40144b30212251e5063e",
+  "result": {
+    "markdown": "---\n# layout: post\ntitle: TEST 1\nauthor: Lukas Graz\ndate: 2023-11-14\n#abstract: MY FANCY ABSTRACT\n\n# format:\n#   pdf:\n#     df-print: default\n#     toc: false\n#     toc-depth: 2\n#     number-sections: false\n#     colorlinks: true\n#     fig-width: 6.5\n#     fig-height: 4.5\n#     keep-tex: true\n#   html: {}\n# knit: |\n#   (function(input, ...) {\n#     stop(\"not evaluated\")\n#     rmarkdown::render(\n#       input,\n#       output_file = paste0(\n#         xfun::sans_ext(input), '-', Sys.Date(), '_XX.md'\n#       ),\n#       envir = globalenv()\n#     )\n#   })\n---\n\n<!-- MATH EQUATION SUPPORT -->\n  <script src=\"https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\" type=\"text/javascript\"></script>\n\n\n$$\nE = m c ^2\n$$\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(lmerTest)\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nplot(cars)\n```\n\n::: {.cell-output-display}\n![](test1_files/figure-pdf/main-1.pdf){fig-pos='H'}\n:::\n\n```{.r .cell-code}\nsummary(cars)\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n     speed           dist    \n Min.   : 4.0   Min.   :  2  \n 1st Qu.:12.0   1st Qu.: 26  \n Median :15.0   Median : 36  \n Mean   :15.4   Mean   : 43  \n 3rd Qu.:19.0   3rd Qu.: 56  \n Max.   :25.0   Max.   :120  \n```\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": null,
+    "postProcess": false
+  }
+}
