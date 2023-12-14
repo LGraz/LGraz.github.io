@@ -22,7 +22,7 @@ format:
   # gfm: 
   #   keep-yaml: true
   gfm+yaml_metadata_block: 
-    comment: '##'
+    comment: "##>"
   # pdf:
   #   keep-md: true
   #   keep-yaml: true
