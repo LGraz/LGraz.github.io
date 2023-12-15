@@ -51,7 +51,7 @@ get_data_all_laws <- function(){
 boxplot(y ~ fun, get_data_all_laws(), main= "Laws illustrated")
 ```
 
-![](../quarto/T-test_vs_Wilcoxon_vs_MedianTest/t-test_vs_wilcoxon_files/figure-commonmark/boxplots-1.png)
+![](../quarto/T-test_vs_Wilcoxon/t-test_vs_wilcoxon_files/figure-commonmark/boxplots-1.png)
 
 verify mean and standard deviation
 
@@ -276,7 +276,7 @@ sapply(laws, function(f) mean(replicate(10000,     sd(f(1, 2)))))
 boxplot(y ~ fun, get_data_all_laws(), main= "Equal Medians (in expectation)")
 ```
 
-![](../quarto/T-test_vs_Wilcoxon_vs_MedianTest/t-test_vs_wilcoxon_files/figure-commonmark/unnamed-chunk-9-1.png)
+![](../quarto/T-test_vs_Wilcoxon/t-test_vs_wilcoxon_files/figure-commonmark/unnamed-chunk-9-1.png)
 
 ``` r
 set.seed(4321)
