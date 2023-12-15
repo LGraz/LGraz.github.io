@@ -1,7 +1,8 @@
 ---
-title: T-test vs Wilcoxon
+title: T-test vs Wilcoxon vs Median Test
 author: Lukas Graz
 date: 2023-09-20
+permalink: /posts/ttest-vs-wilcoxon-vs-median
 format:
   gfm+yaml_metadata_block: 
     df-print: kable

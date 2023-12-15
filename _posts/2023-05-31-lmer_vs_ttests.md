@@ -2,6 +2,7 @@
 title: "Testing Slopes in a LMM -- Should we Simplify?"
 author: Lukas Graz
 date: 2023-05-31
+permalink: /posts/lmm-equivalence-to-ttest
 cache: true
 tags: 
   - simulation
@@ -19,8 +20,8 @@ slopes
 $\beta_{slope} =0$  
 3. Fit `lmer(salery ~ slope + (slope|subject))` and test if
 $\beta_{slope} =0$  
-**Then:** 1 & 3 are valid (equally powerful) approaches and 2 is only
-valid if there is no individual slope.
+**Then:** 1 & 3 are valid (if data bal equally powerful) approaches and
+2 is only valid if there is no individual slope.
 
 # Simulate Data
 
