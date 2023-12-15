@@ -1,31 +1,12 @@
 ---
-title: | 
-  | Contrasts 
-  | All vs. Control
-  | Dunnet vs. Holm vs. TukeyHSD
+title: "Contrasts against Control: Dunnet vs. Holm vs. TukeyHSD"
 author: Lukas Graz
 date: 2023-05-04
-output:
-  pdf_document:
-    df_print: kable
-    toc: true
-    toc_depth: 2
-    number_sections: false
-    fig_width: 6.5
-    fig_height: 4.5
-    fig_caption: true
-    keep_tex: false
-    keep_md: true
+tags: 
+  - simulation
+  - power
 ---
-```{r setup, cache=FALSE, echo=FALSE} 
-knitr::opts_chunk$set(cache = TRUE, autodep = TRUE)
-options(digits = 5)
-def.chunk.hook  <- knitr::knit_hooks$get("chunk")
-knitr::knit_hooks$set(chunk = function(x, options) {
-  x <- def.chunk.hook(x, options)
-  ifelse(options$size != "normalsize", paste0("\n \\", options$size, "\n\n", x, "\n\n \\normalsize"), x)
-})
-``` 
+
 # TLDR
 Even though Dunnet is proven to be optiomal (in all vs comparison) for a reasonable group number (around 10) Holm seems to yield basically the same result, while being a more general method. When increasing the group number (e.g. to 30) Dunnet is more powerful.
 
@@ -50,11 +31,12 @@ Note that there are different definitions of "power" in this context. We will be
 
 # Help functions
 ```{r}
+set.seed(123)
+n_rep <- 1000
+
 library(multcomp)
 library(PMCMRplus)
 library(ggplot2)
-
-set.seed(123)
 
 # g groups, of which one is the control, n_effect of which have the effect `effect`
 get_data <- function(g = 10, n_t = 5, n_c = 5, effect = 1, n_effect = 3) {
@@ -146,7 +128,6 @@ dosim <- function(n_replicate = 200, n_goups = 10, n_treatmentgroup = 5,
 
 # Simulations
 ```{r 1_sim}
-n_rep <- 2000
 a <- dosim(n_replicate = n_rep, n_non_placebo_treatments = 0) # NULL
 g <- dosim(n_replicate = n_rep)
 b <- dosim(n_replicate = n_rep, effect = .5)
@@ -191,8 +172,7 @@ colnames(result) <- c("null", "default", "`-effect`", "`+effect`", "`+alloc`",
   "`+grps++nonplacebo`", "`+groupsize`", "`+grpsize+alloc`"
 )
 options(digits=4)
-as.data.frame(result)[1:6,]
-as.data.frame(result)[7:nrow(result),]
+result |> as.data.frame() |> knitr::kable()
 ```
 
 

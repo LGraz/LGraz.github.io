@@ -2,22 +2,12 @@
 title: "Testing Slopes in a LMM -- Should we Simplify?"
 author: Lukas Graz
 date: 2023-05-31
-output:
-  pdf_document:
-    df_print: kable
-    toc: true
-    toc_depth: 2
-    number_sections: true
-    fig_width: 6.5
-    fig_height: 2
-    fig_caption: true
-    keep_tex: false
-    keep_md: true
+cache: true
+tags: 
+  - simulation
+  - power
+  - lmm
 ---
-```{r setup, cache=FALSE, echo=FALSE} 
-knitr::opts_chunk$set(cache = TRUE, autodep = TRUE)
-set.seed(123)
-``` 
 
 # TLDR
 Given a dataset as shown in the last plot, we consider the following analyses:  
@@ -37,7 +27,9 @@ $$
 - $\varepsilon_{t,s} \sim \mathcal N(0, obsSD^2)$  
 
 ```{r}
-library(mcreplicate)
+nsim <- 2000
+
+library(mcreplicate) # for parallelization
 library(ggplot2)
 library(lmerTest)
 
@@ -72,10 +64,9 @@ plot_data <- function(main, ...){
     theme_minimal() +
     ggtitle(main)
 }
-
-
 ```
 ```{r}
+set.seed(123)
 plot_data("Noisless, equal subjects", obsSD=0, subjSD=0, subjSlopeSD=0)
 plot_data("Noisless, equal slopes", obsSD=0, subjSlopeSD=0)
 plot_data("Noisless", obsSD=0)
@@ -114,7 +105,7 @@ p_values <- function(...){
 get_power <- function(...){
   args <- list(...)
   PVALS <- as.data.frame(t(
-  mc_replicate(2000, do.call(p_values, args))
+  mc_replicate(nsim, do.call(p_values, args))
   ))
   # POWER:
   sapply(lapply(PVALS, function(x) x<0.05), mean)
@@ -163,7 +154,7 @@ for (i in 1:nrow(ARGS)){
 ```
 # Show Results:
 ```{r, size="tiny"}
-as.data.frame(cbind(ARGS, Power))
+as.data.frame(cbind(ARGS, Power)) |> knitr::kable()
 ```
 ```{r, include=FALSE}
 # Perform the two-sample proportion test

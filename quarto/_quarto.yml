@@ -2,17 +2,19 @@ project:
   title: "quarto"
   execute-dir: file 
   post-render: 
-    - Rscript move_md_and_adjust_paths.R
-    - insert_date_to_fname.sh
+    - Rscript move_md_and_adjust_paths.R   #old: bash -c "mv $QUARTO_PROJECT_OUTPUT_FILES ~/Git/LGraz.github.io/_posts"
+    - ./insert_date_to_fname.sh
+  # inserts mathjax:
     # - sed -i '1i <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>'
-  # post-render: bash -c "mv $QUARTO_PROJECT_OUTPUT_FILES ~/Git/LGraz.github.io/_posts"
   render:
-    - test/test1.qmd
-    - T-test_vs_Wilcoxon_vs_MedianTest/t-test_vs_wilcoxon.rmd
+    - T-test_vs_Wilcoxon_vs_MedianTest/t-test_vs_wilcoxon.qmd
+    - ttest-vs-lm-with-more-groups/pairwise-ttest_vs_lm-with-more-groups.qmd
+    - lmer_vs_slope-t-test/lmer_vs_ttests.qmd
+    - Dunnet_vs_Holm/dunnet_vs_holm.qmd
 
 execute: 
   echo: true
-  cache: false
+  cache: true
   warning: true
   keep-md: true
   keep-yaml: true

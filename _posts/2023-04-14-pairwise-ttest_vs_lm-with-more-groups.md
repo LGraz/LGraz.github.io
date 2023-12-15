@@ -9,9 +9,12 @@ tags:
 ---
 
 # TLDR
-more groups make the test more stable and slightly more powerful (for low samplesizes). However, be aware that this assumes homoscedaticity (i.e. equal variance for all groups).
 
-```{r}
+more groups make the test more stable and slightly more powerful (for
+low samplesizes). However, be aware that this assumes homoscedaticity
+(i.e. equal variance for all groups).
+
+``` r
 get_data <- function(n_per_group = 10, n_groups = 15) {
   grp <- as.factor(c(rep(1:n_groups, each = n_per_group)))
   data <- data.frame(group = grp, y = rnorm(n_groups * n_per_group, sd = 2) + as.numeric(grp))
@@ -21,7 +24,11 @@ get_data <- function(n_per_group = 10, n_groups = 15) {
 data <- get_data()
 set.seed(123)
 boxplot(y ~ group, data)
+```
 
+![](../quarto/ttest-vs-lm-with-more-groups/pairwise-ttest_vs_lm-with-more-groups_files/figure-commonmark/unnamed-chunk-1-1.png)
+
+``` r
 # Pairwise T-test using residuals of 2-15 groups
 # plot results
 pvals_mat <- replicate(20, { 
@@ -33,7 +40,11 @@ pvals_mat <- replicate(20, {
 
 # plot each collumn of pvals_mat with matplot
 matplot(pvals_mat, type = "l", xlab = "How Many Groups Considered +1")
+```
 
+![](../quarto/ttest-vs-lm-with-more-groups/pairwise-ttest_vs_lm-with-more-groups_files/figure-commonmark/unnamed-chunk-1-2.png)
+
+``` r
 # simulate power
 # 2 groups vs 5 groups
 n_sim <- 2000
@@ -48,4 +59,5 @@ names(power) <- c("power using 2 groups,", " 5 groups")
 power
 ```
 
-
+    power using 2 groups,              5 groups 
+                    0.074                 0.081 
