@@ -8,10 +8,13 @@ tags:
   - power
 ---
 
-Simulate a `glm` with exponential distribution such that $$
+
+Simulate a `glm` with exponential distribution such that 
+$$
 \operatorname{y} \sim \operatorname{exp}(\operatorname{h}(\alpha + 1\operatorname{x} + 2\operatorname{z})) 
-$$ with the $h$ being the inverse of the link functions: - identity -
-inverse - log
+$$
+ with the \(h\) being the inverse of the link functions: - identity -
+inverse - log $bla$
 
 ## Setup
 

@@ -6,7 +6,7 @@ Gemfile.lock
 .bundle
 vendor
 
-_includes
+# _includes
 _layouts
 _sass
 
