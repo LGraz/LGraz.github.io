@@ -12,8 +12,8 @@ tags:
 # TLDR
 
 more groups make the test more stable and slightly more powerful (for
-low samplesizes). However, be aware that this assumes homoscedaticity
-(i.e. equal variance for all groups).
+low sample sizes). However, be aware that this assumes homoscedasticity
+(i.e., equal variance for all groups).
 
 ``` r
 get_data <- function(n_per_group = 10, n_groups = 15) {

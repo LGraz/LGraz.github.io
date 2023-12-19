@@ -1,0 +1,5 @@
+scriptsize
+normalsize
+homoscedasticity
+Holm
+Dunnet

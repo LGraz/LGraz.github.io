@@ -23,7 +23,7 @@ tags:
   - validity_check
 ---
 
-Define a list of laws (i.e. distributions) with `mean` and `sd`.
+Define a list of laws (i.e., distributions) with `mean` and `sd`.
 
 ``` r
 # functions 
@@ -54,7 +54,7 @@ boxplot(y ~ fun, get_data_all_laws(), main= "Laws illustrated")
 
 ![](../quarto/T-test_vs_Wilcoxon/t-test_vs_wilcoxon_files/figure-commonmark/boxplots-1.png)
 
-verify mean and standard deviation
+Verify mean and standard deviation
 
 ``` r
 sapply(laws, function(f) mean(replicate(10000, mean(f(0, 1)))))
@@ -228,7 +228,7 @@ this gives an idea of the uncertainty of a ratio given 500 simulations
 
 # redo analysis but with groupwise equal medians
 
-Define a list of laws (i.e. distributions) with `median` and `sd`
+Define a list of laws (i.e., distributions) with `median` and `sd`
 
 ``` r
 # functions 

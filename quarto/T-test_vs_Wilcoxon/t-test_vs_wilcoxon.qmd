@@ -23,7 +23,7 @@ tags:
   - validity_check
 ---
 
-Define a list of laws (i.e. distributions) with `mean` and `sd`. 
+Define a list of laws (i.e., distributions) with `mean` and `sd`. 
 ```{r}
 # functions 
 n <- 40 # per group
@@ -51,7 +51,7 @@ get_data_all_laws <- function(){
 boxplot(y ~ fun, get_data_all_laws(), main= "Laws illustrated")
 ```
 
-verify mean and standard deviation
+Verify mean and standard deviation
 ```{r}
 sapply(laws, function(f) mean(replicate(10000, mean(f(0, 1)))))
 sapply(laws, function(f) mean(replicate(10000, mean(f(1, 2)))))
@@ -173,7 +173,7 @@ sapply(c(0:4/40, 3:10/20), prop, nsim) |> as.data.frame() * 100
 this gives an idea of the uncertainty of a ratio given `r nsim` simulations
 
 # redo analysis but with groupwise equal medians
-Define a list of laws (i.e. distributions) with `median` and `sd`
+Define a list of laws (i.e., distributions) with `median` and `sd`
 ```{r}
 # functions 
 n <- 40 # per group

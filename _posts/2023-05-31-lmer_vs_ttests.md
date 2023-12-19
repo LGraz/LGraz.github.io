@@ -22,8 +22,8 @@ slopes
 $\beta_{slope} =0$  
 3. Fit `lmer(salery ~ slope + (slope|subject))` and test if
 $\beta_{slope} =0$  
-**Then:** 1 & 3 are valid (if data bal equally powerful) approaches and
-2 is only valid if there is no individual slope.
+**Then:** 1 & 3 are valid (if data balanced, they are equally powerful)
+approaches and 2 is only valid if there is no individual slope.
 
 # Simulate Data
 

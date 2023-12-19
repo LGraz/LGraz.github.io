@@ -10,10 +10,10 @@ tags:
 
 # TLDR
 
-Even though Dunnet is proven to be optiomal (in all vs comparison) for a
+Even though Dunnet is proven to be optimal (in all vs comparison) for a
 reasonable group number (around 10) Holm seems to yield basically the
-same result, while being a more general method. When increasing the
-group number (e.g. to 30) Dunnet is more powerful.
+same result, while being a more general method. Dunnet is more powerful,
+when increasing the group number (e.g., to 30).
 
 # Purpose and Structure of this Document
 
@@ -32,8 +32,8 @@ The document is structured as follows:
 2.  Perform simulations for various settings.
 3.  Plot the results.
 
-Note that there are different definitions of “power” in this context. We
-will be using the following definitions:
+Note, that there are different definitions of “power” in this context.
+We will be using the following definitions:
 
 - The expectation that any of the non-placebos will be rejected.
 - The expectation of the fraction of non-placebos that will be rejected.
@@ -270,10 +270,10 @@ plt
 # Results
 
 1.  Dunnet and Holm yield very similar results when considering 10
-    groupos (while varying the number of non-placebo groups, the effect,
-    and the samplesize allocation).
-2.  If we increase the number of groups Dunnet shows a slight advantage
-    over Holm.
+    groups (while varying the number of non-placebo groups, the effect,
+    and the sample size allocation).
+2.  Dunnet shows a slight advantage over Holm, when increasing the
+    number of groups.
 3.  The optimal allocation
     ($n_{control} = n_{treatments}\sqrt{n_{groups}-1}$) yields an
     improvement as well in both cases.
