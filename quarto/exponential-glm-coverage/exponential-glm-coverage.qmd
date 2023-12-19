@@ -77,4 +77,4 @@ for (i in seq_along(inv_links)){
 ```
 
 ## Results
-For any link-function, the coverage is terrible.
+For all link functions, the coverage is about 95%

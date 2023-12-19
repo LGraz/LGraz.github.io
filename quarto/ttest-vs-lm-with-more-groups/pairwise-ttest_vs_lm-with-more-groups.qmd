@@ -9,7 +9,7 @@ tags:
   - power
 ---
 
-# TLDR
+**TLDR:**
 more groups make the test more stable and slightly more powerful (for low sample sizes). However, be aware that this assumes homoscedasticity (i.e., equal variance for all groups).
 
 ```{r}

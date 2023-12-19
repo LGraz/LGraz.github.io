@@ -10,12 +10,8 @@ tags:
   - lmm
 ---
 
-<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-
-# TLDR
-
-Given a dataset as shown in the last plot, we consider the following
-analyses:  
+**TLDR:** Given a dataset as shown in the last plot, we consider the
+following analyses:  
 1. For each subject extract the slope and perform a simple t-test on the
 slopes  
 2. Fit `lmer(salery ~ slope + (1|subject))` and test if
@@ -27,9 +23,11 @@ approaches and 2 is only valid if there is no individual slope.
 
 # Simulate Data
 
-Salary of subject $s$ at time $t$: $$
-salary_{t}^{(s)} = t \cdot (slope + d_s) + intercept_s + \varepsilon_{t,s}
-$$ - $d_s \sim \mathcal N(0, subjSlopeSD^2)$  
+Salary of subject $s$ at time $t$:
+
+$$ salary_{t}^{(s)} = t \cdot (slope + d_s) + intercept_s + \varepsilon_{t,s} $$
+
+- $d_s \sim \mathcal N(0, subjSlopeSD^2)$  
 - $intercept_s \sim \mathcal N(0, subjSD^2)$  
 - $\varepsilon_{t,s} \sim \mathcal N(0, obsSD^2)$
 

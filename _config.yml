@@ -29,7 +29,7 @@ remote_theme: mmistakes/minimal-mistakes
 # theme: minimal-mistakes
 # Outputting
 permalink: /:categories/:title/
-paginate: 5 # amount of posts to show
+paginate: 100 # amount of posts to show
 paginate_path: /page:num/
 timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
@@ -62,25 +62,22 @@ author:
   name   : "Lukas Graz"
   avatar : "/assets/images/bio-photo.jpg"
   bio    : "After studying Mathematics and Statistics at ETH, you can now find me working at the Statistical Consulting Unit of ETH."
-  links:
-    - label: "Website"
-      icon: "fas fa-fw fa-link"
-      url: "https://lgraz.github.io/"
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      url: "https://github.com/LGraz"
-    - label: "TODO431234113451345"
-      icon: "fab fa-fw fa-instagram"
-      url: "https://instagram.com/"
+  # links:
+  #   - label: "Website"
+  #     icon: "fas fa-fw fa-link"
+  #     url: "https://lgraz.github.io/"
+  #   - label: "GitHub"
+  #     icon: "fab fa-fw fa-github"
+  #     url: "https://github.com/LGraz"
 
 footer:
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/LGraz"
-    - label: "Instagram"
-      icon: "fab fa-fw fa-instagram"
-      url: "https://instagram.com/"
+    # - label: "Instagram"
+    #   icon: "fab fa-fw fa-instagram"
+    #   url: "https://instagram.com/"
 
 defaults:
   # _posts
@@ -90,7 +87,7 @@ defaults:
     values:
       layout: single
       author_profile: true
-      read_time: true
+      read_time: false
       comments: true
       share: true
       related: true

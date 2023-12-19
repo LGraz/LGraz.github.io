@@ -8,12 +8,10 @@ tags:
   - power
 ---
 
-# TLDR
-
-Even though Dunnet is proven to be optimal (in all vs comparison) for a
-reasonable group number (around 10) Holm seems to yield basically the
-same result, while being a more general method. Dunnet is more powerful,
-when increasing the group number (e.g., to 30).
+**TLDR:** Even though Dunnet is proven to be optimal (in all vs
+comparison) for a reasonable group number (around 10) Holm seems to
+yield basically the same result, while being a more general method.
+Dunnet is more powerful, when increasing the group number (e.g., to 30).
 
 # Purpose and Structure of this Document
 
