@@ -22,6 +22,11 @@ execute:
   keep-yaml: true
   freeze: auto  # re-render only when source changes
 
+
+knitr: 
+  opts_chunk: 
+    comment: "#>"
+
 format:
   # gfm: 
   #   keep-yaml: true
