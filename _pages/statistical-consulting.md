@@ -3,6 +3,6 @@ permalink: /statistical-consulting/
 title: "Statistical Consulting"
 ---
 
-Tempor velit sint sunt ipsum tempor enim ad qui ullamco. Est dolore anim ad velit duis dolore minim sunt aliquip amet commodo labore. Ut eu pariatur aute ea aute excepteur laborum. Esse ea esse excepteur minim mollit qui cillum excepteur ex dolore magna. Labore deserunt fugiat incididunt incididunt sint ea. Consequat dolore aute laboris quis proident quis non et est consectetur ex eiusmod sit culpa.
+I have already consulted for 140 clients, including mostly PhD and master's students as well as professionals from the industry. Discussing these cases in the Statistics Seminar at ETH Zurich has given me a good overview of various methods and the necessary mathematical understanding. Now, it is becoming rare that I cannot deliver a solution.
 
-Cupidatat ea do et in excepteur in. Ad nostrud ut est esse eu duis ea sunt eiusmod. Aliquip tempor veniam sint elit fugiat. Velit incididunt laboris amet incididunt labore dolore irure velit excepteur commodo deserunt laborum. Consectetur eu fugiat veniam veniam Lorem labore magna eiusmod. Ea occaecat reprehenderit pariatur consectetur minim labore ut aliquip.
+Feel free to challenge me! You can contact me via email at stat.consulting.graz@gmail.com
