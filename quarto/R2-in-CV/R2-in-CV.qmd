@@ -1,5 +1,5 @@
 ---
-Title: Do Not Use \(R^2\) for Cross Validation
+title: Do Not Use \(R^2\) for Cross Validation
 author: Lukas Graz
 date: 2024-07-17
 permalink: /posts/R2-in-CV
