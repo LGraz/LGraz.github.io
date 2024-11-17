@@ -57,8 +57,10 @@ if(!interactive())
 ```
 
 
-## 
+## Model Illustration
 ![source: bookdown.org/steve_midway/DAR](assets/images/07_models.png)
+
+![source: bookdown.org/steve_midway/DAR](images/07_models.png)
 
 
 ## Model Equation {.smaller}
