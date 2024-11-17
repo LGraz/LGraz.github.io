@@ -1,12 +1,13 @@
 ---
-Title: "Bad Coverage for exponential GLMs"
+Title: Bad Coverage for exponential GLMs
 author: Lukas Graz
-date: 2023-07-12
+date: 2023-07-12T00:00:00.000Z
 permalink: /posts/exponential-glm-coverage
-tags: 
+tags:
   - simulation
   - power
 ---
+
 
 Simulate a `glm` with exponential distribution such that
 

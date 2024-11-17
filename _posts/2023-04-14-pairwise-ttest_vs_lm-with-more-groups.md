@@ -1,13 +1,13 @@
 ---
-# layout: post
 title: Pairwise T-tests can be improved by including more groups
 author: Lukas Graz
-date: 2023-04-14
+date: 2023-04-14T00:00:00.000Z
 permalink: /posts/ttest-with-more-groups
-tags: 
+tags:
   - simulation
   - power
 ---
+
 
 **TLDR:** more groups make the test more stable and slightly more
 powerful (for low sample sizes). However, be aware that this assumes

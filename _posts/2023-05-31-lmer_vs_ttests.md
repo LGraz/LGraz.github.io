@@ -1,14 +1,15 @@
 ---
-title: "Testing Slopes in a LMM -- Should we Simplify?"
+title: Testing Slopes in a LMM -- Should we Simplify?
 author: Lukas Graz
-date: 2023-05-31
+date: 2023-05-31T00:00:00.000Z
 permalink: /posts/lmm-equivalence-to-ttest
 cache: true
-tags: 
+tags:
   - simulation
   - power
   - lmm
 ---
+
 
 **TLDR:** Given a dataset as shown in the last plot, we consider the
 following analyses:  

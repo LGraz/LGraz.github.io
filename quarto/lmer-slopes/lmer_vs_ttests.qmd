@@ -1,0 +1,326 @@
+---
+title: |
+  Linear Mixed Models
+  Simplifications (t-Test)
+  Tips & Tricks
+author: Lukas Graz  
+note-type: quarto
+date: 2024-07-26  
+uuid: de176b8c-de72-4a9b-8705-3ccb144be6cf  
+permalink: /posts/simplify-lmm-ticks-tricks
+execute:  
+  cache: false  
+  message: false  
+  warning: false  
+  toc: true  
+format:  
+  revealjs:  
+    embed-resources: true
+    echo: true  
+    scrollable: true  
+tags:
+  - simulation
+  - power
+  - lmm
+---
+
+```{r options, echo=FALSE}
+options(digits=4)
+```
+
+1. ~~Technical Details~~
+2. Sleepstudy
+3. Finger Tapping
+4. Power Simulations
+
+# Sleepstudy {.smaller}
+
+**Reaction ~ Days**
+
+. . . 
+
+```{r init}
+library(lmerTest)
+library(simr)
+
+data(sleepstudy)
+S <- sleepstudy
+```
+
+```{r plot-sleepstudy, echo=FALSE}
+library(ggplot2)
+if(!interactive())
+  ggplot(S, aes(x = Days, y = Reaction, group = Subject)) +
+    geom_line() +
+    geom_point() +
+    facet_wrap(~Subject)
+```
+
+
+## 
+![source: bookdown.org/steve_midway/DAR](07_models.png)
+
+
+## Model Equation {.smaller}
+```{r SLP-lmm}
+fit <- lmer(Reaction ~ Days + (Days|Subject), S)
+```
+. . .
+
+```{r SLP-equation, results = 'asis'}
+equatiomatic::extract_eq(fit)
+```
+
+
+## Test {.smaller}
+**LMM**
+
+```{r}
+coef(summary(fit))["Days", , drop=F]
+```
+. . .
+
+**Aggregate + t-Test**
+```{r SLP-aggregate}
+COEFS <- coef(lmList(Reaction ~ Days | Subject, S))
+head(COEFS)
+```
+. . .
+```{r}
+t.test(COEFS$Days)$p.value
+```
+
+
+# Finger Tapping
+
+**Tap_Speed ~ Fatigued + Caffein + Physical_Activity + Time**
+
+. . .
+
+![Consultancy Case: Sarah Stadelmann (Illustration)](./example-illustration.png)
+
+## LMM
+```{r Ex-lmm, message=TRUE, warning=TRUE}
+#| code-line-numbers: 3-5
+#| output-location: fragment
+D <- readRDS("./FingerTapping.rds")
+anova(RSLP_fit <- 
+  lmer(Tap_Speed_t0 ~ 
+     Fatigued + Caffein + Physical_Activity + Time +
+    (Fatigued + Caffein + Physical_Activity + Time || PersonID), D
+))
+```
+
+## Aggregate + t-Test
+
+1. `lm` per person 
+2. Extract coefficients
+3. t-test
+
+. . .
+
+```{r Ex-aggregate}
+#| output-location: fragment
+COEFS <- coef(lmList(Tap_Speed_t0 ~ 
+  Fatigued + Caffein + Physical_Activity + Time| PersonID, D))
+head(COEFS)
+```
+. . .
+```{r ex-aggregate-ttest}
+t.test(COEFS$Fatigued)$p.value
+```
+
+## Comparison
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**LMM**
+
+- Challenging numerics
+- Crossed random effects
+:::
+
+::: {.column width="50%"}
+**aggregate + t-Test**
+
+- KISS
+- Fewer assumptions
+:::
+
+::::
+
+## Type I Error & Power  {.smaller}
+```{r Ex-sim}
+#| code-fold: true
+#| code-summary: "Simulation Code"
+# Setup auxiliary functions 
+# =========================
+get_type1_CI <- function(P.vals){
+  C.int <- apply(P.vals < 0.05, 1, function(x)
+    prop.test(sum(x), length(x), p = 0.05)$conf.int |> round(4))
+
+  cbind(
+    `Power` = rowMeans(P.vals < 0.05),
+    lwr = C.int[1, ],
+    upr = C.int[2, ]
+  ) |> as.data.frame()
+}
+
+get_p_vals <- function(Y){
+  D$Y <- Y
+  c(
+    LMM = lmer(Y ~ 
+       Fatigued + Caffein + Physical_Activity + Time +
+      (Fatigued + Caffein + Physical_Activity + Time || PersonID), D) |> 
+      summary() |> coef() |> _["Fatigued", "Pr(>|t|)"],
+    `t-Test` = lmList(Y ~ 
+      Fatigued + Caffein + Physical_Activity + Time | PersonID, D
+      ) |> coef() |> _$Fatigued |> t.test() |> _$p.value
+  )
+}
+
+# Simulate H0
+# ===========
+xfun::cache_rds({
+    RSLP_fit <- lmer(Tap_Speed_t0 ~ 
+        Fatigued + Caffein + Physical_Activity + Time +
+       (Fatigued + Caffein + Physical_Activity + Time | PersonID), D
+    )
+    fixef(RSLP_fit) <- c(0,0,0,0,0)
+    simulate(
+      RSLP_fit, 
+      nsim = 10000, 
+      seed=123) |> 
+      parallel::mclapply(get_p_vals) 
+  },
+  file = "cache_sim3.1.rds",
+  dir = "cache/",
+  hash = list(D, as.character(body(get_p_vals)))
+) |> simplify2array() |> get_type1_CI() -> H0_CI
+
+# Simulate H1
+# ===========
+xfun::cache_rds({
+    RSLP_fit <- lmer(Tap_Speed_t0 ~ 
+        Fatigued + Caffein + Physical_Activity + Time +
+       (Fatigued + Caffein + Physical_Activity + Time | PersonID), D
+    )
+    fixef(RSLP_fit) <- c(0,0.02,0,0,0)
+    simulate(
+      RSLP_fit, 
+      nsim = 10000, 
+      seed=123) |> 
+      parallel::mclapply(get_p_vals) 
+  },
+  file = "cache_sim3.2.rds",
+  dir = "cache/",
+  hash = list(D, as.character(body(get_p_vals)))
+) |> simplify2array() |> get_type1_CI() -> H1_CI
+
+# Plot results
+# ============
+H0_CI$Hypothesis <- "H0: Fatigue = 0"
+H1_CI$Hypothesis <- "H1: Fatigue = 0.02"
+
+H_all <- rbind(H0_CI, H1_CI) 
+H_all$test <- rownames(H_all)
+
+ggplot(H_all, aes(x = test, y = `Power`, ymin = lwr, ymax = upr)) +
+  geom_pointrange() +
+  geom_hline(yintercept = 0.05, linetype = 2) +
+  facet_wrap(~Hypothesis, scales = "free") +
+  theme_minimal() +
+  xlab("")
+```
+
+# Power-Simulations
+
+## Using `simr`
+```{r eval=FALSE}
+powerSim(RSLP_fit)
+```
+
+. . .
+
+```{r powercurve_non_eval, eval=FALSE}
+powerCurve(RSLP_fit, along = "PersonID") |> plot()
+```
+
+```{r powercurve_sim, echo=FALSE}
+xfun::cache_rds({
+    simrOptions(nsim=100)
+    powerCurve(lmer(Tap_Speed_t0 ~ 
+        Fatigued +
+       (Fatigued || PersonID), D
+    ),
+    along = "PersonID",
+    seed=123)
+  },
+  file = "cache_powercurve233.rds",
+  dir = "cache/",
+  hash = list(D)
+) |> plot()
+```
+
+
+## Simulate with `rnorm()` & co.
+
+![](./boring.png)
+
+
+## `lme4::simulate.merMod` {.smaller}
+1. Existing model
+2. Modify existing model (`simr`)
+
+. . .
+
+  - `fixef<-`
+  - `coef<-`
+  - `VarCorr<-`
+  - `sigma<-`
+  - `scale<-`
+
+. . .
+
+```{r eval=FALSE}
+fixef(RSLP_fit) <- c(0,0,0,0,0)
+simulate(RSLP_fit, nsim = 100)
+```
+
+## No existing model?  {.smaller}
+`simulate(Y ~ ..., newparams = list(theta =  ???, ...))`[^theta] 
+
+[^theta]: theta: cholesky factor of the normalized random effects covariance matrix.
+
+. . . 
+
+```{r}
+#| output-location: fragment
+simr::makeLmer(
+  Y ~ Fatigued + Caffein + Physical_Activity + Time +
+     (Fatigued + Caffein + Physical_Activity + Time | PersonID), 
+  fixef = c(0,0,0,0,0),
+  VarCorr = diag(5),
+  data = D,
+  sigma = 1
+)
+```
+
+
+## Caching: `xfun::cache_rds`
+```{r eval=FALSE}
+xfun::cache_rds({
+    expression
+  },
+  hash = list_with_relevant_objects
+)
+```
+
+## Have Fun Simulating!
+1. Aggregate per Subject $\rightarrow$ t-Test
+2. `equatiomatic::extract_eq()`
+3. `lme4::simulate.merMod()`
+   1. `fixef<-` & co.
+   2. `simr::makeLmer()` 
+4. `xfun::cache_rds()`

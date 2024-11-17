@@ -10,3 +10,14 @@ vendor
 _layouts
 _sass
 
+_freeze
+/quarto/**/*.gfm.md
+/quarto/**/*.revealjs.md
+
+.git_bak
+/**/cache/
+*_cache
+*_files
+*.html
+
+*.pdf

@@ -1,12 +1,13 @@
 ---
 title: Does the variance of the Random-Effect influence the p-values?
 author: Lukas Graz
-date: 2023-12-18
+date: 2023-12-18T00:00:00.000Z
 permalink: /posts/lmm-effect-of-block-variace
-tags: 
+tags:
   - simulation
   - power
 ---
+
 
 We study the classical setup of a randomized complete block design with
 2 treatments, 2 replications per block and 5 blocks. We vary the
