@@ -132,7 +132,7 @@ t.test(COEFS$Days)$p.value
 . . .
 
 ![Consultancy Case: Sarah Stadelmann
-(Illustration)](./example-illustration.png)
+(Illustration)](../assets/images/example-illustration.png)
 
 ## LMM
 
@@ -192,8 +192,8 @@ t.test(COEFS$Fatigued)$p.value
 
 **LMM**
 
-- Challenging numerics
-- Crossed random effects
+- Challenging numerics  
+- Crossed random effects  
 
 </div>
 
@@ -201,8 +201,8 @@ t.test(COEFS$Fatigued)$p.value
 
 **aggregate + t-Test**
 
-- KISS
-- Fewer assumptions
+- KISS  
+- Fewer assumptions  
 
 </div>
 
@@ -312,7 +312,7 @@ powerCurve(RSLP_fit, along = "PersonID") |> plot()
 
 ## Simulate with `rnorm()` & co.
 
-![](./boring.png)
+![](../assets/images/boring.png)
 
 ## `lme4::simulate.merMod`
 
@@ -355,7 +355,7 @@ simr::makeLmer(
     #> Formula: Y ~ Fatigued + Caffein + Physical_Activity + Time + (Fatigued +  
     #>     Caffein + Physical_Activity + Time | PersonID)
     #>    Data: D
-    #> REML criterion at convergence: 2039
+    #> REML criterion at convergence: 2014
     #> Random effects:
     #>  Groups   Name              Std.Dev. Corr               
     #>  PersonID (Intercept)       1                           

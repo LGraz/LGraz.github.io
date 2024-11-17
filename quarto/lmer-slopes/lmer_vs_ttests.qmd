@@ -97,7 +97,7 @@ t.test(COEFS$Days)$p.value
 
 . . .
 
-![Consultancy Case: Sarah Stadelmann (Illustration)](./example-illustration.png)
+![Consultancy Case: Sarah Stadelmann (Illustration)](../assets/images/example-illustration.png)
 
 ## LMM
 ```{r Ex-lmm, message=TRUE, warning=TRUE}
@@ -135,17 +135,17 @@ t.test(COEFS$Fatigued)$p.value
 :::: {.columns}
 
 ::: {.column width="50%"}
-**LMM**
+**LMM**  
 
-- Challenging numerics
-- Crossed random effects
+- Challenging numerics  
+- Crossed random effects  
 :::
 
 ::: {.column width="50%"}
-**aggregate + t-Test**
+**aggregate + t-Test**  
 
-- KISS
-- Fewer assumptions
+- KISS  
+- Fewer assumptions  
 :::
 
 ::::
@@ -262,7 +262,7 @@ xfun::cache_rds({
 
 ## Simulate with `rnorm()` & co.
 
-![](./boring.png)
+![](../assets/images/boring.png)
 
 
 ## `lme4::simulate.merMod` {.smaller}
