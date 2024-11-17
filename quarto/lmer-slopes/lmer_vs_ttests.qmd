@@ -13,11 +13,11 @@ execute:
   message: false  
   warning: false  
   toc: true  
-format:  
-  revealjs:  
-    embed-resources: true
-    echo: true  
-    scrollable: true  
+# format:  
+#   revealjs:  
+#     embed-resources: true
+#     echo: true  
+#     scrollable: true  
 tags:
   - simulation
   - power

@@ -1,7 +1,7 @@
 ---
 title: "Testing Slopes in a LMM -- Should we Simplify?"
 author: Lukas Graz
-date: 2023-05-31
+date: 2023-05-30
 permalink: /posts/lmm-equivalence-to-ttest
 cache: true
 tags: 

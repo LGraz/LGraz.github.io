@@ -10,7 +10,7 @@ project:
     - T-test_vs_Wilcoxon/t-test_vs_wilcoxon.qmd
     - lmer-slopes/lmer_vs_ttests.qmd
     - ttest-vs-lm-with-more-groups/pairwise-ttest_vs_lm-with-more-groups.qmd
-    - lmer_vs_slope-t-test/lmer_vs_ttests.qmd
+    - lmer_vs_slope-t-test/lmer_vs_ttests_OLD.qmd
     - Dunnet_vs_Holm/dunnet_vs_holm.qmd
     - lmm-effect-of-block-variance/lmm-effect-of-block-variance.qmd
     - exponential-glm-coverage/exponential-glm-coverage.qmd
