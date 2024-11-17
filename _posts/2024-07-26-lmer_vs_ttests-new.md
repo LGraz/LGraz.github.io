@@ -209,11 +209,11 @@ t.test(COEFS$Fatigued)$p.value
 
 ## Type I Error & Power
 
-<details class="code-fold">
-<summary>Simulation Code</summary>
-
 ``` r
-# Setup auxiliary functions  =========================
+##| code-fold: true
+##| code-summary: "Simulation Code"
+
+# Setup auxiliary functions
 get_type1_CI <- function(P.vals){
   C.int <- apply(P.vals < 0.05, 1, function(x)
     prop.test(sum(x), length(x), p = 0.05)$conf.int |> round(4))
@@ -289,8 +289,6 @@ ggplot(H_all, aes(x = test, y = `Power`, ymin = lwr, ymax = upr)) +
   xlab("")
 ```
 
-</details>
-
 ![](../quarto/lmer-slopes-new/lmer_vs_ttests-new_files/figure-commonmark/Ex-sim-1.png)
 
 # Power-Simulations
@@ -354,7 +352,7 @@ simr::makeLmer(
     #> Formula: Y ~ Fatigued + Caffein + Physical_Activity + Time + (Fatigued +  
     #>     Caffein + Physical_Activity + Time | PersonID)
     #>    Data: D
-    #> REML criterion at convergence: 1982
+    #> REML criterion at convergence: 2018
     #> Random effects:
     #>  Groups   Name              Std.Dev. Corr               
     #>  PersonID (Intercept)       1                           
