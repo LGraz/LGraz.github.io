@@ -1,8 +1,7 @@
 ---
 title: |
   Linear Mixed Models
-  Simplifications (t-Test)
-  Tips & Tricks
+  Simplifications Tips and Tricks
 author: Lukas Graz  
 note-type: quarto
 date: 2024-07-26  

@@ -10,8 +10,6 @@ tags:
 
 We study the classical setup of a randomized complete block design with 2 treatments, 2 replications per block and 5 blocks. We vary the variance of the block effect and study how the p-values of the treatment effect change.
 
-
-
 $$
 % equatiomatic::extract_eq(fit)
 \begin{aligned}
@@ -29,7 +27,9 @@ The p-values of the treatment effect are not influenced by the variance of the b
 ## Simulate Data
 ```{r, message=FALSE, warning=FALSE}
 library(ggplot2)
+library(gridExtra)
 library(lmerTest)
+library(multcomp)
 
 options(contrasts = c("contr.sum", "contr.poly"))
 ```
@@ -126,4 +126,75 @@ elementwise_apply(summary_coef_trt1, function(coef) coef[length(coef)])
 
 # random effect variance
 sapply(fits[,1], function(fit) VarCorr(fit)$block[1]) |> sqrt() |> signif(2) 
+```
+
+
+# Split Plot
+
+from: [pbkrtest-paper](https://doi.org/10.18637%2Fjss.v059.i09) section 3
+
+Harvesting dates:  
+- 1: 2/10
+- 2: 21/10  
+Plot allocation:
+|                    | Block 1        | Block 2        | Block 3        | Time        |
+|--------------------|--------------- |--------------- |--------------- |-------------|
+| Split-plots (1-15) | h1 h1 h1 h1 h1 | h2 h2 h2 h2 h2 | h1 h1 h1 h1 h1 | Harvesting |
+| Sowing (1-15)      | s3 s4 s5 s2 s1 | s3 s2 s4 s5 s1 | s5 s2 s3 s4 s1 | Sowing     |
+| Split-plots (16-30)| h2 h2 h2 h2 h2 | h1 h1 h1 h1 h1 | h2 h2 h2 h2 h2 | Harvesting |
+| Sowing (16-30)     | s2 s1 s5 s4 s3 | s4 s1 s3 s2 s5 | s1 s4 s3 s2 s5 | Sowing     |
+
+```{r}
+library(pbkrtest)
+data("beets", package = "pbkrtest")
+
+sug4 <- lmer(sugpct ~ block + sow + harvest + (1 | block:harvest), data = beets)
+anova(sug4)
+
+beets$bh <- with(beets, interaction(block, harvest))
+splitplot_effect <- getME(sug4, "Z") %*% getME(sug4, "b")
+# remove splitplot effect from sugpct
+beets$sugpct_without_splitplot <- beets$sugpct - splitplot_effect[,1]
+sug_rm <- lmer(sugpct_without_splitplot ~ block + sow + harvest + (1 | block:harvest), data = beets)
+
+
+# SPE = Split Plot Effect
+effect_multipliers <- c(0, 2^(-2:6))
+names(effect_multipliers) <- paste0("SPE=", effect_multipliers)
+sugpct_with_x_SPEs <- lapply(effect_multipliers, function(effect_multiplier) {
+  beets$sugpct_without_splitplot + effect_multiplier * splitplot_effect[,1]
+})
+
+# plot the data
+plot_list <- list() # Create an empty list to store the plots
+# Generate the plots and store them in the list
+for(i in seq_along(sugpct_with_x_SPEs)){
+  beets$y <- sugpct_with_x_SPEs[[i]]
+  p <- ggplot(beets, aes(x = bh, y = y)) + 
+  geom_boxplot() + 
+  geom_jitter() +
+  ggtitle(names(effect_multipliers)[i])
+  plot_list[[i]] <- p
+}
+# Arrange the plots in a 4x2 grid
+do.call("grid.arrange", c(plot_list, ncol = 2, nrow = 5))
+
+
+# for every entry in sugpct_with_x_SPE fit a mixed model and extract the p-value for the effect of harvest
+sapply(sugpct_with_x_SPEs, function(sugpct_x_SPE) {
+  fit <- lmer(sugpct_x_SPE ~ block + sow + harvest + (1 | block:harvest), data = beets)
+  c(
+    harvest = anova(fit)["harvest", "Pr(>F)"],
+    sow = anova(fit)["sow", "Pr(>F)"]
+  )
+})
+
+# analog but using the lm function
+sapply(sugpct_with_x_SPEs, function(sugpct_x_SPE) {
+  lm(sugpct_x_SPE ~ 0 + bh + sow, data = beets) |> 
+    glht(linfct = matrix(c(1,1,1,-1,-1,-1,0,0,0,0)/6, nrow = 1)) |> 
+    summary() |> 
+    coef()
+}) #==> stays the same
+
 ```
