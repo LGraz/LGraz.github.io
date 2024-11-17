@@ -43,9 +43,7 @@ S <- sleepstudy
 
 ## Model Illustration
 
-![source: bookdown.org/steve_midway/DAR](assets/images/07_models.png)
-
-![source: bookdown.org/steve_midway/DAR](images/07_models.png)
+![source: bookdown.org/steve_midway/DAR](../assets/images/07_models.png)
 
 ## Model Equation
 
@@ -357,7 +355,7 @@ simr::makeLmer(
     #> Formula: Y ~ Fatigued + Caffein + Physical_Activity + Time + (Fatigued +  
     #>     Caffein + Physical_Activity + Time | PersonID)
     #>    Data: D
-    #> REML criterion at convergence: 1986
+    #> REML criterion at convergence: 2039
     #> Random effects:
     #>  Groups   Name              Std.Dev. Corr               
     #>  PersonID (Intercept)       1                           
