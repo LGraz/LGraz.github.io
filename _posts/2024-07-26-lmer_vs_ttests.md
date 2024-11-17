@@ -43,7 +43,7 @@ S <- sleepstudy
 
 ## 
 
-![source: bookdown.org/steve_midway/DAR](07_models.png)
+![source: bookdown.org/steve_midway/DAR](assets/images/07_models.png)
 
 ## Model Equation
 
@@ -214,8 +214,7 @@ t.test(COEFS$Fatigued)$p.value
 <summary>Simulation Code</summary>
 
 ``` r
-# Setup auxiliary functions 
-# =========================
+# Setup auxiliary functions  =========================
 get_type1_CI <- function(P.vals){
   C.int <- apply(P.vals < 0.05, 1, function(x)
     prop.test(sum(x), length(x), p = 0.05)$conf.int |> round(4))
@@ -240,8 +239,7 @@ get_p_vals <- function(Y){
   )
 }
 
-# Simulate H0
-# ===========
+# Simulate H0 ===========
 xfun::cache_rds({
     RSLP_fit <- lmer(Tap_Speed_t0 ~ 
         Fatigued + Caffein + Physical_Activity + Time +
@@ -259,8 +257,7 @@ xfun::cache_rds({
   hash = list(D, as.character(body(get_p_vals)))
 ) |> simplify2array() |> get_type1_CI() -> H0_CI
 
-# Simulate H1
-# ===========
+# Simulate H1 ===========
 xfun::cache_rds({
     RSLP_fit <- lmer(Tap_Speed_t0 ~ 
         Fatigued + Caffein + Physical_Activity + Time +
@@ -278,8 +275,7 @@ xfun::cache_rds({
   hash = list(D, as.character(body(get_p_vals)))
 ) |> simplify2array() |> get_type1_CI() -> H1_CI
 
-# Plot results
-# ============
+# Plot results ============
 H0_CI$Hypothesis <- "H0: Fatigue = 0"
 H1_CI$Hypothesis <- "H1: Fatigue = 0.02"
 
@@ -359,7 +355,7 @@ simr::makeLmer(
     #> Formula: Y ~ Fatigued + Caffein + Physical_Activity + Time + (Fatigued +  
     #>     Caffein + Physical_Activity + Time | PersonID)
     #>    Data: D
-    #> REML criterion at convergence: 2085
+    #> REML criterion at convergence: 2058
     #> Random effects:
     #>  Groups   Name              Std.Dev. Corr               
     #>  PersonID (Intercept)       1                           
