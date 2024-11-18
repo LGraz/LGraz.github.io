@@ -57,7 +57,7 @@ if(!interactive())
 
 
 ## Model Illustration
-![source: bookdown.org/steve_midway/DAR](../assets/images/07_models.png)
+![source: bookdown.org/steve_midway/DAR](07_models.png)
 
 
 ## Model Equation {.smaller}
@@ -96,7 +96,7 @@ t.test(COEFS$Days)$p.value
 
 . . .
 
-![Consultancy Case: Sarah Stadelmann (Illustration)](../assets/images/example-illustration.png)
+![Consultancy Case: Sarah Stadelmann (Illustration)](example-illustration.png)
 
 ## LMM
 ```{r Ex-lmm, message=TRUE, warning=TRUE}
@@ -262,7 +262,7 @@ xfun::cache_rds({
 
 ## Simulate with `rnorm()` & co.
 
-![](../assets/images/boring.png)
+![](boring.png)
 
 
 ## `lme4::simulate.merMod` {.smaller}

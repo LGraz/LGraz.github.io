@@ -33,10 +33,9 @@ Note, that there are different definitions of "power" in this context. We will b
 # Help functions
 ```{r}
 set.seed(123)
-n_rep <- 1000
+n_rep <- 500
 
 library(multcomp)
-library(PMCMRplus)
 library(ggplot2)
 
 # g groups, of which one is the control, n_effect of which have the effect `effect`

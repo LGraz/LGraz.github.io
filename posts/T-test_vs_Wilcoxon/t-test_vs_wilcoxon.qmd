@@ -25,6 +25,9 @@ tags:
 
 Define a list of laws (i.e., distributions) with `mean` and `sd`. 
 ```{r}
+nsim <- 200
+library(coin)
+
 # functions 
 n <- 40 # per group
 laws <- list(
@@ -111,11 +114,6 @@ sim <- function(nsim=1000, mean2=0, sd2=1) {
 
 
 # Simulation
-```{r}
-nsim <- 500
-```
-
-
 ```{r null}
 set.seed(4321)
 null <- sim(nsim=nsim)

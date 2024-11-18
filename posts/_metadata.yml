@@ -2,7 +2,14 @@
 
 # freeze computational output
 # (see https://quarto.org/docs/projects/code-execution.html#freeze)
-freeze: true
+freeze: auto
+cache: true
+# echo: true
+# warning: false
+# message: false
+
+# page-navigation: true # next/previous page
+
 
 # Enable banner style title blocks
 title-block-banner: true

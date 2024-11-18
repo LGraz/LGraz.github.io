@@ -1,8 +1,20 @@
 project:
   type: website
+  render:
+    - "*.qmd"
+    - "!Dunnet_vs_Holm/"
+    - "!exponential-glm-coverage/"
+    - "!lmer-slopes-new/"
+    - "!lmer_vs_slope-t-test/"
+    - "!post-with-code/"
+    - "!R2-in-CV/"
+    - "!T-test_vs_Wilcoxon/"
 
 website:
   title: "Lukas Graz"
+  page-footer: "Copyright 2024, Lukas Graz" 
+  repo-url: https://lgraz.github.io
+  repo-actions: [edit, source, issue]
   navbar:
     right:
       - about.qmd
@@ -12,7 +24,6 @@ format:
   html:
     theme: cosmo
     css: styles.css
-
 
 
 
@@ -33,14 +44,6 @@ format:
 #     - Dunnet_vs_Holm/dunnet_vs_holm.qmd
 #     - lmm-effect-of-block-variance/lmm-effect-of-block-variance.qmd
 #     - exponential-glm-coverage/exponential-glm-coverage.qmd
-
-# execute: 
-#   echo: true
-#   cache: true
-#   warning: true
-#   keep-md: true
-#   keep-yaml: true
-#   freeze: auto  # re-render only when source changes
 
 
 # knitr: 
