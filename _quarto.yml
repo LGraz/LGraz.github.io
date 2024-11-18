@@ -1,0 +1,71 @@
+project:
+  type: website
+
+website:
+  title: "Lukas Graz"
+  navbar:
+    right:
+      - about.qmd
+      - icon: github
+        href: https://github.com/LGraz
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+
+
+
+
+
+# project:
+#   title: "quarto"
+#   execute-dir: file 
+#   post-render: 
+#     - Rscript move_md_and_adjust_paths.R   #old: bash -c "mv $QUARTO_PROJECT_OUTPUT_FILES ~/Git/LGraz.github.io/_posts"
+#     - ./insert_date_to_fname.sh
+#   # inserts mathjax:
+#     # - sed -i '1i <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>'
+#   render:
+#     - T-test_vs_Wilcoxon/t-test_vs_wilcoxon.qmd
+#     - lmer-slopes-new/lmer_vs_ttests-new.qmd
+#     - ttest-vs-lm-with-more-groups/pairwise-ttest_vs_lm-with-more-groups.qmd
+#     - lmer_vs_slope-t-test/lmer_vs_ttests_OLD.qmd
+#     - Dunnet_vs_Holm/dunnet_vs_holm.qmd
+#     - lmm-effect-of-block-variance/lmm-effect-of-block-variance.qmd
+#     - exponential-glm-coverage/exponential-glm-coverage.qmd
+
+# execute: 
+#   echo: true
+#   cache: true
+#   warning: true
+#   keep-md: true
+#   keep-yaml: true
+#   freeze: auto  # re-render only when source changes
+
+
+# knitr: 
+#   opts_chunk: 
+#     comment: "#>"
+
+# format:
+#   # gfm: 
+#   #   keep-yaml: true
+#   gfm+yaml_metadata_block: 
+#     comment: "##>"
+#   # pdf:
+#   #   keep-md: true
+#   #   keep-yaml: true
+#   #   # variant: gfm
+#   #   toc: true
+#   #   toc-depth: 2
+#   #   number-sections: true
+#   #   colorlinks: true
+#   #   highlight-style: github
+#   # md:
+#   #   keep-yaml: true
+
+# number-sections: true
+
+
+
+
