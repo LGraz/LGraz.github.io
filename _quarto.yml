@@ -2,13 +2,6 @@ project:
   type: website
   render:
     - "*.qmd"
-    - "!Dunnet_vs_Holm/"
-    - "!exponential-glm-coverage/"
-    - "!lmer-slopes-new/"
-    - "!lmer_vs_slope-t-test/"
-    - "!post-with-code/"
-    - "!R2-in-CV/"
-    - "!T-test_vs_Wilcoxon/"
 
 website:
   title: "Lukas Graz"
@@ -17,7 +10,8 @@ website:
   repo-actions: [edit, source, issue]
   navbar:
     right:
-      - CV.qmd
+      # - CV.qmd
+      - statistical-consulting.qmd
       - icon: github
         href: https://github.com/LGraz
       - icon: linkedin

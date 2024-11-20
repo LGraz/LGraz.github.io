@@ -15,3 +15,5 @@
 - [ ] TLDR or intro to [posts/exponential-glm-coverage/exponential-glm-coverage.qmd]
 - [ ] Intro/structure to [posts/ttest-vs-lm-with-more-groups/pairwise-ttest_vs_lm-with-more-groups.qmd]
 - [ ] [Google analytics](https://quarto.org/docs/websites/website-tools.html#google-analytics)
+
+- [ ] M: [cv html+pdf](https://www.cynthiahqy.com/posts/cv-html-pdf/)

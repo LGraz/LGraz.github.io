@@ -1,6 +1,6 @@
 ---
 # title: "mytitle"
-image: profile.jpg
+image: assets/images/MATH_foto.jpg
 about:
   template: trestles
   id: my-about-id
@@ -18,10 +18,16 @@ title-block-banner: true
 <!-- ### This content appears above the formatted about page content. -->
 
 :::{#my-about-id}
-- [ ] Statistitian
-- [ ] what I am passinate about
-- [ ] Where I live
-- [ ] link my CV [CV](CV.qmd)
+Hi there! 
+- I am a statistician with a math background located in zurich. 
+- Statistical consultant at ETH. 
+
+Passionate about 
+- IT and programming
+- (Statistical) methods and modelling -> how to derive valid conclusions.
+- Given complex problems simplify them to well studied (simple) mathematical problems and communicating the pragmatic solution in a approachable way.
+
+link my CV [CV](CV.pdf)
 :::
 
 
@@ -29,35 +35,17 @@ title-block-banner: true
 
 I have consulted over 200 clients, including mostly PhD and master's students as well as professionals from the industry. Discussing these cases in the Statistics Seminar at ETH Zurich has given me a good overview of various methods and the necessary mathematical understanding. Now, it is becoming rare that I cannot deliver a solution.
 
-Want to challenge me? Contact me via email at [stat.consulting.graz@gmail.com](mailto:stat.consulting.graz@gmail.com)
+Want to challenge me? Contact me via email at [stat.consulting.graz@gmail.com](mailto:stat.consulting.graz@gmail.com) for a free 30min initial consultation via zoom. Klick [here](statistical-consulting.qmd) for more information.
+
 
 <!-- 
-Statistical Approaches
-    Regression and linear modeling
-    Multi-level models (Random Effects)
-    Factor analysis
-    Structural Equation Models (SEM)
-    Unsupervised classification techniques
-    Intensive longitudinal techniques
-    Time-series analysis
-    Bayesian approaches
-    Project planning and measurement
-
-Computational Skills
-    Big Data
-    Parallelization
-    Database structures (SQL)
-    Web scraping
-    Report generation
-    General automation
-    Reproducible workflows
-    Dashboard creation (Shiny)
-    Linux bash
-    Batch processing and integration
+consulting and pricing example
+https://www.statistical-coaching.ch/consulting_data_analysis/
 -->
-
 
 ## Some Statistical Investigations
 Motivated by some consulting cases, I spend some time to investigate some statistical questions. Here are some of my findings:
 
 <!-- "listing" puts my statistical blogposts here -->
+
+

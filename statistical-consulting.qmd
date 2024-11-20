@@ -4,4 +4,46 @@ title: "Statistical Consulting"
 
 I have consulted over 200 clients, including mostly PhD and master's students as well as professionals from the industry. Discussing these cases in the Statistics Seminar at ETH Zurich has given me a good overview of various methods and the necessary mathematical understanding. Now, it is becoming rare that I cannot deliver a solution.
 
-Want to challenge me? Contact me via email at [stat.consulting.graz@gmail.com](mailto:stat.consulting.graz@gmail.com)
+Want to challenge me? Contact me via email at [stat.consulting.graz@gmail.com](mailto:stat.consulting.graz@gmail.com) to have a **free** 30min initial chat via zoom.
+
+## Topics
+- **General**
+  - Preregistration
+  - Handeling Reviewer comments
+  - Seminars/Workshops/Courses
+  - Translate research questions into statistical hypotheses
+  - Coaching
+- **Experimental Design**
+  - Chose the appropriate design
+  - Sample Size + Power analysis. Note that this step requires:
+    -  a predefined experimental design
+    -  clear statistical hypothesis
+    -  a predefined correct statistical analysis
+- **Modelling + Inference**
+  - Multiple linear regression
+  - (X-way) ANOVA/ANCOVA/MANOVA/PERMANOVA (+ repeat measures)
+  - Causal inference
+  - GLM: Generalized Linear Models
+  - GAM: Generalized Additive Models
+  - (G)LMM: Linear/Generalized Mixed Effects Models (incl. hierarchical models)
+  - Gaussian Process Regression (spatio-temporal)
+  - SEM: Structural Equation Models
+    - Path/Mediation analysis
+  - Bootstrap/Permutation/Resampling tests
+  - Time Series Analysis
+  - Multivariate Analysis
+  - Random Forests
+- **Technical**
+  - R -- lecturer of the Zurich R Courses
+  - Linux bash git docker
+  - Parallelization
+  - Reproducible reports
+  - Dashboard creation (Shiny)
+  - Quarto (this website)
+    
+## Pricing
+- **Free** 30min initial consultation via zoom
+- **companies and institutions**: 170 CHF/h (after 10h: 140 CH)
+- **students**: 140 CHF/h (after 5h: 100 CH)
+
+
