@@ -3,7 +3,6 @@
 title: Pairwise T-tests can be improved by including more groups
 author: Lukas Graz
 date: 2023-04-14
-permalink: /posts/ttest-with-more-groups
 tags: 
   - simulation
   - power

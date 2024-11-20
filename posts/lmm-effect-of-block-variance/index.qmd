@@ -2,7 +2,6 @@
 title: Does the variance of the Random-Effect influence the p-values?
 author: Lukas Graz
 date: 2023-12-18
-permalink: /posts/lmm-effect-of-block-variace
 tags: 
   - simulation
   - power

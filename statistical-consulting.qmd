@@ -1,5 +1,4 @@
 ---
-permalink: /statistical-consulting/
 title: "Statistical Consulting"
 ---
 

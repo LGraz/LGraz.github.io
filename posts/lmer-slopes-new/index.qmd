@@ -6,7 +6,6 @@ author: Lukas Graz
 note-type: quarto
 date: 2024-07-26  
 uuid: de176b8c-de72-4a9b-8705-3ccb144be6cf  
-permalink: /posts/simplify-lmm-ticks-tricks
 execute:  
   cache: false  
   message: false  

@@ -2,7 +2,6 @@
 Title: "Bad Coverage for exponential GLMs"
 author: Lukas Graz
 date: 2023-07-12
-permalink: /posts/exponential-glm-coverage
 tags: 
   - simulation
   - power
