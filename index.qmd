@@ -17,31 +17,22 @@ title-block-banner: true
 
 <!-- ### This content appears above the formatted about page content. -->
 
+
 :::{#my-about-id}
-Hi there! 
-- I am a statistician with a math background located in zurich. 
-- Statistical consultant at ETH. 
+## About Me
+I am a statistician with a mathematical background based in Zurich, Switzerland. Currently working as a Statistical Consultant at ETH Zurich, I am passionate about statistical methods and modeling, deriving valid conclusions through rigorous analysis, and finding elegant solutions to complex problems. My work combines expertise in IT and programming with a focus on translating mathematical concepts into approachable, practical implementations.
 
-Passionate about 
-- IT and programming
-- (Statistical) methods and modelling -> how to derive valid conclusions.
-- Given complex problems simplify them to well studied (simple) mathematical problems and communicating the pragmatic solution in a approachable way.
-
-link my CV [CV](CV.pdf)
+[View my CV](CV.pdf)
 :::
 
 
 ## Statistical Consulting
+I have consulted over 200 clients, primarily PhD and master's students along with industry professionals. Regular discussions of these cases in the Seminar for Statistics at ETH Zurich have broadened my understanding of the statistical landscape and deepened my mathematical insights. This comprehensive experience means I can deliver effective solutions for most statistical challenges I encounter.
 
-I have consulted over 200 clients, including mostly PhD and master's students as well as professionals from the industry. Discussing these cases in the Statistics Seminar at ETH Zurich has given me a good overview of various methods and the necessary mathematical understanding. Now, it is becoming rare that I cannot deliver a solution.
+[Learn more about my consulting services](statistical-consulting.qmd) and book a free 30min initial online-consultation.
 
-Want to challenge me? Contact me via email at [stat.consulting.graz@gmail.com](mailto:stat.consulting.graz@gmail.com) for a free 30min initial consultation via zoom. Klick [here](statistical-consulting.qmd) for more information.
+Contact: [stat.consulting.graz@gmail.com](mailto:stat.consulting.graz@gmail.com)
 
-
-<!-- 
-consulting and pricing example
-https://www.statistical-coaching.ch/consulting_data_analysis/
--->
 
 ## Some Statistical Investigations
 Motivated by some consulting cases, I spend some time to investigate some statistical questions. Here are some of my findings:

@@ -3,8 +3,7 @@
 
 ## Stats
 
-
-- [ ] site-url
+- [ ] Calender link to book 30 min slots
 - [ ] un-ingnore files
 - [ ] link lmm simplify to old and vice verse
 - [ ] picture
