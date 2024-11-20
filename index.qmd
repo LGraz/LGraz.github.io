@@ -1,14 +1,63 @@
 ---
-title: "mytitle"
+# title: "mytitle"
+image: profile.jpg
+about:
+  template: trestles
+  id: my-about-id
 listing:
   contents: posts
   sort: "date desc"
-  type: default
-  categories: true
+  type: table
+  # categories: true
   sort-ui: false
   filter-ui: false
 page-layout: full
 title-block-banner: true
 ---
 
+<!-- ### This content appears above the formatted about page content. -->
 
+:::{#my-about-id}
+- [ ] Statistitian
+- [ ] what I am passinate about
+- [ ] Where I live
+- [ ] link my CV [CV](CV.qmd)
+:::
+
+
+## Statistical Consulting
+
+I have consulted over 200 clients, including mostly PhD and master's students as well as professionals from the industry. Discussing these cases in the Statistics Seminar at ETH Zurich has given me a good overview of various methods and the necessary mathematical understanding. Now, it is becoming rare that I cannot deliver a solution.
+
+Want to challenge me? Contact me via email at [stat.consulting.graz@gmail.com](mailto:stat.consulting.graz@gmail.com)
+
+<!-- 
+Statistical Approaches
+    Regression and linear modeling
+    Multi-level models (Random Effects)
+    Factor analysis
+    Structural Equation Models (SEM)
+    Unsupervised classification techniques
+    Intensive longitudinal techniques
+    Time-series analysis
+    Bayesian approaches
+    Project planning and measurement
+
+Computational Skills
+    Big Data
+    Parallelization
+    Database structures (SQL)
+    Web scraping
+    Report generation
+    General automation
+    Reproducible workflows
+    Dashboard creation (Shiny)
+    Linux bash
+    Batch processing and integration
+-->
+
+
+## Some Statistical Investigations
+Motivated by some consulting cases, I spend some time to investigate some statistical questions. Here are some of my findings:
+
+<!-- "listing" puts my statistical blogposts here -->

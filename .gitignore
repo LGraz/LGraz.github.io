@@ -1,5 +1,6 @@
 _freeze
 _site
+site_libs
 .git_bak
 /**/cache/
 *_cache

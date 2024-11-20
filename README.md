@@ -5,6 +5,11 @@
 
 
 - [ ] site-url
+- [ ] un-ingnore files
+- [ ] link lmm simplify to old and vice verse
+- [ ] picture
+- [ ] clean up root directory
+- [ ] consider clever xfun caching solution or cache option
 - [ ] think about echo/results/messages/warnings/code-folding
 - [ ] TLDR or intro to [posts/T-test_vs_Wilcoxon/t-test_vs_wilcoxon.qmd]
 - [ ] TLDR or intro to [posts/exponential-glm-coverage/exponential-glm-coverage.qmd]
