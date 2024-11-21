@@ -150,8 +150,8 @@ t.test(COEFS$Fatigued)$p.value
 
 ## Type I Error & Power  {.smaller}
 ```{r Ex-sim}
-##| code-fold: true
-##| code-summary: "Simulation Code"
+#| code-fold: true
+#| code-summary: "Simulation Code"
 
 # Setup auxiliary functions
 get_type1_CI <- function(P.vals){

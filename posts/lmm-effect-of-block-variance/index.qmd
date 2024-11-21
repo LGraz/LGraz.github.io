@@ -136,6 +136,7 @@ Harvesting dates:
 - 1: 2/10
 - 2: 21/10  
 Plot allocation:
+
 |                    | Block 1        | Block 2        | Block 3        | Time        |
 |--------------------|--------------- |--------------- |--------------- |-------------|
 | Split-plots (1-15) | h1 h1 h1 h1 h1 | h2 h2 h2 h2 h2 | h1 h1 h1 h1 h1 | Harvesting |
@@ -144,6 +145,8 @@ Plot allocation:
 | Sowing (16-30)     | s2 s1 s5 s4 s3 | s4 s1 s3 s2 s5 | s1 s4 s3 s2 s5 | Sowing     |
 
 ```{r}
+#| fig-width: 8 
+#| fig-height: 7
 library(pbkrtest)
 data("beets", package = "pbkrtest")
 
@@ -167,17 +170,16 @@ sugpct_with_x_SPEs <- lapply(effect_multipliers, function(effect_multiplier) {
 # plot the data
 plot_list <- list() # Create an empty list to store the plots
 # Generate the plots and store them in the list
-for(i in seq_along(sugpct_with_x_SPEs)){
-  beets$y <- sugpct_with_x_SPEs[[i]]
-  p <- ggplot(beets, aes(x = bh, y = y)) + 
-  geom_boxplot() + 
-  geom_jitter() +
-  ggtitle(names(effect_multipliers)[i])
-  plot_list[[i]] <- p
+Dtmp <- cbind(beets, y = sugpct_with_x_SPEs[[1]], spe = rep(names(effect_multipliers)[1], nrow(beets)))
+for(i in 2:length(sugpct_with_x_SPEs)){
+  Dtmp <- rbind(Dtmp, cbind(beets, y = sugpct_with_x_SPEs[[i]], spe = rep(names(effect_multipliers)[i], nrow(beets)))
+  )
 }
-# Arrange the plots in a 4x2 grid
-do.call("grid.arrange", c(plot_list, ncol = 2, nrow = 5))
 
+Dtmp$spe <- factor(Dtmp$spe, levels = names(effect_multipliers))
+
+ggplot(Dtmp, aes(x = bh, y = y)) + facet_wrap(~spe, nrow=2, ncol=5) + geom_boxplot() + geom_jitter()+ 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 # for every entry in sugpct_with_x_SPE fit a mixed model and extract the p-value for the effect of harvest
 sapply(sugpct_with_x_SPEs, function(sugpct_x_SPE) {
