@@ -30,7 +30,7 @@ I am a statistician with a mathematical background based in Zurich, Switzerland.
 I have consulted over 200 clients, primarily PhD and master's students along with industry professionals. Regular discussions of these cases in the Seminar for Statistics at ETH Zurich have broadened my understanding of the statistical landscape and deepened my mathematical insights. This comprehensive experience means I can deliver effective solutions for most statistical challenges. [Learn more about my services](statistical-consulting.qmd).
 
 [Book a free 30-minute online consultation](https://doodle.com/bp/lukasgraz/30min-statistical-consulting-w-lgraz) or contact me via email at 
-_stat.consulting.graz@gmail.com_
+stat.consulting.graz@~~REMOVETHIS~~gmail.com
 
 ## Some Statistical Investigations
 Motivated by some consulting cases, I spend some time to investigate some statistical questions. Here are some of my findings:
