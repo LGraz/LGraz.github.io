@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Lukas Graz">
+<meta name="dcterms.date" content="2024-07-26">
+
+<title>Lukas Graz - Linear Mixed Models Simplifications Tips and Tricks</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Lukas Graz</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../statistical-consulting.html"> 
+<span class="menu-text">Statistical Consulting</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/LGraz"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/lukas-graz/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title"><p>Linear Mixed Models Simplifications Tips and Tricks</p></h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Lukas Graz </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 26, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<ol type="1">
+<li><del>Technical Details</del></li>
+<li>Sleepstudy</li>
+<li>Finger Tapping</li>
+<li>Power Simulations</li>
+</ol>
+<section id="sleepstudy" class="level1 smaller">
+<h1 class="smaller">Sleepstudy</h1>
+<p><strong>Reaction ~ Days</strong></p>
+<p>. . .</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(simr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(sleepstudy)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> sleepstudy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/plot-sleepstudy-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="model-illustration" class="level2">
+<h2 class="anchored" data-anchor-id="model-illustration">Model Illustration</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="07_models.png" class="img-fluid figure-img"></p>
+<figcaption>source: bookdown.org/steve_midway/DAR</figcaption>
+</figure>
+</div>
+</section>
+<section id="model-equation" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="model-equation">Model Equation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Reaction <span class="sc">~</span> Days <span class="sc">+</span> (Days<span class="sc">|</span>Subject), S)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>. . .</p>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>equatiomatic<span class="sc">::</span><span class="fu">extract_eq</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><span class="math display">\[
+\begin{aligned}
+  \operatorname{Reaction}_{i}  &amp;\sim N \left(\alpha_{j[i]} + \beta_{1j[i]}(\operatorname{Days}), \sigma^2 \right) \\    
+\left(
+  \begin{array}{c}
+    \begin{aligned}
+      &amp;\alpha_{j} \\
+      &amp;\beta_{1j}
+    \end{aligned}
+  \end{array}
+\right)
+  &amp;\sim N \left(
+\left(
+  \begin{array}{c}
+    \begin{aligned}
+      &amp;\mu_{\alpha_{j}} \\
+      &amp;\mu_{\beta_{1j}}
+    \end{aligned}
+  \end{array}
+\right)
+,
+\left(
+  \begin{array}{cc}
+     \sigma^2_{\alpha_{j}} &amp; \rho_{\alpha_{j}\beta_{1j}} \\
+     \rho_{\beta_{1j}\alpha_{j}} &amp; \sigma^2_{\beta_{1j}}
+  \end{array}
+\right)
+\right)
+    \text{, for Subject j = 1,} \dots \text{,J}
+\end{aligned}
+\]</span></p>
+</section>
+<section id="test" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="test">Test</h2>
+<p><strong>LMM</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(fit))[<span class="st">"Days"</span>, , drop<span class="ot">=</span>F]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Estimate Std. Error df t value  Pr(&gt;|t|)
+Days    10.47      1.546 17   6.771 3.264e-06</code></pre>
+</div>
+</div>
+<p>. . .</p>
+<p><strong>Aggregate + t-Test</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>COEFS <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">lmList</span>(Reaction <span class="sc">~</span> Days <span class="sc">|</span> Subject, S))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(COEFS)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    (Intercept)   Days
+308       244.2 21.765
+309       205.1  2.262
+310       203.5  6.115
+330       289.7  3.008
+331       285.7  5.266
+332       264.3  9.567</code></pre>
+</div>
+</div>
+<p>. . .</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(COEFS<span class="sc">$</span>Days)<span class="sc">$</span>p.value</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.264e-06</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="finger-tapping" class="level1">
+<h1>Finger Tapping</h1>
+<p><strong>Tap_Speed ~ Fatigued + Caffein + Physical_Activity + Time</strong></p>
+<p>. . .</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example-illustration.png" class="img-fluid figure-img"></p>
+<figcaption>Consultancy Case: Sarah Stadelmann (Illustration)</figcaption>
+</figure>
+</div>
+<section id="lmm" class="level2">
+<h2 class="anchored" data-anchor-id="lmm">LMM</h2>
+<div class="cell" data-output-location="fragment">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>D <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./FingerTapping.rds"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="fu">anova</span>(RSLP_fit <span class="ot">&lt;-</span> </span>
+<span id="cb10-3"><a href="#cb10-3"></a>  <span class="fu">lmer</span>(Tap_Speed_t0 <span class="sc">~</span> </span>
+<span id="cb10-4"><a href="#cb10-4"></a>     Fatigued <span class="sc">+</span> Caffein <span class="sc">+</span> Physical_Activity <span class="sc">+</span> Time <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>    (Fatigued <span class="sc">+</span> Caffein <span class="sc">+</span> Physical_Activity <span class="sc">+</span> Time <span class="sc">||</span> PersonID), D</span>
+<span id="cb10-6"><a href="#cb10-6"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
+                  Sum Sq Mean Sq NumDF DenDF F value  Pr(&gt;F)    
+Fatigued           1.118   1.118     1  20.3   16.52 0.00059 ***
+Caffein            0.710   0.710     1  16.7   10.48 0.00492 ** 
+Physical_Activity  0.134   0.134     1  14.2    1.97 0.18150    
+Time               0.843   0.843     1  27.5   12.45 0.00149 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="aggregate-t-test" class="level2">
+<h2 class="anchored" data-anchor-id="aggregate-t-test">Aggregate + t-Test</h2>
+<ol type="1">
+<li><code>lm</code> per person</li>
+<li>Extract coefficients</li>
+<li>t-test</li>
+</ol>
+<p>. . .</p>
+<div class="cell" data-output-location="fragment">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>COEFS <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">lmList</span>(Tap_Speed_t0 <span class="sc">~</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  Fatigued <span class="sc">+</span> Caffein <span class="sc">+</span> Physical_Activity <span class="sc">+</span> Time<span class="sc">|</span> PersonID, D))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(COEFS)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  (Intercept)  Fatigued Caffein Physical_Activity      Time
+1       5.537 -0.005006 0.11454           0.01294  0.010271
+2       5.954  0.008884 0.06979           0.24502 -0.009993
+4       6.089 -0.091132 0.24615                NA -0.006202
+6       5.690 -0.002435 0.09211                NA -0.025624
+7       6.197 -0.139987      NA                NA  0.034949
+8       6.288 -0.042551      NA           0.45775  0.010620</code></pre>
+</div>
+</div>
+<p>. . .</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(COEFS<span class="sc">$</span>Fatigued)<span class="sc">$</span>p.value</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.006832</code></pre>
+</div>
+</div>
+</section>
+<section id="comparison" class="level2">
+<h2 class="anchored" data-anchor-id="comparison">Comparison</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>LMM</strong></p>
+<ul>
+<li>Challenging numerics<br>
+</li>
+<li>Crossed random effects<br>
+</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><strong>aggregate + t-Test</strong></p>
+<ul>
+<li>KISS<br>
+</li>
+<li>Fewer assumptions<br>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="type-i-error-power" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="type-i-error-power">Type I Error &amp; Power</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Simulation Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup auxiliary functions</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>get_type1_CI <span class="ot">&lt;-</span> <span class="cf">function</span>(P.vals){</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  C.int <span class="ot">&lt;-</span> <span class="fu">apply</span>(P.vals <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="dv">1</span>, <span class="cf">function</span>(x)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">prop.test</span>(<span class="fu">sum</span>(x), <span class="fu">length</span>(x), <span class="at">p =</span> <span class="fl">0.05</span>)<span class="sc">$</span>conf.int <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">4</span>))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Power</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">rowMeans</span>(P.vals <span class="sc">&lt;</span> <span class="fl">0.05</span>),</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">lwr =</span> C.int[<span class="dv">1</span>, ],</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">upr =</span> C.int[<span class="dv">2</span>, ]</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> <span class="fu">as.data.frame</span>()</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>get_p_vals <span class="ot">&lt;-</span> <span class="cf">function</span>(Y){</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  D<span class="sc">$</span>Y <span class="ot">&lt;-</span> Y</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">LMM =</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> </span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>       Fatigued <span class="sc">+</span> Caffein <span class="sc">+</span> Physical_Activity <span class="sc">+</span> Time <span class="sc">+</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>      (Fatigued <span class="sc">+</span> Caffein <span class="sc">+</span> Physical_Activity <span class="sc">+</span> Time <span class="sc">||</span> PersonID), D) <span class="sc">|&gt;</span> </span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summary</span>() <span class="sc">|&gt;</span> <span class="fu">coef</span>() <span class="sc">|&gt;</span> _[<span class="st">"Fatigued"</span>, <span class="st">"Pr(&gt;|t|)"</span>],</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">t-Test</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lmList</span>(Y <span class="sc">~</span> </span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>      Fatigued <span class="sc">+</span> Caffein <span class="sc">+</span> Physical_Activity <span class="sc">+</span> Time <span class="sc">|</span> PersonID, D</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">|&gt;</span> <span class="fu">coef</span>() <span class="sc">|&gt;</span> _<span class="sc">$</span>Fatigued <span class="sc">|&gt;</span> <span class="fu">t.test</span>() <span class="sc">|&gt;</span> _<span class="sc">$</span>p.value</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate H0 ===========</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>xfun<span class="sc">::</span><span class="fu">cache_rds</span>({</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>    RSLP_fit <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Tap_Speed_t0 <span class="sc">~</span> </span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>        Fatigued <span class="sc">+</span> Caffein <span class="sc">+</span> Physical_Activity <span class="sc">+</span> Time <span class="sc">+</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>       (Fatigued <span class="sc">+</span> Caffein <span class="sc">+</span> Physical_Activity <span class="sc">+</span> Time <span class="sc">|</span> PersonID), D</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fixef</span>(RSLP_fit) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">simulate</span>(</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>      RSLP_fit, </span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">nsim =</span> <span class="dv">10000</span>, </span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed=</span><span class="dv">123</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>      parallel<span class="sc">::</span><span class="fu">mclapply</span>(get_p_vals) </span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"cache_sim3.1.rds"</span>,</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">dir =</span> <span class="st">"cache/"</span>,</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">hash =</span> <span class="fu">list</span>(D, <span class="fu">as.character</span>(<span class="fu">body</span>(get_p_vals)))</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">simplify2array</span>() <span class="sc">|&gt;</span> <span class="fu">get_type1_CI</span>() <span class="ot">-&gt;</span> H0_CI</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate H1 ===========</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>xfun<span class="sc">::</span><span class="fu">cache_rds</span>({</span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>    RSLP_fit <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Tap_Speed_t0 <span class="sc">~</span> </span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>        Fatigued <span class="sc">+</span> Caffein <span class="sc">+</span> Physical_Activity <span class="sc">+</span> Time <span class="sc">+</span></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>       (Fatigued <span class="sc">+</span> Caffein <span class="sc">+</span> Physical_Activity <span class="sc">+</span> Time <span class="sc">|</span> PersonID), D</span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fixef</span>(RSLP_fit) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.02</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">simulate</span>(</span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>      RSLP_fit, </span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>      <span class="at">nsim =</span> <span class="dv">10000</span>, </span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed=</span><span class="dv">123</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>      parallel<span class="sc">::</span><span class="fu">mclapply</span>(get_p_vals) </span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"cache_sim3.2.rds"</span>,</span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">dir =</span> <span class="st">"cache/"</span>,</span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">hash =</span> <span class="fu">list</span>(D, <span class="fu">as.character</span>(<span class="fu">body</span>(get_p_vals)))</span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">simplify2array</span>() <span class="sc">|&gt;</span> <span class="fu">get_type1_CI</span>() <span class="ot">-&gt;</span> H1_CI</span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot results ============</span></span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>H0_CI<span class="sc">$</span>Hypothesis <span class="ot">&lt;-</span> <span class="st">"H0: Fatigue = 0"</span></span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>H1_CI<span class="sc">$</span>Hypothesis <span class="ot">&lt;-</span> <span class="st">"H1: Fatigue = 0.02"</span></span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>H_all <span class="ot">&lt;-</span> <span class="fu">rbind</span>(H0_CI, H1_CI) </span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>H_all<span class="sc">$</span>test <span class="ot">&lt;-</span> <span class="fu">rownames</span>(H_all)</span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(H_all, <span class="fu">aes</span>(<span class="at">x =</span> test, <span class="at">y =</span> <span class="st">`</span><span class="at">Power</span><span class="st">`</span>, <span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr)) <span class="sc">+</span></span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>() <span class="sc">+</span></span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.05</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Hypothesis, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/Ex-sim-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="power-simulations" class="level1">
+<h1>Power-Simulations</h1>
+<section id="using-simr" class="level2">
+<h2 class="anchored" data-anchor-id="using-simr">Using <code>simr</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">powerSim</span>(RSLP_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>. . .</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">powerCurve</span>(RSLP_fit, <span class="at">along =</span> <span class="st">"PersonID"</span>) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Simulating: |                                                                  |Simulating: |=                                                                 |Simulating: |==                                                                |Simulating: |===                                                               |Simulating: |====                                                              |Simulating: |=====                                                             |Simulating: |======                                                            |Simulating: |=======                                                           |Simulating: |========                                                          |Simulating: |=========                                                         |Simulating: |==========                                                        |Simulating: |===========                                                       |Simulating: |============                                                      |Simulating: |=============                                                     |Simulating: |==============                                                    |Simulating: |===============                                                   |Simulating: |================                                                  |Simulating: |=================                                                 |Simulating: |==================                                                |Simulating: |===================                                               |Simulating: |====================                                              |Simulating: |=====================                                             |Simulating: |======================                                            |Simulating: |=======================                                           |Simulating: |========================                                          |Simulating: |=========================                                         |Simulating: |==========================                                        |Simulating: |===========================                                       |Simulating: |============================                                      |Simulating: |=============================                                     |Simulating: |==============================                                    |Simulating: |===============================                                   |Simulating: |================================                                  |Simulating: |=================================                                 |Simulating: |==================================                                |Simulating: |===================================                               |Simulating: |====================================                              |Simulating: |=====================================                             |Simulating: |======================================                            |Simulating: |=======================================                           |Simulating: |========================================                          |Simulating: |=========================================                         |Simulating: |==========================================                        |Simulating: |===========================================                       |Simulating: |============================================                      |Simulating: |=============================================                     |Simulating: |==============================================                    |Simulating: |===============================================                   |Simulating: |================================================                  |Simulating: |=================================================                 |Simulating: |==================================================                |Simulating: |===================================================               |Simulating: |====================================================              |Simulating: |=====================================================             |Simulating: |======================================================            |Simulating: |=======================================================           |Simulating: |========================================================          |Simulating: |=========================================================         |Simulating: |==========================================================        |Simulating: |===========================================================       |Simulating: |============================================================      |Simulating: |=============================================================     |Simulating: |==============================================================    |Simulating: |===============================================================   |Simulating: |================================================================  |Simulating: |================================================================= |Simulating: |==================================================================|( 1/10) ( 1/10) Simulating: |                                                          |( 1/10) Simulating: |=                                                         |( 1/10) Simulating: |==                                                        |( 1/10) Simulating: |===                                                       |( 1/10) Simulating: |====                                                      |( 1/10) Simulating: |=====                                                     |( 1/10) Simulating: |======                                                    |( 1/10) Simulating: |=======                                                   |( 1/10) Simulating: |========                                                  |( 1/10) Simulating: |=========                                                 |( 1/10) Simulating: |==========                                                |( 1/10) Simulating: |===========                                               |( 1/10) Simulating: |============                                              |( 1/10) Simulating: |=============                                             |( 1/10) Simulating: |==============                                            |( 1/10) Simulating: |===============                                           |( 1/10) Simulating: |================                                          |( 1/10) Simulating: |=================                                         |( 1/10) Simulating: |==================                                        |( 1/10) Simulating: |===================                                       |( 1/10) Simulating: |====================                                      |( 1/10) Simulating: |=====================                                     |( 1/10) Simulating: |======================                                    |( 1/10) Simulating: |=======================                                   |( 1/10) Simulating: |========================                                  |( 1/10) Simulating: |=========================                                 |( 1/10) Simulating: |==========================                                |( 1/10) Simulating: |===========================                               |( 1/10) Simulating: |============================                              |( 1/10) Simulating: |=============================                             |( 1/10) Simulating: |==============================                            |( 1/10) Simulating: |===============================                           |( 1/10) Simulating: |================================                          |( 1/10) Simulating: |=================================                         |( 1/10) Simulating: |==================================                        |( 1/10) Simulating: |===================================                       |( 1/10) Simulating: |====================================                      |( 1/10) Simulating: |=====================================                     |( 1/10) Simulating: |======================================                    |( 1/10) Simulating: |=======================================                   |( 1/10) Simulating: |========================================                  |( 1/10) Simulating: |=========================================                 |( 1/10) Simulating: |==========================================                |( 1/10) Simulating: |===========================================               |( 1/10) Simulating: |============================================              |( 1/10) Simulating: |=============================================             |( 1/10) Simulating: |==============================================            |( 1/10) Simulating: |===============================================           |( 1/10) Simulating: |================================================          |( 1/10) Simulating: |=================================================         |( 1/10) Simulating: |==================================================        |( 1/10) Simulating: |===================================================       |( 1/10) Simulating: |====================================================      |( 1/10) Simulating: |=====================================================     |( 1/10) Simulating: |======================================================    |( 1/10) Simulating: |=======================================================   |( 1/10) Simulating: |========================================================  |( 1/10) Simulating: |========================================================= |( 1/10) Simulating: |==========================================================|( 1/10) ( 2/10) ( 2/10) Simulating: |                                                          |( 2/10) Simulating: |=                                                         |( 2/10) Simulating: |==                                                        |( 2/10) Simulating: |===                                                       |( 2/10) Simulating: |====                                                      |( 2/10) Simulating: |=====                                                     |( 2/10) Simulating: |======                                                    |( 2/10) Simulating: |=======                                                   |( 2/10) Simulating: |========                                                  |( 2/10) Simulating: |=========                                                 |( 2/10) Simulating: |==========                                                |( 2/10) Simulating: |===========                                               |( 2/10) Simulating: |============                                              |( 2/10) Simulating: |=============                                             |( 2/10) Simulating: |==============                                            |( 2/10) Simulating: |===============                                           |( 2/10) Simulating: |================                                          |( 2/10) Simulating: |=================                                         |( 2/10) Simulating: |==================                                        |( 2/10) Simulating: |===================                                       |( 2/10) Simulating: |====================                                      |( 2/10) Simulating: |=====================                                     |( 2/10) Simulating: |======================                                    |( 2/10) Simulating: |=======================                                   |( 2/10) Simulating: |========================                                  |( 2/10) Simulating: |=========================                                 |( 2/10) Simulating: |==========================                                |( 2/10) Simulating: |===========================                               |( 2/10) Simulating: |============================                              |( 2/10) Simulating: |=============================                             |( 2/10) Simulating: |==============================                            |( 2/10) Simulating: |===============================                           |( 2/10) Simulating: |================================                          |( 2/10) Simulating: |=================================                         |( 2/10) Simulating: |==================================                        |( 2/10) Simulating: |===================================                       |( 2/10) Simulating: |====================================                      |( 2/10) Simulating: |=====================================                     |( 2/10) Simulating: |======================================                    |( 2/10) Simulating: |=======================================                   |( 2/10) Simulating: |========================================                  |( 2/10) Simulating: |=========================================                 |( 2/10) Simulating: |==========================================                |( 2/10) Simulating: |===========================================               |( 2/10) Simulating: |============================================              |( 2/10) Simulating: |=============================================             |( 2/10) Simulating: |==============================================            |( 2/10) Simulating: |===============================================           |( 2/10) Simulating: |================================================          |( 2/10) Simulating: |=================================================         |( 2/10) Simulating: |==================================================        |( 2/10) Simulating: |===================================================       |( 2/10) Simulating: |====================================================      |( 2/10) Simulating: |=====================================================     |( 2/10) Simulating: |======================================================    |( 2/10) Simulating: |=======================================================   |( 2/10) Simulating: |========================================================  |( 2/10) Simulating: |========================================================= |( 2/10) Simulating: |==========================================================|( 2/10) ( 3/10) ( 3/10) Simulating: |                                                          |( 3/10) Simulating: |=                                                         |( 3/10) Simulating: |==                                                        |( 3/10) Simulating: |===                                                       |( 3/10) Simulating: |====                                                      |( 3/10) Simulating: |=====                                                     |( 3/10) Simulating: |======                                                    |( 3/10) Simulating: |=======                                                   |( 3/10) Simulating: |========                                                  |( 3/10) Simulating: |=========                                                 |( 3/10) Simulating: |==========                                                |( 3/10) Simulating: |===========                                               |( 3/10) Simulating: |============                                              |( 3/10) Simulating: |=============                                             |( 3/10) Simulating: |==============                                            |( 3/10) Simulating: |===============                                           |( 3/10) Simulating: |================                                          |( 3/10) Simulating: |=================                                         |( 3/10) Simulating: |==================                                        |( 3/10) Simulating: |===================                                       |( 3/10) Simulating: |====================                                      |( 3/10) Simulating: |=====================                                     |( 3/10) Simulating: |======================                                    |( 3/10) Simulating: |=======================                                   |( 3/10) Simulating: |========================                                  |( 3/10) Simulating: |=========================                                 |( 3/10) Simulating: |==========================                                |( 3/10) Simulating: |===========================                               |( 3/10) Simulating: |============================                              |( 3/10) Simulating: |=============================                             |( 3/10) Simulating: |==============================                            |( 3/10) Simulating: |===============================                           |( 3/10) Simulating: |================================                          |( 3/10) Simulating: |=================================                         |( 3/10) Simulating: |==================================                        |( 3/10) Simulating: |===================================                       |( 3/10) Simulating: |====================================                      |( 3/10) Simulating: |=====================================                     |( 3/10) Simulating: |======================================                    |( 3/10) Simulating: |=======================================                   |( 3/10) Simulating: |========================================                  |( 3/10) Simulating: |=========================================                 |( 3/10) Simulating: |==========================================                |( 3/10) Simulating: |===========================================               |( 3/10) Simulating: |============================================              |( 3/10) Simulating: |=============================================             |( 3/10) Simulating: |==============================================            |( 3/10) Simulating: |===============================================           |( 3/10) Simulating: |================================================          |( 3/10) Simulating: |=================================================         |( 3/10) Simulating: |==================================================        |( 3/10) Simulating: |===================================================       |( 3/10) Simulating: |====================================================      |( 3/10) Simulating: |=====================================================     |( 3/10) Simulating: |======================================================    |( 3/10) Simulating: |=======================================================   |( 3/10) Simulating: |========================================================  |( 3/10) Simulating: |========================================================= |( 3/10) Simulating: |==========================================================|( 3/10) ( 4/10) ( 4/10) Simulating: |                                                          |( 4/10) Simulating: |=                                                         |( 4/10) Simulating: |==                                                        |( 4/10) Simulating: |===                                                       |( 4/10) Simulating: |====                                                      |( 4/10) Simulating: |=====                                                     |( 4/10) Simulating: |======                                                    |( 4/10) Simulating: |=======                                                   |( 4/10) Simulating: |========                                                  |( 4/10) Simulating: |=========                                                 |( 4/10) Simulating: |==========                                                |( 4/10) Simulating: |===========                                               |( 4/10) Simulating: |============                                              |( 4/10) Simulating: |=============                                             |( 4/10) Simulating: |==============                                            |( 4/10) Simulating: |===============                                           |( 4/10) Simulating: |================                                          |( 4/10) Simulating: |=================                                         |( 4/10) Simulating: |==================                                        |( 4/10) Simulating: |===================                                       |( 4/10) Simulating: |====================                                      |( 4/10) Simulating: |=====================                                     |( 4/10) Simulating: |======================                                    |( 4/10) Simulating: |=======================                                   |( 4/10) Simulating: |========================                                  |( 4/10) Simulating: |=========================                                 |( 4/10) Simulating: |==========================                                |( 4/10) Simulating: |===========================                               |( 4/10) Simulating: |============================                              |( 4/10) Simulating: |=============================                             |( 4/10) Simulating: |==============================                            |( 4/10) Simulating: |===============================                           |( 4/10) Simulating: |================================                          |( 4/10) Simulating: |=================================                         |( 4/10) Simulating: |==================================                        |( 4/10) Simulating: |===================================                       |( 4/10) Simulating: |====================================                      |( 4/10) Simulating: |=====================================                     |( 4/10) Simulating: |======================================                    |( 4/10) Simulating: |=======================================                   |( 4/10) Simulating: |========================================                  |( 4/10) Simulating: |=========================================                 |( 4/10) Simulating: |==========================================                |( 4/10) Simulating: |===========================================               |( 4/10) Simulating: |============================================              |( 4/10) Simulating: |=============================================             |( 4/10) Simulating: |==============================================            |( 4/10) Simulating: |===============================================           |( 4/10) Simulating: |================================================          |( 4/10) Simulating: |=================================================         |( 4/10) Simulating: |==================================================        |( 4/10) Simulating: |===================================================       |( 4/10) Simulating: |====================================================      |( 4/10) Simulating: |=====================================================     |( 4/10) Simulating: |======================================================    |( 4/10) Simulating: |=======================================================   |( 4/10) Simulating: |========================================================  |( 4/10) Simulating: |========================================================= |( 4/10) Simulating: |==========================================================|( 4/10) ( 5/10) ( 5/10) Simulating: |                                                          |( 5/10) Simulating: |=                                                         |( 5/10) Simulating: |==                                                        |( 5/10) Simulating: |===                                                       |( 5/10) Simulating: |====                                                      |( 5/10) Simulating: |=====                                                     |( 5/10) Simulating: |======                                                    |( 5/10) Simulating: |=======                                                   |( 5/10) Simulating: |========                                                  |( 5/10) Simulating: |=========                                                 |( 5/10) Simulating: |==========                                                |( 5/10) Simulating: |===========                                               |( 5/10) Simulating: |============                                              |( 5/10) Simulating: |=============                                             |( 5/10) Simulating: |==============                                            |( 5/10) Simulating: |===============                                           |( 5/10) Simulating: |================                                          |( 5/10) Simulating: |=================                                         |( 5/10) Simulating: |==================                                        |( 5/10) Simulating: |===================                                       |( 5/10) Simulating: |====================                                      |( 5/10) Simulating: |=====================                                     |( 5/10) Simulating: |======================                                    |( 5/10) Simulating: |=======================                                   |( 5/10) Simulating: |========================                                  |( 5/10) Simulating: |=========================                                 |( 5/10) Simulating: |==========================                                |( 5/10) Simulating: |===========================                               |( 5/10) Simulating: |============================                              |( 5/10) Simulating: |=============================                             |( 5/10) Simulating: |==============================                            |( 5/10) Simulating: |===============================                           |( 5/10) Simulating: |================================                          |( 5/10) Simulating: |=================================                         |( 5/10) Simulating: |==================================                        |( 5/10) Simulating: |===================================                       |( 5/10) Simulating: |====================================                      |( 5/10) Simulating: |=====================================                     |( 5/10) Simulating: |======================================                    |( 5/10) Simulating: |=======================================                   |( 5/10) Simulating: |========================================                  |( 5/10) Simulating: |=========================================                 |( 5/10) Simulating: |==========================================                |( 5/10) Simulating: |===========================================               |( 5/10) Simulating: |============================================              |( 5/10) Simulating: |=============================================             |( 5/10) Simulating: |==============================================            |( 5/10) Simulating: |===============================================           |( 5/10) Simulating: |================================================          |( 5/10) Simulating: |=================================================         |( 5/10) Simulating: |==================================================        |( 5/10) Simulating: |===================================================       |( 5/10) Simulating: |====================================================      |( 5/10) Simulating: |=====================================================     |( 5/10) Simulating: |======================================================    |( 5/10) Simulating: |=======================================================   |( 5/10) Simulating: |========================================================  |( 5/10) Simulating: |========================================================= |( 5/10) Simulating: |==========================================================|( 5/10) ( 6/10) ( 6/10) Simulating: |                                                          |( 6/10) Simulating: |=                                                         |( 6/10) Simulating: |==                                                        |( 6/10) Simulating: |===                                                       |( 6/10) Simulating: |====                                                      |( 6/10) Simulating: |=====                                                     |( 6/10) Simulating: |======                                                    |( 6/10) Simulating: |=======                                                   |( 6/10) Simulating: |========                                                  |( 6/10) Simulating: |=========                                                 |( 6/10) Simulating: |==========                                                |( 6/10) Simulating: |===========                                               |( 6/10) Simulating: |============                                              |( 6/10) Simulating: |=============                                             |( 6/10) Simulating: |==============                                            |( 6/10) Simulating: |===============                                           |( 6/10) Simulating: |================                                          |( 6/10) Simulating: |=================                                         |( 6/10) Simulating: |==================                                        |( 6/10) Simulating: |===================                                       |( 6/10) Simulating: |====================                                      |( 6/10) Simulating: |=====================                                     |( 6/10) Simulating: |======================                                    |( 6/10) Simulating: |=======================                                   |( 6/10) Simulating: |========================                                  |( 6/10) Simulating: |=========================                                 |( 6/10) Simulating: |==========================                                |( 6/10) Simulating: |===========================                               |( 6/10) Simulating: |============================                              |( 6/10) Simulating: |=============================                             |( 6/10) Simulating: |==============================                            |( 6/10) Simulating: |===============================                           |( 6/10) Simulating: |================================                          |( 6/10) Simulating: |=================================                         |( 6/10) Simulating: |==================================                        |( 6/10) Simulating: |===================================                       |( 6/10) Simulating: |====================================                      |( 6/10) Simulating: |=====================================                     |( 6/10) Simulating: |======================================                    |( 6/10) Simulating: |=======================================                   |( 6/10) Simulating: |========================================                  |( 6/10) Simulating: |=========================================                 |( 6/10) Simulating: |==========================================                |( 6/10) Simulating: |===========================================               |( 6/10) Simulating: |============================================              |( 6/10) Simulating: |=============================================             |( 6/10) Simulating: |==============================================            |( 6/10) Simulating: |===============================================           |( 6/10) Simulating: |================================================          |( 6/10) Simulating: |=================================================         |( 6/10) Simulating: |==================================================        |( 6/10) Simulating: |===================================================       |( 6/10) Simulating: |====================================================      |( 6/10) Simulating: |=====================================================     |( 6/10) Simulating: |======================================================    |( 6/10) Simulating: |=======================================================   |( 6/10) Simulating: |========================================================  |( 6/10) Simulating: |========================================================= |( 6/10) Simulating: |==========================================================|( 6/10) ( 7/10) ( 7/10) Simulating: |                                                          |( 7/10) Simulating: |=                                                         |( 7/10) Simulating: |==                                                        |( 7/10) Simulating: |===                                                       |( 7/10) Simulating: |====                                                      |( 7/10) Simulating: |=====                                                     |( 7/10) Simulating: |======                                                    |( 7/10) Simulating: |=======                                                   |( 7/10) Simulating: |========                                                  |( 7/10) Simulating: |=========                                                 |( 7/10) Simulating: |==========                                                |( 7/10) Simulating: |===========                                               |( 7/10) Simulating: |============                                              |( 7/10) Simulating: |=============                                             |( 7/10) Simulating: |==============                                            |( 7/10) Simulating: |===============                                           |( 7/10) Simulating: |================                                          |( 7/10) Simulating: |=================                                         |( 7/10) Simulating: |==================                                        |( 7/10) Simulating: |===================                                       |( 7/10) Simulating: |====================                                      |( 7/10) Simulating: |=====================                                     |( 7/10) Simulating: |======================                                    |( 7/10) Simulating: |=======================                                   |( 7/10) Simulating: |========================                                  |( 7/10) Simulating: |=========================                                 |( 7/10) Simulating: |==========================                                |( 7/10) Simulating: |===========================                               |( 7/10) Simulating: |============================                              |( 7/10) Simulating: |=============================                             |( 7/10) Simulating: |==============================                            |( 7/10) Simulating: |===============================                           |( 7/10) Simulating: |================================                          |( 7/10) Simulating: |=================================                         |( 7/10) Simulating: |==================================                        |( 7/10) Simulating: |===================================                       |( 7/10) Simulating: |====================================                      |( 7/10) Simulating: |=====================================                     |( 7/10) Simulating: |======================================                    |( 7/10) Simulating: |=======================================                   |( 7/10) Simulating: |========================================                  |( 7/10) Simulating: |=========================================                 |( 7/10) Simulating: |==========================================                |( 7/10) Simulating: |===========================================               |( 7/10) Simulating: |============================================              |( 7/10) Simulating: |=============================================             |( 7/10) Simulating: |==============================================            |( 7/10) Simulating: |===============================================           |( 7/10) Simulating: |================================================          |( 7/10) Simulating: |=================================================         |( 7/10) Simulating: |==================================================        |( 7/10) Simulating: |===================================================       |( 7/10) Simulating: |====================================================      |( 7/10) Simulating: |=====================================================     |( 7/10) Simulating: |======================================================    |( 7/10) Simulating: |=======================================================   |( 7/10) Simulating: |========================================================  |( 7/10) Simulating: |========================================================= |( 7/10) Simulating: |==========================================================|( 7/10) ( 8/10) ( 8/10) Simulating: |                                                          |( 8/10) Simulating: |=                                                         |( 8/10) Simulating: |==                                                        |( 8/10) Simulating: |===                                                       |( 8/10) Simulating: |====                                                      |( 8/10) Simulating: |=====                                                     |( 8/10) Simulating: |======                                                    |( 8/10) Simulating: |=======                                                   |( 8/10) Simulating: |========                                                  |( 8/10) Simulating: |=========                                                 |( 8/10) Simulating: |==========                                                |( 8/10) Simulating: |===========                                               |( 8/10) Simulating: |============                                              |( 8/10) Simulating: |=============                                             |( 8/10) Simulating: |==============                                            |( 8/10) Simulating: |===============                                           |( 8/10) Simulating: |================                                          |( 8/10) Simulating: |=================                                         |( 8/10) Simulating: |==================                                        |( 8/10) Simulating: |===================                                       |( 8/10) Simulating: |====================                                      |( 8/10) Simulating: |=====================                                     |( 8/10) Simulating: |======================                                    |( 8/10) Simulating: |=======================                                   |( 8/10) Simulating: |========================                                  |( 8/10) Simulating: |=========================                                 |( 8/10) Simulating: |==========================                                |( 8/10) Simulating: |===========================                               |( 8/10) Simulating: |============================                              |( 8/10) Simulating: |=============================                             |( 8/10) Simulating: |==============================                            |( 8/10) Simulating: |===============================                           |( 8/10) Simulating: |================================                          |( 8/10) Simulating: |=================================                         |( 8/10) Simulating: |==================================                        |( 8/10) Simulating: |===================================                       |( 8/10) Simulating: |====================================                      |( 8/10) Simulating: |=====================================                     |( 8/10) Simulating: |======================================                    |( 8/10) Simulating: |=======================================                   |( 8/10) Simulating: |========================================                  |( 8/10) Simulating: |=========================================                 |( 8/10) Simulating: |==========================================                |( 8/10) Simulating: |===========================================               |( 8/10) Simulating: |============================================              |( 8/10) Simulating: |=============================================             |( 8/10) Simulating: |==============================================            |( 8/10) Simulating: |===============================================           |( 8/10) Simulating: |================================================          |( 8/10) Simulating: |=================================================         |( 8/10) Simulating: |==================================================        |( 8/10) Simulating: |===================================================       |( 8/10) Simulating: |====================================================      |( 8/10) Simulating: |=====================================================     |( 8/10) Simulating: |======================================================    |( 8/10) Simulating: |=======================================================   |( 8/10) Simulating: |========================================================  |( 8/10) Simulating: |========================================================= |( 8/10) Simulating: |==========================================================|( 8/10) ( 9/10) ( 9/10) Simulating: |                                                          |( 9/10) Simulating: |=                                                         |( 9/10) Simulating: |==                                                        |( 9/10) Simulating: |===                                                       |( 9/10) Simulating: |====                                                      |( 9/10) Simulating: |=====                                                     |( 9/10) Simulating: |======                                                    |( 9/10) Simulating: |=======                                                   |( 9/10) Simulating: |========                                                  |( 9/10) Simulating: |=========                                                 |( 9/10) Simulating: |==========                                                |( 9/10) Simulating: |===========                                               |( 9/10) Simulating: |============                                              |( 9/10) Simulating: |=============                                             |( 9/10) Simulating: |==============                                            |( 9/10) Simulating: |===============                                           |( 9/10) Simulating: |================                                          |( 9/10) Simulating: |=================                                         |( 9/10) Simulating: |==================                                        |( 9/10) Simulating: |===================                                       |( 9/10) Simulating: |====================                                      |( 9/10) Simulating: |=====================                                     |( 9/10) Simulating: |======================                                    |( 9/10) Simulating: |=======================                                   |( 9/10) Simulating: |========================                                  |( 9/10) Simulating: |=========================                                 |( 9/10) Simulating: |==========================                                |( 9/10) Simulating: |===========================                               |( 9/10) Simulating: |============================                              |( 9/10) Simulating: |=============================                             |( 9/10) Simulating: |==============================                            |( 9/10) Simulating: |===============================                           |( 9/10) Simulating: |================================                          |( 9/10) Simulating: |=================================                         |( 9/10) Simulating: |==================================                        |( 9/10) Simulating: |===================================                       |( 9/10) Simulating: |====================================                      |( 9/10) Simulating: |=====================================                     |( 9/10) Simulating: |======================================                    |( 9/10) Simulating: |=======================================                   |( 9/10) Simulating: |========================================                  |( 9/10) Simulating: |=========================================                 |( 9/10) Simulating: |==========================================                |( 9/10) Simulating: |===========================================               |( 9/10) Simulating: |============================================              |( 9/10) Simulating: |=============================================             |( 9/10) Simulating: |==============================================            |( 9/10) Simulating: |===============================================           |( 9/10) Simulating: |================================================          |( 9/10) Simulating: |=================================================         |( 9/10) Simulating: |==================================================        |( 9/10) Simulating: |===================================================       |( 9/10) Simulating: |====================================================      |( 9/10) Simulating: |=====================================================     |( 9/10) Simulating: |======================================================    |( 9/10) Simulating: |=======================================================   |( 9/10) Simulating: |========================================================  |( 9/10) Simulating: |========================================================= |( 9/10) Simulating: |==========================================================|( 9/10) (10/10) (10/10) Simulating: |                                                          |(10/10) Simulating: |=                                                         |(10/10) Simulating: |==                                                        |(10/10) Simulating: |===                                                       |(10/10) Simulating: |====                                                      |(10/10) Simulating: |=====                                                     |(10/10) Simulating: |======                                                    |(10/10) Simulating: |=======                                                   |(10/10) Simulating: |========                                                  |(10/10) Simulating: |=========                                                 |(10/10) Simulating: |==========                                                |(10/10) Simulating: |===========                                               |(10/10) Simulating: |============                                              |(10/10) Simulating: |=============                                             |(10/10) Simulating: |==============                                            |(10/10) Simulating: |===============                                           |(10/10) Simulating: |================                                          |(10/10) Simulating: |=================                                         |(10/10) Simulating: |==================                                        |(10/10) Simulating: |===================                                       |(10/10) Simulating: |====================                                      |(10/10) Simulating: |=====================                                     |(10/10) Simulating: |======================                                    |(10/10) Simulating: |=======================                                   |(10/10) Simulating: |========================                                  |(10/10) Simulating: |=========================                                 |(10/10) Simulating: |==========================                                |(10/10) Simulating: |===========================                               |(10/10) Simulating: |============================                              |(10/10) Simulating: |=============================                             |(10/10) Simulating: |==============================                            |(10/10) Simulating: |===============================                           |(10/10) Simulating: |================================                          |(10/10) Simulating: |=================================                         |(10/10) Simulating: |==================================                        |(10/10) Simulating: |===================================                       |(10/10) Simulating: |====================================                      |(10/10) Simulating: |=====================================                     |(10/10) Simulating: |======================================                    |(10/10) Simulating: |=======================================                   |(10/10) Simulating: |========================================                  |(10/10) Simulating: |=========================================                 |(10/10) Simulating: |==========================================                |(10/10) Simulating: |===========================================               |(10/10) Simulating: |============================================              |(10/10) Simulating: |=============================================             |(10/10) Simulating: |==============================================            |(10/10) Simulating: |===============================================           |(10/10) Simulating: |================================================          |(10/10) Simulating: |=================================================         |(10/10) Simulating: |==================================================        |(10/10) Simulating: |===================================================       |(10/10) Simulating: |====================================================      |(10/10) Simulating: |=====================================================     |(10/10) Simulating: |======================================================    |(10/10) Simulating: |=======================================================   |(10/10) Simulating: |========================================================  |(10/10) Simulating: |========================================================= |(10/10) Simulating: |==========================================================|(10/10) </code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/powercurve_sim-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="simulate-with-rnorm-co." class="level2">
+<h2 class="anchored" data-anchor-id="simulate-with-rnorm-co.">Simulate with <code>rnorm()</code> &amp; co.</h2>
+<p><img src="boring.png" class="img-fluid"></p>
+</section>
+<section id="lme4simulate.mermod" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="lme4simulate.mermod"><code>lme4::simulate.merMod</code></h2>
+<ol type="1">
+<li>Existing model</li>
+<li>Modify existing model (<code>simr</code>)</li>
+</ol>
+<p>. . .</p>
+<ul>
+<li><code>fixef&lt;-</code></li>
+<li><code>coef&lt;-</code></li>
+<li><code>VarCorr&lt;-</code></li>
+<li><code>sigma&lt;-</code></li>
+<li><code>scale&lt;-</code></li>
+</ul>
+<p>. . .</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(RSLP_fit) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">simulate</span>(RSLP_fit, <span class="at">nsim =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="no-existing-model" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="no-existing-model">No existing model?</h2>
+<p><code>simulate(Y ~ ..., newparams = list(theta =  ???, ...))</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>. . .</p>
+<div class="cell" data-output-location="fragment">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>simr<span class="sc">::</span><span class="fu">makeLmer</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  Y <span class="sc">~</span> Fatigued <span class="sc">+</span> Caffein <span class="sc">+</span> Physical_Activity <span class="sc">+</span> Time <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>     (Fatigued <span class="sc">+</span> Caffein <span class="sc">+</span> Physical_Activity <span class="sc">+</span> Time <span class="sc">|</span> PersonID), </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixef =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">VarCorr =</span> <span class="fu">diag</span>(<span class="dv">5</span>),</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> D,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma =</span> <span class="dv">1</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML ['lmerMod']
+Formula: Y ~ Fatigued + Caffein + Physical_Activity + Time + (Fatigued +  
+    Caffein + Physical_Activity + Time | PersonID)
+   Data: D
+REML criterion at convergence: 2033
+Random effects:
+ Groups   Name              Std.Dev. Corr               
+ PersonID (Intercept)       1                           
+          Fatigued          1        0.00               
+          Caffein           1        0.00 0.00          
+          Physical_Activity 1        0.00 0.00 0.00     
+          Time              1        0.00 0.00 0.00 0.00
+ Residual                   1                           
+Number of obs: 567, groups:  PersonID, 27
+Fixed Effects:
+      (Intercept)           Fatigued            Caffein  Physical_Activity  
+                0                  0                  0                  0  
+             Time  
+                0  </code></pre>
+</div>
+</div>
+</section>
+<section id="caching-xfuncache_rds" class="level2">
+<h2 class="anchored" data-anchor-id="caching-xfuncache_rds">Caching: <code>xfun::cache_rds</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>xfun<span class="sc">::</span><span class="fu">cache_rds</span>({</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    expression</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">hash =</span> list_with_relevant_objects</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="have-fun-simulating" class="level2">
+<h2 class="anchored" data-anchor-id="have-fun-simulating">Have Fun Simulating!</h2>
+<ol type="1">
+<li>Aggregate per Subject <span class="math inline">\(\rightarrow\)</span> t-Test</li>
+<li><code>equatiomatic::extract_eq()</code></li>
+<li><code>lme4::simulate.merMod()</code>
+<ol type="1">
+<li><code>fixef&lt;-</code> &amp; co.</li>
+<li><code>simr::makeLmer()</code></li>
+</ol></li>
+<li><code>xfun::cache_rds()</code></li>
+</ol>
+
+
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>theta: cholesky factor of the normalized random effects covariance matrix.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Copyright 2024, Lukas Graz</p>
+<div class="toc-actions"><ul><li><a href="https://lgraz.github.io/edit/main/posts/lmer-slopes-new/index.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://lgraz.github.io/blob/main/posts/lmer-slopes-new/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://lgraz.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
