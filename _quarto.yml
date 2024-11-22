@@ -15,7 +15,7 @@ website:
       - icon: github
         href: https://github.com/LGraz
       - icon: linkedin
-        # text: LinkedIn
+        # text: LinkedIn #
         href: https://www.linkedin.com/in/lukas-graz/
 format:
   html:
