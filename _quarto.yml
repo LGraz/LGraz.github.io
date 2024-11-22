@@ -6,7 +6,7 @@ project:
 website:
   title: "Lukas Graz"
   page-footer: "Copyright 2024, Lukas Graz" 
-  repo-url: https://github.com/LGraz/LGraz.github.io/
+  repo-url: https://github.com/LGraz/LGraz.github.io/blob/master/
   repo-actions: [edit, source, issue]
   navbar:
     right:
