@@ -11,3 +11,5 @@ site_libs
 
 /.quarto/
 *_cache
+
+!CV.pdf
