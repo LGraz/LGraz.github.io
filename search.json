@@ -1,166 +1,5 @@
 [
   {
-    "objectID": "website/index.html",
-    "href": "website/index.html",
-    "title": "mytitle",
-    "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
-  },
-  {
-    "objectID": "statistical-consulting.html",
-    "href": "statistical-consulting.html",
-    "title": "Statistical Consulting",
-    "section": "",
-    "text": "I have consulted over 200 clients, primarily PhD and master’s students along with industry professionals. Regular discussions of these cases in the Seminar for Statistics at ETH Zurich have broadened my understanding of the statistical landscape and deepened my mathematical insights. This comprehensive experience means I can deliver effective solutions for most statistical challenges I encounter.\nWant to challenge me? Contact me via email at stat.consulting.graz@gmail.com to have a free 30min initial chat via zoom."
-  },
-  {
-    "objectID": "statistical-consulting.html#services",
-    "href": "statistical-consulting.html#services",
-    "title": "Statistical Consulting",
-    "section": "Services",
-    "text": "Services\n\nResearch Planning & Support\n\nResearch question formulation and statistical hypotheses\nStudy preregistration\nExperimental design selection\nSample size and power analysis, requiring:\n\nClear statistical hypotheses\nDefined experimental design\nPlanned analysis approach\n\nResponse to reviewer comments\nIndividual coaching\nCustom workshops and seminars\n\n\n\nStatistical Modeling & Analysis\n\nMultiple regression\nANOVA/ANCOVA/MANOVA (including repeated measures)\nMixed effects models (LMM/GLMM)\nGeneralized linear models (GLM)\nGeneralized additive models (GAM)\nStructural equation models (SEM)\nPath and mediation analysis\nCausal inference\nTime series analysis\nGaussian process regression\nMultivariate analysis\nBootstrap and permutation tests\nNon-parametric tests\nRandom forests\n\n\n\nTechnical Implementation\nReproducible Research & Reporting: - R programming (Zurich R Courses lecturer) - Linux, bash, git, and Docker - Documentation formats: - Interactive dashboards (Shiny) - Reports (Rmarkdown) - Reproducible manuscripts (example XXX) - Quarto websites (like this one)"
-  },
-  {
-    "objectID": "statistical-consulting.html#pricing",
-    "href": "statistical-consulting.html#pricing",
-    "title": "Statistical Consulting",
-    "section": "Pricing",
-    "text": "Pricing\n\nFree 30-minute consultation via Zoom to discuss your project\nIndustry/Institutional: 170 CHF/hour (140 CHF/hour after 10 hours)\nStudents: 140 CHF/hour (100 CHF/hour after 5 hours)\n\nContact: stat.consulting.graz@gmail.com"
-  },
-  {
-    "objectID": "posts/r2-in-cv/index.html",
-    "href": "posts/r2-in-cv/index.html",
-    "title": "Do Not Use \\(R^2\\) for Cross Validation",
-    "section": "",
-    "text": "Using the notation from Wikipedia:\nThe coefficient of determination is usually evaluated on the train set. If you evaluate it on the test data, weird things can happen (especially when a test set is small). Let’s consider the $ R^2 $ for one fold that contains two observations, where the $ y $ values by pure chance are VERY close to each other.\n\\[ R^2 = 1 - \\frac{SS_{\\text{res}}}{SS_{\\text{tot}}} \\]\n$ SS_{} $ is calculated by\n\\[ \\sum_{i=1}^{2} (y_i - \\bar{y})^2 \\]\nwhere \\(\\bar{y}\\) is the mean of those two observations (at least this is how it is done in scikit-learn). Since the two observations are VERY close to each other, the $ SS_{} $ gets VERY small, while the test-residuals (and hence $ SS_{} $) might still be moderately high. This way, $ R^2 $ can be VERY low. By putting the two $ y $-values arbitrarily close to each other, you can make the $ R^2 $ for this test-fold go to \\(-\\infty\\). Note that those $ y $-values are not outliers, but just very close to each other."
-  },
-  {
-    "objectID": "posts/r2-in-cv/index.html#minimal-example",
-    "href": "posts/r2-in-cv/index.html#minimal-example",
-    "title": "Do Not Use \\(R^2\\) for Cross Validation",
-    "section": "Minimal example:",
-    "text": "Minimal example:\n$ n=4 $, $ k=2 $, estimator = mean, $ $ are the predictions from the other fold using the mean\n\n\n\nfold\n$ y $\n$ $\n\n\n\n\n1\n4\n5.0005\n\n\n1\n7\n5.0005\n\n\n2\n5\n5.5\n\n\n2\n5.001\n5.5\n\n\n\nConsider fold 2: \\[ SS_{\\text{res}} = 0.5^2 + 0.499^2 = 0.499 \\] \\[ SS_{\\text{tot}} = (5 - 5.0005)^2 + (5.001 - 5.0005)^2 = 5 \\times 10^{-7} \\] \\[ R^2 = 1 - \\frac{SS_{\\text{res}}}{SS_{\\text{tot}}} = -998001 \\]"
-  },
-  {
-    "objectID": "posts/r2-in-cv/index.html#alternatives",
-    "href": "posts/r2-in-cv/index.html#alternatives",
-    "title": "Do Not Use \\(R^2\\) for Cross Validation",
-    "section": "Alternatives:",
-    "text": "Alternatives:\n\nUse the (R)MSE\nUse the MAE\n“pseudo R-squared”: 1 - mse / Var(y) (c.f. the R-implementation of randomForest)"
-  },
-  {
-    "objectID": "posts/lmm-effect-of-block-variance/index.html",
-    "href": "posts/lmm-effect-of-block-variance/index.html",
-    "title": "Does the variance of the Random-Effect influence the p-values?",
-    "section": "",
-    "text": "We study the classical setup of a randomized complete block design with 2 treatments, 2 replications per block and 5 blocks. We vary the variance of the block effect and study how the p-values of the treatment effect change.\n\\[\n% equatiomatic::extract_eq(fit)\n\\begin{aligned}\n  \\operatorname{y}_{i}  &\\sim N \\left(\\alpha_{block(i)} + \\beta_{trt(i)}, \\sigma^2 \\right) \\\\\n    \\alpha_{j}  &\\sim N \\left(\\mu_{\\alpha_{j}}, {\\sigma_{\\alpha_{j}}}^2 \\right)\n    \\text{, for block j = 1,} \\dots \\text{,5}\\\\\n    % contr sum for \\beta_{trt(i)}:\n    \\beta_{1}  &= - \\beta_{2}  \\quad \\text{(contr.sum)}\n\\end{aligned}\n\\]"
-  },
-  {
-    "objectID": "posts/lmm-effect-of-block-variance/index.html#simulate-data",
-    "href": "posts/lmm-effect-of-block-variance/index.html#simulate-data",
-    "title": "Does the variance of the Random-Effect influence the p-values?",
-    "section": "Simulate Data",
-    "text": "Simulate Data\n\nlibrary(ggplot2)\nlibrary(gridExtra)\nlibrary(lmerTest)\nlibrary(multcomp)\n\noptions(contrasts = c(\"contr.sum\", \"contr.poly\"))\n\n\n# simulate data for a linear mixed model\n# a randomized complete block design with 3 treatments, nblock blocks, nrep replicates per block\n# an observation error with standard deviation SD_noise and a block effect with standard deviation SD_block\n# a treatment effect with standard deviation SD_trt\nget_data &lt;- function(nblock=5, nrep=2, SD_noise=3, SD_block=1, SD_trt=0) {\n  data &lt;- expand.grid(\n    nrep = 1:nrep,\n    trt = as.factor(1:2),\n    block = as.factor(1:nblock)\n  )\n  block_effect &lt;- SD_block * rnorm(nblock)[data$block]\n  noise &lt;- SD_noise * rnorm(nrow(data))\n  trt_effect &lt;- SD_trt * rnorm(nrow(data))[data$trt]\n  data$y &lt;- trt_effect + block_effect + noise\n  data\n}"
-  },
-  {
-    "objectID": "posts/lmm-effect-of-block-variance/index.html#plot-function",
-    "href": "posts/lmm-effect-of-block-variance/index.html#plot-function",
-    "title": "Does the variance of the Random-Effect influence the p-values?",
-    "section": "Plot Function",
-    "text": "Plot Function\n\n# function that makes an interactions plot\nplot_interactions &lt;- function(data, ...) {\n  with(data,\n  interaction.plot(\n      x.factor = trt,\n      trace.factor = block,\n      response = y,\n      type = \"b\",\n      legend = FALSE,\n      ...\n    )\n  )\n}"
-  },
-  {
-    "objectID": "posts/lmm-effect-of-block-variance/index.html#perform-analysis",
-    "href": "posts/lmm-effect-of-block-variance/index.html#perform-analysis",
-    "title": "Does the variance of the Random-Effect influence the p-values?",
-    "section": "Perform Analysis",
-    "text": "Perform Analysis\n\nGet Data that only differs with respect to SD_block (increasing)\n\nPlot the data for each SD_block\nFit a model with lmer and lm for each SD_block\n\ninspect how the estimates and standard errors of the treatmenteffect change with increasing SD_block\n\n\nSD_blocks &lt;- 0:8\nfits &lt;- vector(\"list\", length(SD_blocks)*2)\ndim(fits) &lt;- c(length(SD_blocks), 2)\ndimnames(fits) &lt;- list(paste0(\"SD_block=\",as.character(SD_blocks)), c(\"lmer\", \"lm\"))\n\npar(mfrow=c(3,3))\nfor(i in seq_along(SD_blocks)){\n  SD_block &lt;- SD_blocks[i]\n\n  set.seed(2)\n  data &lt;- get_data(SD_block=SD_block)\n  plot_interactions(data, main=paste0(\"SD_block=\", SD_block))\n  \n  # lmer\n  fits[[i,1]] &lt;- lmer(y ~ trt + (1|block), data=data)\n  \n  # lm\n  fits[[i,2]] &lt;- lm(y ~ trt + block, data=data)\n}; par(mfrow=c(1,1))\n\nboundary (singular) fit: see help('isSingular')\nboundary (singular) fit: see help('isSingular')\nboundary (singular) fit: see help('isSingular')\n\n\n\n\n\n\n\n\n# apply a function to each element of a list-array\n# preserving the dimensions and dimnames\nelementwise_apply &lt;- function(L, f){\n  L_applied &lt;- lapply(L, f)\n  dim(L_applied) &lt;- dim(L)\n  dimnames(L_applied) &lt;- dimnames(L)\n  L_applied\n}\n\nsummary_coef_trt1 &lt;- elementwise_apply(fits, function(fit) coef(summary(fit))[\"trt1\",])"
-  },
-  {
-    "objectID": "posts/lmm-effect-of-block-variance/index.html#results",
-    "href": "posts/lmm-effect-of-block-variance/index.html#results",
-    "title": "Does the variance of the Random-Effect influence the p-values?",
-    "section": "Results",
-    "text": "Results\nIllustration: How summary_coef_trt1 looks like:\n\nsummary_coef_trt1[\"SD_block=5\",]\n\n$lmer\n  Estimate Std. Error         df    t value   Pr(&gt;|t|) \n-0.3125844  0.8561637 14.0000000 -0.3650989  0.7204942 \n\n$lm\n  Estimate Std. Error    t value   Pr(&gt;|t|) \n-0.3125844  0.8561637 -0.3650989  0.7204942 \n\n# estimate\nelementwise_apply(summary_coef_trt1, function(coef) coef[1])\n\n           lmer       lm        \nSD_block=0 -0.3125844 -0.3125844\nSD_block=1 -0.3125844 -0.3125844\nSD_block=2 -0.3125844 -0.3125844\nSD_block=3 -0.3125844 -0.3125844\nSD_block=4 -0.3125844 -0.3125844\nSD_block=5 -0.3125844 -0.3125844\nSD_block=6 -0.3125844 -0.3125844\nSD_block=7 -0.3125844 -0.3125844\nSD_block=8 -0.3125844 -0.3125844\n\n# standard error\nelementwise_apply(summary_coef_trt1, function(coef) coef[2])\n\n           lmer      lm       \nSD_block=0 0.7997087 0.8561637\nSD_block=1 0.7588929 0.8561637\nSD_block=2 0.7842232 0.8561637\nSD_block=3 0.8561637 0.8561637\nSD_block=4 0.8561637 0.8561637\nSD_block=5 0.8561637 0.8561637\nSD_block=6 0.8561637 0.8561637\nSD_block=7 0.8561637 0.8561637\nSD_block=8 0.8561637 0.8561637\n\n# p-value\nelementwise_apply(summary_coef_trt1, function(coef) coef[length(coef)])\n\n           lmer      lm       \nSD_block=0 0.700479  0.7204942\nSD_block=1 0.6852797 0.7204942\nSD_block=2 0.6948831 0.7204942\nSD_block=3 0.7204942 0.7204942\nSD_block=4 0.7204942 0.7204942\nSD_block=5 0.7204942 0.7204942\nSD_block=6 0.7204942 0.7204942\nSD_block=7 0.7204942 0.7204942\nSD_block=8 0.7204942 0.7204942\n\n# random effect variance\nsapply(fits[,1], function(fit) VarCorr(fit)$block[1]) |&gt; sqrt() |&gt; signif(2) \n\nSD_block=0 SD_block=1 SD_block=2 SD_block=3 SD_block=4 SD_block=5 SD_block=6 \n      0.00       0.00       0.00       0.73       2.50       3.70       4.90 \nSD_block=7 SD_block=8 \n      6.00       7.20"
-  },
-  {
-    "objectID": "posts/improve-t-test-w-lm-using-more-groups/index.html",
-    "href": "posts/improve-t-test-w-lm-using-more-groups/index.html",
-    "title": "Pairwise T-tests can be improved by including more groups",
-    "section": "",
-    "text": "TLDR: more groups make the test more stable and slightly more powerful (for low sample sizes). However, be aware that this assumes homoscedasticity (i.e., equal variance for all groups).\n\nget_data &lt;- function(n_per_group = 10, n_groups = 15) {\n  grp &lt;- as.factor(c(rep(1:n_groups, each = n_per_group)))\n  data &lt;- data.frame(group = grp, y = rnorm(n_groups * n_per_group, sd = 2) + as.numeric(grp))\n}\n\n# illustrate data\ndata &lt;- get_data()\nset.seed(123)\nboxplot(y ~ group, data)\n\n\n\n\n\n\n\n# Pairwise T-test using residuals of 2-15 groups\n# plot results\npvals_mat &lt;- replicate(20, { \n  data &lt;- get_data()\n  pvals &lt;- sapply(2:15, function(i) {\n    coefficients(summary(lm(y ~ group, data, subset = group %in% 1:i)))[\"group2\", \"Pr(&gt;|t|)\"]\n  })\n})\n\n# plot each collumn of pvals_mat with matplot\nmatplot(pvals_mat, type = \"l\", xlab = \"How Many Groups Considered +1\")\n\n\n\n\n\n\n\n# simulate power\n# 2 groups vs 5 groups\nn_sim &lt;- 2000\nresults &lt;- matrix(NA, nrow = n_sim, ncol = 2)\nfor (i in 1:n_sim) {\n  data &lt;- get_data(n_per_group = 3, n_groups = 5)\n  results[i, 1] &lt;- coefficients(summary(lm(y ~ group, data, subset = group %in% 1:2)))[\"group2\", \"Pr(&gt;|t|)\"]\n  results[i, 2] &lt;- coefficients(summary(lm(y ~ group, data, subset = group %in% 1:5)))[\"group2\", \"Pr(&gt;|t|)\"]\n}\npower &lt;- apply(results &lt; 0.05, 2, mean)\nnames(power) &lt;- c(\"power using 2 groups,\", \" 5 groups\")\npower\n\npower using 2 groups,              5 groups \n                0.074                 0.081"
-  },
-  {
-    "objectID": "posts/dunnet-vs-holm-vs-tukeyhsd/index.html",
-    "href": "posts/dunnet-vs-holm-vs-tukeyhsd/index.html",
-    "title": "Contrasts against Control: Dunnet vs. Holm vs. TukeyHSD",
-    "section": "",
-    "text": "TLDR: Even though Dunnet is proven to be optimal (in all vs comparison) for a reasonable group number (around 10) Holm seems to yield basically the same result, while being a more general method. Dunnet is more powerful, when increasing the group number (e.g., to 30).\n\nPurpose and Structure of this Document\nIn many cases, we may want to compare new alternatives to a standard treatment or control. To do this, we use a linear model and perform hypothesis testing of all alternatives versus the control. The purpose of this document is to compare the power of different multiple testing techniques.\nThe document is structured as follows:\n\nDefine helper functions, including:\n\ndata generation\nmultiple testing functions\nwrapper for simulations\n\nPerform simulations for various settings.\nPlot the results.\n\nNote, that there are different definitions of “power” in this context. We will be using the following definitions:\n\nThe expectation that any of the non-placebos will be rejected.\nThe expectation of the fraction of non-placebos that will be rejected.\nThe expectation that all non-placebos will be rejected.\n\n\n\nHelp functions\n\nset.seed(123)\nn_rep &lt;- 500\n\nlibrary(multcomp)\n\nLoading required package: mvtnorm\n\n\nLoading required package: survival\n\n\nLoading required package: TH.data\n\n\nLoading required package: MASS\n\n\n\nAttaching package: 'TH.data'\n\n\nThe following object is masked from 'package:MASS':\n\n    geyser\n\nlibrary(ggplot2)\n\n# g groups, of which one is the control, n_effect of which have the effect `effect`\nget_data &lt;- function(g = 10, n_t = 5, n_c = 5, effect = 1, n_effect = 3) {\n  fac &lt;- as.factor(\n    rep(c(\"ctrl\", c(LETTERS, letters)[1:(g - 1)]), \n    c(n_c, rep(n_t, g - 1)))\n    )\n  groups &lt;- relevel(fac, ref = \"ctrl\")\n  y &lt;- rnorm(groups, \n    c(rep(0, length(groups) - n_t * n_effect), rep(effect, n_t * n_effect))\n    )\n  data.frame(group = groups, y = y)\n}\n\nholm &lt;- function(data) {\n  fit &lt;- lm(y ~ group, data)\n  p_vals &lt;- summary(fit)$coefficients[-1, \"Pr(&gt;|t|)\"]\n  p.adjust(p_vals)\n}\n\nnone &lt;- function(data) {\n  fit &lt;- lm(y ~ group, data)\n  summary(fit)$coefficients[-1, \"Pr(&gt;|t|)\"]\n}\n\ntukey_hsd &lt;- function(data) {\n  fit &lt;- aov(y ~ group, data)\n  a &lt;- TukeyHSD(fit)\n  contrasts &lt;- grep(\"ctrl\", rownames(a$group), value = TRUE)\n  a$group[contrasts, \"p adj\"]\n}\n\n# multcomp implementation of \"dunnet\"\ndunn &lt;- function(data) {\n  n &lt;- table(data$group)\n  names(n) &lt;- levels(data$group)\n  c(summary(\n    glht(aov(y ~ group, data), linfct = mcp(group = \"Dunnett\"))\n  )$test$pvalues)\n}\n\nall &lt;- function(data) as.matrix(data.frame(none = none(data),\n  holm = holm(data), dunn = dunn(data), tukeyHSD = tukey_hsd(data))\n)\n\ndosim &lt;- function(n_replicate = 200, n_goups = 10, n_treatmentgroup = 5, \n                  n_controlgroup = 5, effect = 1, n_non_placebo_treatments = 3) {\n  obj &lt;- mcreplicate::mc_replicate(n_replicate, all(get_data(\n    g = n_goups, n_t = n_treatmentgroup, n_c = n_controlgroup, effect = effect, \n    n_effect = n_non_placebo_treatments\n  )))\n  stopifnot(effect &gt; 0)\n  if (n_non_placebo_treatments == 0) {\n    p_val_non_placebo &lt;- obj\n    p_val_non_placebo[, , ] &lt;- 1 # this is used for power calc. In this case no effect\n  } else {\n    p_val_non_placebo &lt;- obj[(n_goups - n_non_placebo_treatments):(n_goups - 1), , ]\n  }\n  p_val_no_effect &lt;- obj[1:(n_goups - n_non_placebo_treatments - 1), , ]\n\n  # The fraction of rejected tests within the non-placebo treatments\n  MeanPower &lt;- apply(p_val_non_placebo, 2, function(x) mean(x &lt; 0.05))\n  names(MeanPower) &lt;- paste0(\"MeanPower_\", names(MeanPower))\n\n  # The fraction where all non-placebo treatments where detected\n  AllPower  &lt;- apply(p_val_non_placebo, c(2, 3), function(x) base::all(x &lt; 0.05))\n  AllPower  &lt;- apply(AllPower, 1, function(x) mean(x))\n  names(AllPower) &lt;- paste0(\"AllPower_\", names(AllPower))\n\n  # The fraction where ANY non-placebo treatment was detected\n  AnyPower  &lt;- apply(p_val_non_placebo, c(2, 3), function(x) base::any(x &lt; 0.05))\n  AnyPower  &lt;- apply(AnyPower, 1, function(x) mean(x))\n  names(AnyPower) &lt;- paste0(\"AnyPower_\", names(AnyPower))\n\n  # The FWER under the NULL (i.e. for placebo treatments)\n  any_positive &lt;- apply(p_val_no_effect, c(2, 3), function(x) any(x &lt; 0.05))\n  alpha &lt;- apply(any_positive, 1, function(x) mean(x))\n  names(alpha) &lt;- paste0(\"alpha_\", names(alpha))\n\n  as.matrix(c(\n    n_replicate = n_replicate, n_goups = n_goups, \n    n_treatmentgroup = n_treatmentgroup, \n    n_controlgroup = n_controlgroup, effect = effect,\n    n_non_placebo_treatments = n_non_placebo_treatments,\n    MeanPower, AllPower, AnyPower, alpha\n  ), ncol = 1)\n}\n\n\n\nSimulations\n\na &lt;- dosim(n_replicate = n_rep, n_non_placebo_treatments = 0) # NULL\ng &lt;- dosim(n_replicate = n_rep)\nb &lt;- dosim(n_replicate = n_rep, effect = .5)\nc &lt;- dosim(n_replicate = n_rep, effect = 2)\n# 12=floor(n_t * sqrt(g-1)) ==&gt; taking 14 yields the same total sample size\nd &lt;- dosim(n_replicate = n_rep, n_treatmentgroup = 4, n_controlgroup = 14) \ne &lt;- dosim(n_replicate = n_rep, n_treatmentgroup = 4, n_controlgroup = 14, effect = 2)\nf &lt;- dosim(n_replicate = n_rep, n_treatmentgroup = 4, n_controlgroup = 14, \n            n_non_placebo_treatments = 7)\n\n\nh &lt;- dosim(n_replicate = n_rep, n_goups = 30, n_non_placebo_treatments = 3)\ni &lt;- dosim(n_replicate = n_rep, n_goups = 30, n_non_placebo_treatments = 10)\nj &lt;- dosim(n_replicate = n_rep, n_goups = 30, n_non_placebo_treatments = 20)\n\n\nk &lt;- dosim(n_replicate = n_rep, n_treatmentgroup = 20, n_controlgroup = 20)\n# optimal sample allocation with equal total\nl &lt;- dosim(n_replicate = n_rep, n_treatmentgroup = 17, n_controlgroup = 47) \n\n\n\nResults\n\nresult &lt;- cbind(\n  null=a, \n  default=g, \n  `-effect`=b, \n  `+effect`=c,\n  `+alloc` = d, \n  `+alloc+effect` = e, \n  `+nonplacebo_grps`=f,\n  `+grps`=h,\n  `+grps+nonplacebo`=i,\n  `+grps++nonplacebo`=j,\n  `+groupsize`=k,\n  `+grpsize+alloc`=l\n)\ncolnames(result) &lt;- c(\"null\", \"default\", \"`-effect`\", \"`+effect`\", \"`+alloc`\", \n  \"`+alloc+effect`\", \"`+nonplacebo_grps`\", \"`+grps`\", \"`+grps+nonplacebo`\", \n  \"`+grps++nonplacebo`\", \"`+groupsize`\", \"`+grpsize+alloc`\"\n)\noptions(digits=4)\nresult |&gt; as.data.frame() |&gt; knitr::kable()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nnull\ndefault\n-effect\n+effect\n+alloc\n+alloc+effect\n+nonplacebo_grps\n+grps\n+grps+nonplacebo\n+grps++nonplacebo\n+groupsize\n+grpsize+alloc\n\n\n\n\nn_replicate\n500.000\n500.0000\n500.0000\n500.0000\n500.0000\n500.0000\n500.0000\n500.000\n500.0000\n500.0000\n500.0000\n500.0000\n\n\nn_goups\n10.000\n10.0000\n10.0000\n10.0000\n10.0000\n10.0000\n10.0000\n30.000\n30.0000\n30.0000\n10.0000\n10.0000\n\n\nn_treatmentgroup\n5.000\n5.0000\n5.0000\n5.0000\n4.0000\n4.0000\n4.0000\n5.000\n5.0000\n5.0000\n20.0000\n17.0000\n\n\nn_controlgroup\n5.000\n5.0000\n5.0000\n5.0000\n14.0000\n14.0000\n14.0000\n5.000\n5.0000\n5.0000\n20.0000\n47.0000\n\n\neffect\n1.000\n1.0000\n0.5000\n2.0000\n1.0000\n2.0000\n1.0000\n1.000\n1.0000\n1.0000\n1.0000\n1.0000\n\n\nn_non_placebo_treatments\n0.000\n3.0000\n3.0000\n3.0000\n3.0000\n3.0000\n7.0000\n3.000\n10.0000\n20.0000\n3.0000\n3.0000\n\n\nMeanPower_none\n0.000\n0.3420\n0.1260\n0.8720\n0.4227\n0.9340\n0.3966\n0.046\n0.2790\n0.3134\n0.8820\n0.9353\n\n\nMeanPower_holm\n0.000\n0.1180\n0.0207\n0.6067\n0.1367\n0.7527\n0.1500\n0.000\n0.0542\n0.0537\n0.6727\n0.7953\n\n\nMeanPower_dunn\n0.000\n0.1367\n0.0240\n0.6307\n0.1393\n0.7433\n0.1411\n0.000\n0.0680\n0.0647\n0.6900\n0.7833\n\n\nMeanPower_tukeyHSD\n0.000\n0.0567\n0.0073\n0.4527\n0.0733\n0.5893\n0.0711\n0.000\n0.0188\n0.0108\n0.4807\n0.6267\n\n\nAllPower_none\n0.000\n0.1320\n0.0260\n0.7280\n0.1140\n0.8240\n0.0260\n0.002\n0.0040\n0.0000\n0.7500\n0.8440\n\n\nAllPower_holm\n0.000\n0.0180\n0.0000\n0.3960\n0.0200\n0.5140\n0.0080\n0.000\n0.0000\n0.0000\n0.4460\n0.5700\n\n\nAllPower_dunn\n0.000\n0.0180\n0.0000\n0.4100\n0.0120\n0.4760\n0.0040\n0.000\n0.0000\n0.0000\n0.4500\n0.5320\n\n\nAllPower_tukeyHSD\n0.000\n0.0080\n0.0000\n0.2280\n0.0060\n0.2900\n0.0000\n0.000\n0.0000\n0.0000\n0.2240\n0.3180\n\n\nAnyPower_none\n0.000\n0.5720\n0.2520\n0.9740\n0.7540\n1.0000\n0.8860\n0.110\n0.8200\n0.8940\n0.9760\n0.9980\n\n\nAnyPower_holm\n0.000\n0.2420\n0.0580\n0.7940\n0.3100\n0.9560\n0.4980\n0.000\n0.2600\n0.3560\n0.8600\n0.9720\n\n\nAnyPower_dunn\n0.000\n0.2900\n0.0680\n0.8280\n0.3260\n0.9660\n0.5120\n0.000\n0.3140\n0.4360\n0.8840\n0.9740\n\n\nAnyPower_tukeyHSD\n0.000\n0.1180\n0.0220\n0.6800\n0.1760\n0.8800\n0.3020\n0.000\n0.1120\n0.1080\n0.7360\n0.9120\n\n\nalpha_none\n0.258\n0.2160\n0.1860\n0.2180\n0.2380\n0.2420\n0.1020\n0.802\n0.7660\n0.6980\n0.2020\n0.2200\n\n\nalpha_holm\n0.036\n0.0240\n0.0240\n0.0360\n0.0340\n0.0380\n0.0180\n0.146\n0.1580\n0.1560\n0.0180\n0.0420\n\n\nalpha_dunn\n0.056\n0.0280\n0.0360\n0.0380\n0.0360\n0.0300\n0.0180\n0.190\n0.1960\n0.1940\n0.0200\n0.0320\n\n\nalpha_tukeyHSD\n0.012\n0.0080\n0.0100\n0.0100\n0.0100\n0.0060\n0.0040\n0.046\n0.0560\n0.0420\n0.0020\n0.0160\n\n\n\n\n\n\n\nPlot\n\nX &lt;- result[-c(1:7, 11, 15, 19),] # remove \"none\" rows, and parameters \n\n# convert matrix to data frame\ndf &lt;- data.frame(env = rep(colnames(X), each = nrow(X)), \n                 strategy = rep(rownames(X), times = ncol(X)),\n                 value = as.vector(X))\n\n# split the strategy names into two parts\ndf$part1 &lt;- gsub(\"^(.*?)_.*$\", \"\\\\1\", df$strategy)\ndf$part2 &lt;- gsub(\"^.*?_(.*)$\", \"\\\\1\", df$strategy)\n\n# plot\nplt &lt;- ggplot(df, aes(x = factor(env, ordered=T, levels=unique(env)), y = value, \n  group = strategy, linetype = part1, color = part2)) + \n  geom_line() + \n  geom_point() +\n  scale_linetype_manual(\n    values = c(\"solid\", \"dashed\", \"dotted\", \"dotdash\")) +  # line types\n  theme(axis.text.x = element_text(angle = 30, hjust = 1)) # vertical x-labels \nplt\n\n\n\n\n\n\n\n\n\n\nResults\n\nDunnet and Holm yield very similar results when considering 10 groups (while varying the number of non-placebo groups, the effect, and the sample size allocation).\nDunnet shows a slight advantage over Holm, when increasing the number of groups.\nThe optimal allocation (\\(n_{control} = n_{treatments}\\sqrt{n_{groups}-1}\\)) yields an improvement as well in both cases."
-  },
-  {
-    "objectID": "CV.html",
-    "href": "CV.html",
-    "title": "Curriculum Vitae",
-    "section": "",
-    "text": "here will by my CV :)"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Lukas Graz",
-    "section": "",
-    "text": "I am a statistician with a mathematical background based in Zurich, Switzerland. Currently working as a Statistical Consultant at ETH Zurich, I am passionate about statistical methods, deriving valid conclusions, and finding elegant solutions to complex problems. My work combines statistical expertise with modern IT practices to translate mathematical concepts into practical implementations.\nView my CV"
-  },
-  {
-    "objectID": "index.html#about-me",
-    "href": "index.html#about-me",
-    "title": "Lukas Graz",
-    "section": "",
-    "text": "I am a statistician with a mathematical background based in Zurich, Switzerland. Currently working as a Statistical Consultant at ETH Zurich, I am passionate about statistical methods, deriving valid conclusions, and finding elegant solutions to complex problems. My work combines statistical expertise with modern IT practices to translate mathematical concepts into practical implementations.\nView my CV"
-  },
-  {
-    "objectID": "index.html#statistical-consulting",
-    "href": "index.html#statistical-consulting",
-    "title": "Lukas Graz",
-    "section": "Statistical Consulting",
-    "text": "Statistical Consulting\nI have consulted over 200 clients, primarily PhD and master’s students along with industry professionals. Regular discussions of these cases in the Seminar for Statistics at ETH Zurich have broadened my understanding of the statistical landscape and deepened my mathematical insights. This comprehensive experience means I can deliver effective solutions for most statistical challenges. Learn more about my services.\nBook a free 30-minute online consultation or contact me via email at stat.consulting.graz@REMOVETHISgmail.com"
-  },
-  {
-    "objectID": "index.html#some-statistical-investigations",
-    "href": "index.html#some-statistical-investigations",
-    "title": "Lukas Graz",
-    "section": "Some Statistical Investigations",
-    "text": "Some Statistical Investigations\nMotivated by some consulting cases, I spend some time to investigate some statistical questions. Here are some of my findings:"
-  },
-  {
-    "objectID": "posts/exponential-glm-coverage/index.html",
-    "href": "posts/exponential-glm-coverage/index.html",
-    "title": "Bad Coverage for exponential GLMs",
-    "section": "",
-    "text": "Simulate a glm with exponential distribution such that\n\\[\\operatorname{y} \\sim \\operatorname{exp}(\\operatorname{h}(\\alpha + 1\\operatorname{x} + 2\\operatorname{z}))\\]\nwith the \\(h\\) being the inverse of the link functions:"
-  },
-  {
-    "objectID": "posts/exponential-glm-coverage/index.html#setup",
-    "href": "posts/exponential-glm-coverage/index.html#setup",
-    "title": "Bad Coverage for exponential GLMs",
-    "section": "Setup",
-    "text": "Setup\n\ninv_links &lt;- list( \n  identity = function(eta) eta,\n  inverse = function(eta) 1/eta,\n  log = exp)\n\nget_data &lt;- function(inv_link){\n  x &lt;- pmin(pmax(0, rnorm(n, 2)), 4)\n  z &lt;- pmin(pmax(0, rnorm(n, 1)), 4)\n  eta &lt;- 1 + x + 2*z\n  data.frame(\n    x=x, \n    z=z, \n    eta=eta, \n    mu=inv_link(eta), \n    y=rgamma(n, shape=1, scale=inv_link(eta))\n  )\n}\n\nis.in.confint &lt;- function(x, I) (x &gt;I[1]) && (x&lt; I[2])"
-  },
-  {
-    "objectID": "posts/exponential-glm-coverage/index.html#simulation",
-    "href": "posts/exponential-glm-coverage/index.html#simulation",
-    "title": "Bad Coverage for exponential GLMs",
-    "section": "Simulation",
-    "text": "Simulation\nFor each link function: 1. Plot an example (green line is the true expectation and red line is a smoothing spline) 2. Simulate coverage of true parameter for x (should be 95%)\n\nn &lt;- 100 # sample size\nnsim &lt;- 500 # number of simulations to test the confidence interval\nset.seed(123)\nfor (i in seq_along(inv_links)){\n  D &lt;- get_data(inv_links[[i]])\n  \n  plot(y ~ mu, main=names(inv_links)[i], data=D)\n  # Test with SmoothingSplines if indeed: E(y|mu) = mu\n  with(D, lines(smooth.spline(mu, y), col='red'))\n  abline(0,1, col='green')\n\n  # see if the conf-interval for beta_x is valid. i.e.:\n  #    repeat it nsim times and see if 1 is in our confidence interval\n  R &lt;- mcreplicate::mc_replicate(nsim,{\n    try({\n      D &lt;- get_data(inv_links[[i]])\n      s &lt;- summary(f &lt;- glm(\n        y ~ x + z, \n        data = D,\n        family = Gamma(link = names(inv_links)[i]), \n        mustart = mu)); s\n      suppressMessages(is.in.confint(1, confint(f, \"x\")))\n    }, silent = TRUE)\n  })\n  coverage &lt;- mean(as.logical(R), na.rm=TRUE)\n  cat(sprintf(\"Coverage for %s: %f\\n\", names(inv_links)[i], coverage))\n}\n\n\n\n\n\n\n\n\n\nCoverage for identity: 0.940299\n\n\n\n\n\n\n\n\n\n\nCoverage for inverse: 0.946058\n\n\n\n\n\n\n\n\n\n\nCoverage for log: 0.956000"
-  },
-  {
-    "objectID": "posts/exponential-glm-coverage/index.html#results",
-    "href": "posts/exponential-glm-coverage/index.html#results",
-    "title": "Bad Coverage for exponential GLMs",
-    "section": "Results",
-    "text": "Results\nFor all link functions, the coverage is about 95%"
-  },
-  {
     "objectID": "posts/lmer-slopes-new/index.html",
     "href": "posts/lmer-slopes-new/index.html",
     "title": "Linear Mixed Models Simplifications Tips and Tricks",
@@ -273,10 +112,171 @@
     "text": "TLDR: Given a dataset as shown in the last plot, we consider the following analyses:\n1. For each subject extract the slope and perform a simple t-test on the slopes\n2. Fit lmer(salery ~ slope + (1|subject)) and test if \\(\\beta_{slope} =0\\)\n3. Fit lmer(salery ~ slope + (slope|subject)) and test if \\(\\beta_{slope} =0\\)\nThen: 1 & 3 are valid (if data balanced, they are equally powerful) approaches and 2 is only valid if there is no individual slope.\n\nSimulate Data\nSalary of subject \\(s\\) at time \\(t\\):\n\\[ salary_{t}^{(s)} = t \\cdot (slope + d_s) + intercept_s + \\varepsilon_{t,s} \\]\n\n\\(d_s \\sim \\mathcal N(0, subjSlopeSD^2)\\)\n\n\\(intercept_s \\sim \\mathcal N(0, subjSD^2)\\)\n\n\\(\\varepsilon_{t,s} \\sim \\mathcal N(0, obsSD^2)\\)\n\n\nnsim &lt;- 2000\n\nlibrary(mcreplicate) # for parallelization\nlibrary(ggplot2)\nlibrary(lmerTest)\n\nLoading required package: lme4\n\n\nLoading required package: Matrix\n\n\n\nAttaching package: 'lmerTest'\n\n\nThe following object is masked from 'package:lme4':\n\n    lmer\n\n\nThe following object is masked from 'package:stats':\n\n    step\n\n#' `nsub`: how many subjects (default: 6)\n#' `nyears`: how many years(default: 10)\n#' `obsSD`: standard deviation of noise (observation-level) (default: 15)\n#' `subjSD`: standard deviation of individual effect (default: 4)\n#' `slope`: shared increase of income per year (default: 5)\n#' `subjSlopeSD`: subject specific standard deviation from slope (default: 2)\nget_data &lt;- function(nsub=6, nyears=10, \n                     obsSD=15, subjSD=4, \n                     slope=5, subjSlopeSD=2){\n  subj_intercept &lt;- rep(rnorm(nsub, 0, subjSD), each=nyears)\n  subj_slope &lt;- rep(rnorm(nsub, slope, subjSlopeSD), each=nyears)\n  data.frame(\n    subject = as.factor(rep(1:nsub, each = nyears)),\n    year = rep(1:nyears, times = nsub),\n    salary =  subj_intercept +  # subject effect\n              subj_slope*(1:nyears) + # individual slope\n              rnorm(nyears*nsub, 0, obsSD) # obsSD\n  )\n}\n\n\n\nPlot Data\n\nplot_data &lt;- function(main, ...){\n  ggplot(get_data(...), aes(x = year, y = salary, group = subject, color = subject)) +\n    geom_line() +\n    geom_point() +\n    labs(x = \"Year\", y = \"Salary\") +\n    theme_minimal() +\n    ggtitle(main)\n}\n\n\nset.seed(123)\nplot_data(\"Noisless, equal subjects\", obsSD=0, subjSD=0, subjSlopeSD=0)\n\n\n\n\n\n\n\nplot_data(\"Noisless, equal slopes\", obsSD=0, subjSlopeSD=0)\n\n\n\n\n\n\n\nplot_data(\"Noisless\", obsSD=0)\n\n\n\n\n\n\n\nplot_data(\"General case\")\n\n\n\n\n\n\n\n\n\n\nAnalysis Methods\n\nslopeTTest &lt;- function(data){\n  fits &lt;- lmList(salary ~ year | subject, data)\n  slopes &lt;- coef(fits)[,\"year\"]\n  t_test &lt;- t.test(slopes, mu = 0)\n  t_test$p.value\n}\n\nlmmRandItcpt &lt;- function(data){\n  lmm &lt;- lmer(salary ~ year + (1|subject), data = data)\n    summary(lmm)$coefficients[2, \"Pr(&gt;|t|)\"]\n}\n\nlmmRandSlope &lt;- function(data){\n  lmm &lt;- lmer(salary ~ year + (year|subject), data = data)\n    summary(lmm)$coefficients[2, \"Pr(&gt;|t|)\"]\n}\n\np_values &lt;- function(...){\n  data &lt;- get_data(...)\n  c(\n    slopeTTest = slopeTTest(data),\n    lmmRandItcpt = lmmRandItcpt(data),\n    lmmRandSlope = lmmRandSlope(data)\n  ) # if you cange the amount of arguments, change also the object \"Power\"\n}\n\nget_power &lt;- function(...){\n  args &lt;- list(...)\n  PVALS &lt;- as.data.frame(t(\n  mc_replicate(nsim, do.call(p_values, args))\n  ))\n  # POWER:\n  sapply(lapply(PVALS, function(x) x&lt;0.05), mean)\n}\n\n\n\nPower Calculations\n\nset.seed(123)\nARGS &lt;- as.data.frame(rbind(\n  # NULL:\n  expand.grid( \n    nsub=6, \n    nyears=10, \n    obsSD=5, \n    subjSD=4, \n    slope=0, \n    subjSlopeSD=c(0,4)),\n  # Change standard deviations and effects:\n  expand.grid(\n    nsub=6, \n    nyears=10, \n    obsSD=c(5,15), \n    subjSD=c(4, 12), \n    slope=c(2,4), \n    subjSlopeSD=c(1,4)),\n  # Change samplesize (allocation):\n  expand.grid(\n    nsub=c(6,10,20), \n    nyears=c(10,20), \n    obsSD=5, \n    subjSD=4, \n    slope=2, \n    subjSlopeSD=1)[-1,]\n))\nrownames(ARGS) &lt;- NULL\n\nPower &lt;- matrix(NA, nrow=nrow(ARGS), ncol=3)\ncolnames(Power) &lt;- c(\"slopeTTest\", \n  \"lmmRandItcpt\", \"lmmRandSlope\")\n\nfor (i in 1:nrow(ARGS)){\n  args &lt;- as.list(ARGS[i,])\n  Power[i,] &lt;- do.call(get_power, args)\n}\n\n\n\nShow Results:\n\nas.data.frame(cbind(ARGS, Power)) |&gt; knitr::kable()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nnsub\nnyears\nobsSD\nsubjSD\nslope\nsubjSlopeSD\nslopeTTest\nlmmRandItcpt\nlmmRandSlope\n\n\n\n\n6\n10\n5\n4\n0\n0\n0.0440\n0.0435\n0.0170\n\n\n6\n10\n5\n4\n0\n4\n0.0520\n0.5415\n0.0515\n\n\n6\n10\n5\n4\n2\n1\n0.9200\n0.9985\n0.9185\n\n\n6\n10\n15\n4\n2\n1\n0.5385\n0.7970\n0.5120\n\n\n6\n10\n5\n12\n2\n1\n0.9175\n0.9995\n0.9170\n\n\n6\n10\n15\n12\n2\n1\n0.5500\n0.7880\n0.5335\n\n\n6\n10\n5\n4\n4\n1\n1.0000\n1.0000\n1.0000\n\n\n6\n10\n15\n4\n4\n1\n0.9775\n0.9995\n0.9780\n\n\n6\n10\n5\n12\n4\n1\n1.0000\n1.0000\n1.0000\n\n\n6\n10\n15\n12\n4\n1\n0.9805\n0.9995\n0.9805\n\n\n6\n10\n5\n4\n2\n4\n0.1820\n0.7715\n0.1820\n\n\n6\n10\n15\n4\n2\n4\n0.1515\n0.5910\n0.1475\n\n\n6\n10\n5\n12\n2\n4\n0.1570\n0.7380\n0.1570\n\n\n6\n10\n15\n12\n2\n4\n0.1510\n0.5815\n0.1480\n\n\n6\n10\n5\n4\n4\n4\n0.5000\n0.9630\n0.5015\n\n\n6\n10\n15\n4\n4\n4\n0.4555\n0.9010\n0.4470\n\n\n6\n10\n5\n12\n4\n4\n0.4905\n0.9680\n0.4905\n\n\n6\n10\n15\n12\n4\n4\n0.4405\n0.9165\n0.4350\n\n\n10\n10\n5\n4\n2\n1\n0.9990\n1.0000\n0.9990\n\n\n20\n10\n5\n4\n2\n1\n1.0000\n1.0000\n1.0000\n\n\n6\n20\n5\n4\n2\n1\n0.9655\n1.0000\n0.9655\n\n\n10\n20\n5\n4\n2\n1\n1.0000\n1.0000\n1.0000\n\n\n20\n20\n5\n4\n2\n1\n1.0000\n1.0000\n1.0000"
   },
   {
+    "objectID": "posts/dunnet-vs-holm-vs-tukeyhsd/index.html",
+    "href": "posts/dunnet-vs-holm-vs-tukeyhsd/index.html",
+    "title": "Contrasts against Control: Dunnet vs. Holm vs. TukeyHSD",
+    "section": "",
+    "text": "TLDR: Even though Dunnet is proven to be optimal (in all vs comparison) for a reasonable group number (around 10) Holm seems to yield basically the same result, while being a more general method. Dunnet is more powerful, when increasing the group number (e.g., to 30).\n\nPurpose and Structure of this Document\nIn many cases, we may want to compare new alternatives to a standard treatment or control. To do this, we use a linear model and perform hypothesis testing of all alternatives versus the control. The purpose of this document is to compare the power of different multiple testing techniques.\nThe document is structured as follows:\n\nDefine helper functions, including:\n\ndata generation\nmultiple testing functions\nwrapper for simulations\n\nPerform simulations for various settings.\nPlot the results.\n\nNote, that there are different definitions of “power” in this context. We will be using the following definitions:\n\nThe expectation that any of the non-placebos will be rejected.\nThe expectation of the fraction of non-placebos that will be rejected.\nThe expectation that all non-placebos will be rejected.\n\n\n\nHelp functions\n\nset.seed(123)\nn_rep &lt;- 500\n\nlibrary(multcomp)\n\nLoading required package: mvtnorm\n\n\nLoading required package: survival\n\n\nLoading required package: TH.data\n\n\nLoading required package: MASS\n\n\n\nAttaching package: 'TH.data'\n\n\nThe following object is masked from 'package:MASS':\n\n    geyser\n\nlibrary(ggplot2)\n\n# g groups, of which one is the control, n_effect of which have the effect `effect`\nget_data &lt;- function(g = 10, n_t = 5, n_c = 5, effect = 1, n_effect = 3) {\n  fac &lt;- as.factor(\n    rep(c(\"ctrl\", c(LETTERS, letters)[1:(g - 1)]), \n    c(n_c, rep(n_t, g - 1)))\n    )\n  groups &lt;- relevel(fac, ref = \"ctrl\")\n  y &lt;- rnorm(groups, \n    c(rep(0, length(groups) - n_t * n_effect), rep(effect, n_t * n_effect))\n    )\n  data.frame(group = groups, y = y)\n}\n\nholm &lt;- function(data) {\n  fit &lt;- lm(y ~ group, data)\n  p_vals &lt;- summary(fit)$coefficients[-1, \"Pr(&gt;|t|)\"]\n  p.adjust(p_vals)\n}\n\nnone &lt;- function(data) {\n  fit &lt;- lm(y ~ group, data)\n  summary(fit)$coefficients[-1, \"Pr(&gt;|t|)\"]\n}\n\ntukey_hsd &lt;- function(data) {\n  fit &lt;- aov(y ~ group, data)\n  a &lt;- TukeyHSD(fit)\n  contrasts &lt;- grep(\"ctrl\", rownames(a$group), value = TRUE)\n  a$group[contrasts, \"p adj\"]\n}\n\n# multcomp implementation of \"dunnet\"\ndunn &lt;- function(data) {\n  n &lt;- table(data$group)\n  names(n) &lt;- levels(data$group)\n  c(summary(\n    glht(aov(y ~ group, data), linfct = mcp(group = \"Dunnett\"))\n  )$test$pvalues)\n}\n\nall &lt;- function(data) as.matrix(data.frame(none = none(data),\n  holm = holm(data), dunn = dunn(data), tukeyHSD = tukey_hsd(data))\n)\n\ndosim &lt;- function(n_replicate = 200, n_goups = 10, n_treatmentgroup = 5, \n                  n_controlgroup = 5, effect = 1, n_non_placebo_treatments = 3) {\n  obj &lt;- mcreplicate::mc_replicate(n_replicate, all(get_data(\n    g = n_goups, n_t = n_treatmentgroup, n_c = n_controlgroup, effect = effect, \n    n_effect = n_non_placebo_treatments\n  )))\n  stopifnot(effect &gt; 0)\n  if (n_non_placebo_treatments == 0) {\n    p_val_non_placebo &lt;- obj\n    p_val_non_placebo[, , ] &lt;- 1 # this is used for power calc. In this case no effect\n  } else {\n    p_val_non_placebo &lt;- obj[(n_goups - n_non_placebo_treatments):(n_goups - 1), , ]\n  }\n  p_val_no_effect &lt;- obj[1:(n_goups - n_non_placebo_treatments - 1), , ]\n\n  # The fraction of rejected tests within the non-placebo treatments\n  MeanPower &lt;- apply(p_val_non_placebo, 2, function(x) mean(x &lt; 0.05))\n  names(MeanPower) &lt;- paste0(\"MeanPower_\", names(MeanPower))\n\n  # The fraction where all non-placebo treatments where detected\n  AllPower  &lt;- apply(p_val_non_placebo, c(2, 3), function(x) base::all(x &lt; 0.05))\n  AllPower  &lt;- apply(AllPower, 1, function(x) mean(x))\n  names(AllPower) &lt;- paste0(\"AllPower_\", names(AllPower))\n\n  # The fraction where ANY non-placebo treatment was detected\n  AnyPower  &lt;- apply(p_val_non_placebo, c(2, 3), function(x) base::any(x &lt; 0.05))\n  AnyPower  &lt;- apply(AnyPower, 1, function(x) mean(x))\n  names(AnyPower) &lt;- paste0(\"AnyPower_\", names(AnyPower))\n\n  # The FWER under the NULL (i.e. for placebo treatments)\n  any_positive &lt;- apply(p_val_no_effect, c(2, 3), function(x) any(x &lt; 0.05))\n  alpha &lt;- apply(any_positive, 1, function(x) mean(x))\n  names(alpha) &lt;- paste0(\"alpha_\", names(alpha))\n\n  as.matrix(c(\n    n_replicate = n_replicate, n_goups = n_goups, \n    n_treatmentgroup = n_treatmentgroup, \n    n_controlgroup = n_controlgroup, effect = effect,\n    n_non_placebo_treatments = n_non_placebo_treatments,\n    MeanPower, AllPower, AnyPower, alpha\n  ), ncol = 1)\n}\n\n\n\nSimulations\n\na &lt;- dosim(n_replicate = n_rep, n_non_placebo_treatments = 0) # NULL\ng &lt;- dosim(n_replicate = n_rep)\nb &lt;- dosim(n_replicate = n_rep, effect = .5)\nc &lt;- dosim(n_replicate = n_rep, effect = 2)\n# 12=floor(n_t * sqrt(g-1)) ==&gt; taking 14 yields the same total sample size\nd &lt;- dosim(n_replicate = n_rep, n_treatmentgroup = 4, n_controlgroup = 14) \ne &lt;- dosim(n_replicate = n_rep, n_treatmentgroup = 4, n_controlgroup = 14, effect = 2)\nf &lt;- dosim(n_replicate = n_rep, n_treatmentgroup = 4, n_controlgroup = 14, \n            n_non_placebo_treatments = 7)\n\n\nh &lt;- dosim(n_replicate = n_rep, n_goups = 30, n_non_placebo_treatments = 3)\ni &lt;- dosim(n_replicate = n_rep, n_goups = 30, n_non_placebo_treatments = 10)\nj &lt;- dosim(n_replicate = n_rep, n_goups = 30, n_non_placebo_treatments = 20)\n\n\nk &lt;- dosim(n_replicate = n_rep, n_treatmentgroup = 20, n_controlgroup = 20)\n# optimal sample allocation with equal total\nl &lt;- dosim(n_replicate = n_rep, n_treatmentgroup = 17, n_controlgroup = 47) \n\n\n\nResults\n\nresult &lt;- cbind(\n  null=a, \n  default=g, \n  `-effect`=b, \n  `+effect`=c,\n  `+alloc` = d, \n  `+alloc+effect` = e, \n  `+nonplacebo_grps`=f,\n  `+grps`=h,\n  `+grps+nonplacebo`=i,\n  `+grps++nonplacebo`=j,\n  `+groupsize`=k,\n  `+grpsize+alloc`=l\n)\ncolnames(result) &lt;- c(\"null\", \"default\", \"`-effect`\", \"`+effect`\", \"`+alloc`\", \n  \"`+alloc+effect`\", \"`+nonplacebo_grps`\", \"`+grps`\", \"`+grps+nonplacebo`\", \n  \"`+grps++nonplacebo`\", \"`+groupsize`\", \"`+grpsize+alloc`\"\n)\noptions(digits=4)\nresult |&gt; as.data.frame() |&gt; knitr::kable()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nnull\ndefault\n-effect\n+effect\n+alloc\n+alloc+effect\n+nonplacebo_grps\n+grps\n+grps+nonplacebo\n+grps++nonplacebo\n+groupsize\n+grpsize+alloc\n\n\n\n\nn_replicate\n500.000\n500.0000\n500.0000\n500.0000\n500.0000\n500.0000\n500.0000\n500.000\n500.0000\n500.0000\n500.0000\n500.0000\n\n\nn_goups\n10.000\n10.0000\n10.0000\n10.0000\n10.0000\n10.0000\n10.0000\n30.000\n30.0000\n30.0000\n10.0000\n10.0000\n\n\nn_treatmentgroup\n5.000\n5.0000\n5.0000\n5.0000\n4.0000\n4.0000\n4.0000\n5.000\n5.0000\n5.0000\n20.0000\n17.0000\n\n\nn_controlgroup\n5.000\n5.0000\n5.0000\n5.0000\n14.0000\n14.0000\n14.0000\n5.000\n5.0000\n5.0000\n20.0000\n47.0000\n\n\neffect\n1.000\n1.0000\n0.5000\n2.0000\n1.0000\n2.0000\n1.0000\n1.000\n1.0000\n1.0000\n1.0000\n1.0000\n\n\nn_non_placebo_treatments\n0.000\n3.0000\n3.0000\n3.0000\n3.0000\n3.0000\n7.0000\n3.000\n10.0000\n20.0000\n3.0000\n3.0000\n\n\nMeanPower_none\n0.000\n0.3420\n0.1260\n0.8720\n0.4227\n0.9340\n0.3966\n0.046\n0.2790\n0.3134\n0.8820\n0.9353\n\n\nMeanPower_holm\n0.000\n0.1180\n0.0207\n0.6067\n0.1367\n0.7527\n0.1500\n0.000\n0.0542\n0.0537\n0.6727\n0.7953\n\n\nMeanPower_dunn\n0.000\n0.1367\n0.0240\n0.6307\n0.1393\n0.7433\n0.1411\n0.000\n0.0680\n0.0647\n0.6900\n0.7833\n\n\nMeanPower_tukeyHSD\n0.000\n0.0567\n0.0073\n0.4527\n0.0733\n0.5893\n0.0711\n0.000\n0.0188\n0.0108\n0.4807\n0.6267\n\n\nAllPower_none\n0.000\n0.1320\n0.0260\n0.7280\n0.1140\n0.8240\n0.0260\n0.002\n0.0040\n0.0000\n0.7500\n0.8440\n\n\nAllPower_holm\n0.000\n0.0180\n0.0000\n0.3960\n0.0200\n0.5140\n0.0080\n0.000\n0.0000\n0.0000\n0.4460\n0.5700\n\n\nAllPower_dunn\n0.000\n0.0180\n0.0000\n0.4100\n0.0120\n0.4760\n0.0040\n0.000\n0.0000\n0.0000\n0.4500\n0.5320\n\n\nAllPower_tukeyHSD\n0.000\n0.0080\n0.0000\n0.2280\n0.0060\n0.2900\n0.0000\n0.000\n0.0000\n0.0000\n0.2240\n0.3180\n\n\nAnyPower_none\n0.000\n0.5720\n0.2520\n0.9740\n0.7540\n1.0000\n0.8860\n0.110\n0.8200\n0.8940\n0.9760\n0.9980\n\n\nAnyPower_holm\n0.000\n0.2420\n0.0580\n0.7940\n0.3100\n0.9560\n0.4980\n0.000\n0.2600\n0.3560\n0.8600\n0.9720\n\n\nAnyPower_dunn\n0.000\n0.2900\n0.0680\n0.8280\n0.3260\n0.9660\n0.5120\n0.000\n0.3140\n0.4360\n0.8840\n0.9740\n\n\nAnyPower_tukeyHSD\n0.000\n0.1180\n0.0220\n0.6800\n0.1760\n0.8800\n0.3020\n0.000\n0.1120\n0.1080\n0.7360\n0.9120\n\n\nalpha_none\n0.258\n0.2160\n0.1860\n0.2180\n0.2380\n0.2420\n0.1020\n0.802\n0.7660\n0.6980\n0.2020\n0.2200\n\n\nalpha_holm\n0.036\n0.0240\n0.0240\n0.0360\n0.0340\n0.0380\n0.0180\n0.146\n0.1580\n0.1560\n0.0180\n0.0420\n\n\nalpha_dunn\n0.056\n0.0280\n0.0360\n0.0380\n0.0360\n0.0300\n0.0180\n0.190\n0.1960\n0.1940\n0.0200\n0.0320\n\n\nalpha_tukeyHSD\n0.012\n0.0080\n0.0100\n0.0100\n0.0100\n0.0060\n0.0040\n0.046\n0.0560\n0.0420\n0.0020\n0.0160\n\n\n\n\n\n\n\nPlot\n\nX &lt;- result[-c(1:7, 11, 15, 19),] # remove \"none\" rows, and parameters \n\n# convert matrix to data frame\ndf &lt;- data.frame(env = rep(colnames(X), each = nrow(X)), \n                 strategy = rep(rownames(X), times = ncol(X)),\n                 value = as.vector(X))\n\n# split the strategy names into two parts\ndf$part1 &lt;- gsub(\"^(.*?)_.*$\", \"\\\\1\", df$strategy)\ndf$part2 &lt;- gsub(\"^.*?_(.*)$\", \"\\\\1\", df$strategy)\n\n# plot\nplt &lt;- ggplot(df, aes(x = factor(env, ordered=T, levels=unique(env)), y = value, \n  group = strategy, linetype = part1, color = part2)) + \n  geom_line() + \n  geom_point() +\n  scale_linetype_manual(\n    values = c(\"solid\", \"dashed\", \"dotted\", \"dotdash\")) +  # line types\n  theme(axis.text.x = element_text(angle = 30, hjust = 1)) # vertical x-labels \nplt\n\n\n\n\n\n\n\n\n\n\nResults\n\nDunnet and Holm yield very similar results when considering 10 groups (while varying the number of non-placebo groups, the effect, and the sample size allocation).\nDunnet shows a slight advantage over Holm, when increasing the number of groups.\nThe optimal allocation (\\(n_{control} = n_{treatments}\\sqrt{n_{groups}-1}\\)) yields an improvement as well in both cases."
+  },
+  {
+    "objectID": "posts/improve-t-test-w-lm-using-more-groups/index.html",
+    "href": "posts/improve-t-test-w-lm-using-more-groups/index.html",
+    "title": "Pairwise T-tests can be improved by including more groups",
+    "section": "",
+    "text": "TLDR: more groups make the test more stable and slightly more powerful (for low sample sizes). However, be aware that this assumes homoscedasticity (i.e., equal variance for all groups).\n\nget_data &lt;- function(n_per_group = 10, n_groups = 15) {\n  grp &lt;- as.factor(c(rep(1:n_groups, each = n_per_group)))\n  data &lt;- data.frame(group = grp, y = rnorm(n_groups * n_per_group, sd = 2) + as.numeric(grp))\n}\n\n# illustrate data\ndata &lt;- get_data()\nset.seed(123)\nboxplot(y ~ group, data)\n\n\n\n\n\n\n\n# Pairwise T-test using residuals of 2-15 groups\n# plot results\npvals_mat &lt;- replicate(20, { \n  data &lt;- get_data()\n  pvals &lt;- sapply(2:15, function(i) {\n    coefficients(summary(lm(y ~ group, data, subset = group %in% 1:i)))[\"group2\", \"Pr(&gt;|t|)\"]\n  })\n})\n\n# plot each collumn of pvals_mat with matplot\nmatplot(pvals_mat, type = \"l\", xlab = \"How Many Groups Considered +1\")\n\n\n\n\n\n\n\n# simulate power\n# 2 groups vs 5 groups\nn_sim &lt;- 2000\nresults &lt;- matrix(NA, nrow = n_sim, ncol = 2)\nfor (i in 1:n_sim) {\n  data &lt;- get_data(n_per_group = 3, n_groups = 5)\n  results[i, 1] &lt;- coefficients(summary(lm(y ~ group, data, subset = group %in% 1:2)))[\"group2\", \"Pr(&gt;|t|)\"]\n  results[i, 2] &lt;- coefficients(summary(lm(y ~ group, data, subset = group %in% 1:5)))[\"group2\", \"Pr(&gt;|t|)\"]\n}\npower &lt;- apply(results &lt; 0.05, 2, mean)\nnames(power) &lt;- c(\"power using 2 groups,\", \" 5 groups\")\npower\n\npower using 2 groups,              5 groups \n                0.074                 0.081"
+  },
+  {
     "objectID": "website/about.html",
     "href": "website/about.html",
     "title": "About",
     "section": "",
     "text": "About this site"
+  },
+  {
+    "objectID": "posts/r2-in-cv/index.html",
+    "href": "posts/r2-in-cv/index.html",
+    "title": "Do Not Use \\(R^2\\) for Cross Validation",
+    "section": "",
+    "text": "Using the notation from Wikipedia:\nThe coefficient of determination is usually evaluated on the train set. If you evaluate it on the test data, weird things can happen (especially when a test set is small). Let’s consider the $ R^2 $ for one fold that contains two observations, where the $ y $ values by pure chance are VERY close to each other.\n\\[ R^2 = 1 - \\frac{SS_{\\text{res}}}{SS_{\\text{tot}}} \\]\n$ SS_{} $ is calculated by\n\\[ \\sum_{i=1}^{2} (y_i - \\bar{y})^2 \\]\nwhere \\(\\bar{y}\\) is the mean of those two observations (at least this is how it is done in scikit-learn). Since the two observations are VERY close to each other, the $ SS_{} $ gets VERY small, while the test-residuals (and hence $ SS_{} $) might still be moderately high. This way, $ R^2 $ can be VERY low. By putting the two $ y $-values arbitrarily close to each other, you can make the $ R^2 $ for this test-fold go to \\(-\\infty\\). Note that those $ y $-values are not outliers, but just very close to each other."
+  },
+  {
+    "objectID": "posts/r2-in-cv/index.html#minimal-example",
+    "href": "posts/r2-in-cv/index.html#minimal-example",
+    "title": "Do Not Use \\(R^2\\) for Cross Validation",
+    "section": "Minimal example:",
+    "text": "Minimal example:\n$ n=4 $, $ k=2 $, estimator = mean, $ $ are the predictions from the other fold using the mean\n\n\n\nfold\n$ y $\n$ $\n\n\n\n\n1\n4\n5.0005\n\n\n1\n7\n5.0005\n\n\n2\n5\n5.5\n\n\n2\n5.001\n5.5\n\n\n\nConsider fold 2: \\[ SS_{\\text{res}} = 0.5^2 + 0.499^2 = 0.499 \\] \\[ SS_{\\text{tot}} = (5 - 5.0005)^2 + (5.001 - 5.0005)^2 = 5 \\times 10^{-7} \\] \\[ R^2 = 1 - \\frac{SS_{\\text{res}}}{SS_{\\text{tot}}} = -998001 \\]"
+  },
+  {
+    "objectID": "posts/r2-in-cv/index.html#alternatives",
+    "href": "posts/r2-in-cv/index.html#alternatives",
+    "title": "Do Not Use \\(R^2\\) for Cross Validation",
+    "section": "Alternatives:",
+    "text": "Alternatives:\n\nUse the (R)MSE\nUse the MAE\n“pseudo R-squared”: 1 - mse / Var(y) (c.f. the R-implementation of randomForest)"
+  },
+  {
+    "objectID": "CV.html",
+    "href": "CV.html",
+    "title": "Curriculum Vitae",
+    "section": "",
+    "text": "here will by my CV :)"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Lukas Graz",
+    "section": "",
+    "text": "I am a statistician with a mathematical background based in Zurich, Switzerland. Currently working as a Statistical Consultant at ETH Zurich, I am passionate about statistical methods, deriving valid conclusions, and finding elegant solutions to complex problems. My work combines statistical expertise with modern IT practices to translate mathematical concepts into practical implementations.\nView my CV"
+  },
+  {
+    "objectID": "index.html#about-me",
+    "href": "index.html#about-me",
+    "title": "Lukas Graz",
+    "section": "",
+    "text": "I am a statistician with a mathematical background based in Zurich, Switzerland. Currently working as a Statistical Consultant at ETH Zurich, I am passionate about statistical methods, deriving valid conclusions, and finding elegant solutions to complex problems. My work combines statistical expertise with modern IT practices to translate mathematical concepts into practical implementations.\nView my CV"
+  },
+  {
+    "objectID": "index.html#statistical-consulting",
+    "href": "index.html#statistical-consulting",
+    "title": "Lukas Graz",
+    "section": "Statistical Consulting",
+    "text": "Statistical Consulting\nI have consulted over 200 clients, primarily PhD and master’s students along with industry professionals. Regular discussions of these cases in the Seminar for Statistics at ETH Zurich have broadened my understanding of the statistical landscape and deepened my mathematical insights. This comprehensive experience means I can deliver effective solutions for most statistical challenges. Learn more about my services.\nBook a free 30-minute online consultation or contact me via email at stat.consulting.graz@REMOVETHISgmail.com"
+  },
+  {
+    "objectID": "index.html#some-statistical-investigations",
+    "href": "index.html#some-statistical-investigations",
+    "title": "Lukas Graz",
+    "section": "Some Statistical Investigations",
+    "text": "Some Statistical Investigations\nMotivated by some consulting cases, I spend some time to investigate some statistical questions. Here are some of my findings:"
+  },
+  {
+    "objectID": "statistical-consulting.html",
+    "href": "statistical-consulting.html",
+    "title": "Statistical Consulting",
+    "section": "",
+    "text": "I have consulted over 200 clients, primarily PhD and master’s students along with industry professionals. Regular discussions of these cases in the Seminar for Statistics at ETH Zurich have broadened my understanding of the statistical landscape and deepened my mathematical insights. This comprehensive experience means I can deliver effective solutions for most statistical challenges I encounter.\nWant to challenge me? Contact me via email at stat.consulting.graz@gmail.com to have a free 30min initial chat via zoom."
+  },
+  {
+    "objectID": "statistical-consulting.html#services",
+    "href": "statistical-consulting.html#services",
+    "title": "Statistical Consulting",
+    "section": "Services",
+    "text": "Services\n\nResearch Planning & Support\n\nResearch question formulation and statistical hypotheses\nStudy preregistration\nExperimental design selection\nSample size and power analysis, requiring:\n\nClear statistical hypotheses\nDefined experimental design\nPlanned analysis approach\n\nResponse to reviewer comments\nIndividual coaching\nCustom workshops and seminars\n\n\n\nStatistical Modeling & Analysis\n\nMultiple regression\nANOVA/ANCOVA/MANOVA (including repeated measures)\nMixed effects models (LMM/GLMM)\nGeneralized linear models (GLM)\nGeneralized additive models (GAM)\nStructural equation models (SEM)\nPath and mediation analysis\nCausal inference\nTime series analysis\nGaussian process regression\nMultivariate analysis\nBootstrap and permutation tests\nNon-parametric tests\nRandom forests\n\n\n\nReproducible Research & Reporting:\n\nR programming (Zurich R Courses lecturer)\nLinux, bash, git, and Docker\nDocumentation formats:\n\nInteractive dashboards (Shiny)\nReports (Rmarkdown)\nReproducible manuscripts (example XXX)\nQuarto websites (like this one)"
+  },
+  {
+    "objectID": "statistical-consulting.html#pricing",
+    "href": "statistical-consulting.html#pricing",
+    "title": "Statistical Consulting",
+    "section": "Pricing",
+    "text": "Pricing\n\nFree 30-minute consultation via Zoom to discuss your project\nIndustry/Institutional: 170 CHF/hour (140 CHF/hour after 10 hours)\nStudents: 140 CHF/hour (100 CHF/hour after 5 hours)\n\nContact: stat.consulting.graz@gmail.com"
+  },
+  {
+    "objectID": "website/index.html",
+    "href": "website/index.html",
+    "title": "mytitle",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  },
+  {
+    "objectID": "posts/exponential-glm-coverage/index.html",
+    "href": "posts/exponential-glm-coverage/index.html",
+    "title": "Bad Coverage for exponential GLMs",
+    "section": "",
+    "text": "Simulate a glm with exponential distribution such that\n\\[\\operatorname{y} \\sim \\operatorname{exp}(\\operatorname{h}(\\alpha + 1\\operatorname{x} + 2\\operatorname{z}))\\]\nwith the \\(h\\) being the inverse of the link functions:"
+  },
+  {
+    "objectID": "posts/exponential-glm-coverage/index.html#setup",
+    "href": "posts/exponential-glm-coverage/index.html#setup",
+    "title": "Bad Coverage for exponential GLMs",
+    "section": "Setup",
+    "text": "Setup\n\ninv_links &lt;- list( \n  identity = function(eta) eta,\n  inverse = function(eta) 1/eta,\n  log = exp)\n\nget_data &lt;- function(inv_link){\n  x &lt;- pmin(pmax(0, rnorm(n, 2)), 4)\n  z &lt;- pmin(pmax(0, rnorm(n, 1)), 4)\n  eta &lt;- 1 + x + 2*z\n  data.frame(\n    x=x, \n    z=z, \n    eta=eta, \n    mu=inv_link(eta), \n    y=rgamma(n, shape=1, scale=inv_link(eta))\n  )\n}\n\nis.in.confint &lt;- function(x, I) (x &gt;I[1]) && (x&lt; I[2])"
+  },
+  {
+    "objectID": "posts/exponential-glm-coverage/index.html#simulation",
+    "href": "posts/exponential-glm-coverage/index.html#simulation",
+    "title": "Bad Coverage for exponential GLMs",
+    "section": "Simulation",
+    "text": "Simulation\nFor each link function: 1. Plot an example (green line is the true expectation and red line is a smoothing spline) 2. Simulate coverage of true parameter for x (should be 95%)\n\nn &lt;- 100 # sample size\nnsim &lt;- 500 # number of simulations to test the confidence interval\nset.seed(123)\nfor (i in seq_along(inv_links)){\n  D &lt;- get_data(inv_links[[i]])\n  \n  plot(y ~ mu, main=names(inv_links)[i], data=D)\n  # Test with SmoothingSplines if indeed: E(y|mu) = mu\n  with(D, lines(smooth.spline(mu, y), col='red'))\n  abline(0,1, col='green')\n\n  # see if the conf-interval for beta_x is valid. i.e.:\n  #    repeat it nsim times and see if 1 is in our confidence interval\n  R &lt;- mcreplicate::mc_replicate(nsim,{\n    try({\n      D &lt;- get_data(inv_links[[i]])\n      s &lt;- summary(f &lt;- glm(\n        y ~ x + z, \n        data = D,\n        family = Gamma(link = names(inv_links)[i]), \n        mustart = mu)); s\n      suppressMessages(is.in.confint(1, confint(f, \"x\")))\n    }, silent = TRUE)\n  })\n  coverage &lt;- mean(as.logical(R), na.rm=TRUE)\n  cat(sprintf(\"Coverage for %s: %f\\n\", names(inv_links)[i], coverage))\n}\n\n\n\n\n\n\n\n\n\nCoverage for identity: 0.940299\n\n\n\n\n\n\n\n\n\n\nCoverage for inverse: 0.946058\n\n\n\n\n\n\n\n\n\n\nCoverage for log: 0.956000"
+  },
+  {
+    "objectID": "posts/exponential-glm-coverage/index.html#results",
+    "href": "posts/exponential-glm-coverage/index.html#results",
+    "title": "Bad Coverage for exponential GLMs",
+    "section": "Results",
+    "text": "Results\nFor all link functions, the coverage is about 95%"
+  },
+  {
+    "objectID": "posts/lmm-effect-of-block-variance/index.html",
+    "href": "posts/lmm-effect-of-block-variance/index.html",
+    "title": "Does the variance of the Random-Effect influence the p-values?",
+    "section": "",
+    "text": "We study the classical setup of a randomized complete block design with 2 treatments, 2 replications per block and 5 blocks. We vary the variance of the block effect and study how the p-values of the treatment effect change.\n\\[\n% equatiomatic::extract_eq(fit)\n\\begin{aligned}\n  \\operatorname{y}_{i}  &\\sim N \\left(\\alpha_{block(i)} + \\beta_{trt(i)}, \\sigma^2 \\right) \\\\\n    \\alpha_{j}  &\\sim N \\left(\\mu_{\\alpha_{j}}, {\\sigma_{\\alpha_{j}}}^2 \\right)\n    \\text{, for block j = 1,} \\dots \\text{,5}\\\\\n    % contr sum for \\beta_{trt(i)}:\n    \\beta_{1}  &= - \\beta_{2}  \\quad \\text{(contr.sum)}\n\\end{aligned}\n\\]"
+  },
+  {
+    "objectID": "posts/lmm-effect-of-block-variance/index.html#simulate-data",
+    "href": "posts/lmm-effect-of-block-variance/index.html#simulate-data",
+    "title": "Does the variance of the Random-Effect influence the p-values?",
+    "section": "Simulate Data",
+    "text": "Simulate Data\n\nlibrary(ggplot2)\nlibrary(gridExtra)\nlibrary(lmerTest)\nlibrary(multcomp)\n\noptions(contrasts = c(\"contr.sum\", \"contr.poly\"))\n\n\n# simulate data for a linear mixed model\n# a randomized complete block design with 3 treatments, nblock blocks, nrep replicates per block\n# an observation error with standard deviation SD_noise and a block effect with standard deviation SD_block\n# a treatment effect with standard deviation SD_trt\nget_data &lt;- function(nblock=5, nrep=2, SD_noise=3, SD_block=1, SD_trt=0) {\n  data &lt;- expand.grid(\n    nrep = 1:nrep,\n    trt = as.factor(1:2),\n    block = as.factor(1:nblock)\n  )\n  block_effect &lt;- SD_block * rnorm(nblock)[data$block]\n  noise &lt;- SD_noise * rnorm(nrow(data))\n  trt_effect &lt;- SD_trt * rnorm(nrow(data))[data$trt]\n  data$y &lt;- trt_effect + block_effect + noise\n  data\n}"
+  },
+  {
+    "objectID": "posts/lmm-effect-of-block-variance/index.html#plot-function",
+    "href": "posts/lmm-effect-of-block-variance/index.html#plot-function",
+    "title": "Does the variance of the Random-Effect influence the p-values?",
+    "section": "Plot Function",
+    "text": "Plot Function\n\n# function that makes an interactions plot\nplot_interactions &lt;- function(data, ...) {\n  with(data,\n  interaction.plot(\n      x.factor = trt,\n      trace.factor = block,\n      response = y,\n      type = \"b\",\n      legend = FALSE,\n      ...\n    )\n  )\n}"
+  },
+  {
+    "objectID": "posts/lmm-effect-of-block-variance/index.html#perform-analysis",
+    "href": "posts/lmm-effect-of-block-variance/index.html#perform-analysis",
+    "title": "Does the variance of the Random-Effect influence the p-values?",
+    "section": "Perform Analysis",
+    "text": "Perform Analysis\n\nGet Data that only differs with respect to SD_block (increasing)\n\nPlot the data for each SD_block\nFit a model with lmer and lm for each SD_block\n\ninspect how the estimates and standard errors of the treatmenteffect change with increasing SD_block\n\n\nSD_blocks &lt;- 0:8\nfits &lt;- vector(\"list\", length(SD_blocks)*2)\ndim(fits) &lt;- c(length(SD_blocks), 2)\ndimnames(fits) &lt;- list(paste0(\"SD_block=\",as.character(SD_blocks)), c(\"lmer\", \"lm\"))\n\npar(mfrow=c(3,3))\nfor(i in seq_along(SD_blocks)){\n  SD_block &lt;- SD_blocks[i]\n\n  set.seed(2)\n  data &lt;- get_data(SD_block=SD_block)\n  plot_interactions(data, main=paste0(\"SD_block=\", SD_block))\n  \n  # lmer\n  fits[[i,1]] &lt;- lmer(y ~ trt + (1|block), data=data)\n  \n  # lm\n  fits[[i,2]] &lt;- lm(y ~ trt + block, data=data)\n}; par(mfrow=c(1,1))\n\nboundary (singular) fit: see help('isSingular')\nboundary (singular) fit: see help('isSingular')\nboundary (singular) fit: see help('isSingular')\n\n\n\n\n\n\n\n\n# apply a function to each element of a list-array\n# preserving the dimensions and dimnames\nelementwise_apply &lt;- function(L, f){\n  L_applied &lt;- lapply(L, f)\n  dim(L_applied) &lt;- dim(L)\n  dimnames(L_applied) &lt;- dimnames(L)\n  L_applied\n}\n\nsummary_coef_trt1 &lt;- elementwise_apply(fits, function(fit) coef(summary(fit))[\"trt1\",])"
+  },
+  {
+    "objectID": "posts/lmm-effect-of-block-variance/index.html#results",
+    "href": "posts/lmm-effect-of-block-variance/index.html#results",
+    "title": "Does the variance of the Random-Effect influence the p-values?",
+    "section": "Results",
+    "text": "Results\nIllustration: How summary_coef_trt1 looks like:\n\nsummary_coef_trt1[\"SD_block=5\",]\n\n$lmer\n  Estimate Std. Error         df    t value   Pr(&gt;|t|) \n-0.3125844  0.8561637 14.0000000 -0.3650989  0.7204942 \n\n$lm\n  Estimate Std. Error    t value   Pr(&gt;|t|) \n-0.3125844  0.8561637 -0.3650989  0.7204942 \n\n# estimate\nelementwise_apply(summary_coef_trt1, function(coef) coef[1])\n\n           lmer       lm        \nSD_block=0 -0.3125844 -0.3125844\nSD_block=1 -0.3125844 -0.3125844\nSD_block=2 -0.3125844 -0.3125844\nSD_block=3 -0.3125844 -0.3125844\nSD_block=4 -0.3125844 -0.3125844\nSD_block=5 -0.3125844 -0.3125844\nSD_block=6 -0.3125844 -0.3125844\nSD_block=7 -0.3125844 -0.3125844\nSD_block=8 -0.3125844 -0.3125844\n\n# standard error\nelementwise_apply(summary_coef_trt1, function(coef) coef[2])\n\n           lmer      lm       \nSD_block=0 0.7997087 0.8561637\nSD_block=1 0.7588929 0.8561637\nSD_block=2 0.7842232 0.8561637\nSD_block=3 0.8561637 0.8561637\nSD_block=4 0.8561637 0.8561637\nSD_block=5 0.8561637 0.8561637\nSD_block=6 0.8561637 0.8561637\nSD_block=7 0.8561637 0.8561637\nSD_block=8 0.8561637 0.8561637\n\n# p-value\nelementwise_apply(summary_coef_trt1, function(coef) coef[length(coef)])\n\n           lmer      lm       \nSD_block=0 0.700479  0.7204942\nSD_block=1 0.6852797 0.7204942\nSD_block=2 0.6948831 0.7204942\nSD_block=3 0.7204942 0.7204942\nSD_block=4 0.7204942 0.7204942\nSD_block=5 0.7204942 0.7204942\nSD_block=6 0.7204942 0.7204942\nSD_block=7 0.7204942 0.7204942\nSD_block=8 0.7204942 0.7204942\n\n# random effect variance\nsapply(fits[,1], function(fit) VarCorr(fit)$block[1]) |&gt; sqrt() |&gt; signif(2) \n\nSD_block=0 SD_block=1 SD_block=2 SD_block=3 SD_block=4 SD_block=5 SD_block=6 \n      0.00       0.00       0.00       0.73       2.50       3.70       4.90 \nSD_block=7 SD_block=8 \n      6.00       7.20"
   }
 ]

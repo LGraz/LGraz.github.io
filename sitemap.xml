@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://lgraz.com/website/index.html</loc>
-    <lastmod>2024-11-22T13:41:40.312Z</lastmod>
-  </url>
-  <url>
-    <loc>https://lgraz.com/statistical-consulting.html</loc>
-    <lastmod>2024-11-22T13:41:40.312Z</lastmod>
-  </url>
-  <url>
-    <loc>https://lgraz.com/posts/r2-in-cv/index.html</loc>
+    <loc>https://lgraz.com/posts/lmer-slopes-new/index.html</loc>
     <lastmod>2024-11-22T13:41:40.311Z</lastmod>
   </url>
   <url>
-    <loc>https://lgraz.com/posts/lmm-effect-of-block-variance/index.html</loc>
+    <loc>https://lgraz.com/posts/lmm-slope-aggregate/index.html</loc>
     <lastmod>2024-11-22T13:41:40.311Z</lastmod>
+  </url>
+  <url>
+    <loc>https://lgraz.com/posts/dunnet-vs-holm-vs-tukeyhsd/index.html</loc>
+    <lastmod>2024-11-22T13:41:40.308Z</lastmod>
   </url>
   <url>
     <loc>https://lgraz.com/posts/improve-t-test-w-lm-using-more-groups/index.html</loc>
     <lastmod>2024-11-22T13:41:40.308Z</lastmod>
   </url>
   <url>
-    <loc>https://lgraz.com/posts/dunnet-vs-holm-vs-tukeyhsd/index.html</loc>
-    <lastmod>2024-11-22T13:41:40.308Z</lastmod>
+    <loc>https://lgraz.com/website/about.html</loc>
+    <lastmod>2024-11-22T13:41:40.312Z</lastmod>
+  </url>
+  <url>
+    <loc>https://lgraz.com/posts/r2-in-cv/index.html</loc>
+    <lastmod>2024-11-22T13:41:40.311Z</lastmod>
   </url>
   <url>
     <loc>https://lgraz.com/about.html</loc>
@@ -37,19 +37,19 @@
     <lastmod>2024-11-22T17:18:25.335Z</lastmod>
   </url>
   <url>
+    <loc>https://lgraz.com/statistical-consulting.html</loc>
+    <lastmod>2024-11-24T15:31:02.193Z</lastmod>
+  </url>
+  <url>
+    <loc>https://lgraz.com/website/index.html</loc>
+    <lastmod>2024-11-22T13:41:40.312Z</lastmod>
+  </url>
+  <url>
     <loc>https://lgraz.com/posts/exponential-glm-coverage/index.html</loc>
     <lastmod>2024-11-22T13:41:40.308Z</lastmod>
   </url>
   <url>
-    <loc>https://lgraz.com/posts/lmer-slopes-new/index.html</loc>
+    <loc>https://lgraz.com/posts/lmm-effect-of-block-variance/index.html</loc>
     <lastmod>2024-11-22T13:41:40.311Z</lastmod>
-  </url>
-  <url>
-    <loc>https://lgraz.com/posts/lmm-slope-aggregate/index.html</loc>
-    <lastmod>2024-11-22T13:41:40.311Z</lastmod>
-  </url>
-  <url>
-    <loc>https://lgraz.com/website/about.html</loc>
-    <lastmod>2024-11-22T13:41:40.312Z</lastmod>
   </url>
 </urlset>
