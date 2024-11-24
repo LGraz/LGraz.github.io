@@ -1,3 +1,11 @@
+# My personal webpage
+- powered with [quarto](https://quarto.org/docs/websites/)
+- Commands:
+  - Build: `quarto render`
+  - Preview: `quarto preview`
+  - Publish: `quarto publish gh-pages`
+
+
 # To Do
 - [ ] set up "google search console" 
 
