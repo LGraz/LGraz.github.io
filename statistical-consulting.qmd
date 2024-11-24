@@ -41,8 +41,7 @@ Want to challenge me? Contact me via email at [stat.consulting.graz@gmail.com](m
 - Non-parametric tests
 - Random forests
 
-### Technical Implementation
-Reproducible Research & Reporting:
+### Reproducible Research & Reporting:
 - R programming (Zurich R Courses lecturer)
 - Linux, bash, git, and Docker
 - Documentation formats:
