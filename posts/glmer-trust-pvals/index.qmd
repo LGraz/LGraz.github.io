@@ -1,0 +1,74 @@
+---
+title: |
+  Trust p-values from glmer? 
+author: Lukas Graz  
+note-type: quarto
+date: 2024-11-28    
+execute:  
+  cache: false  
+  message: false  
+  warning: false  
+  toc: true  
+# format:  
+#   revealjs:  
+#     embed-resources: true
+#     echo: true  
+#     scrollable: true  
+tags:
+  - simulation
+  - power
+  - lmm
+draft: true
+---
+
+IDEA: 
+
+- Use sleepstudy data-structure
+- to use the logistic regression consider the binary response `is.slow <- Reaction > 300`  
+- to simulate under the NULL if the p-values are uniform.
+
+```{r}
+# plot sleepstudy data w ggplot
+
+library(ggplot2)
+library(lmerTest)
+data(sleepstudy)
+
+ggplot(sleepstudy, aes(x=Days, y=Reaction)) +
+  geom_point() +
+  geom_smooth(method="lm", se=FALSE) +
+  theme_minimal() +
+  labs(title="Reaction time by days of sleep deprivation",
+       x="Days",
+       y="Reaction time (ms)") + facet_wrap(~Subject, scales="free_y")
+
+sleepstudy$is.slow <- sleepstudy$Reaction > 300
+
+fit <- nullfit <- glmer(is.slow ~ Days + (1|Subject), data=sleepstudy, family=binomial)
+lfit <- lmer(Reaction ~ Days + (1|Subject), data=sleepstudy)
+plot(lfit)
+
+# make nullfit actually null
+library(simr)
+fixef(nullfit)[] <- 0
+sim <- simulate(nullfit, nsim=500)
+
+get_pval <- function(is.slow){
+  sleepstudy$is.slow <- is.slow
+  fit <- glmer(is.slow ~ Days + (1|Subject), data=sleepstudy, family=binomial)
+  coef(summary(fit))["Days", "Pr(>|z|)"]
+}
+
+get_pval_nlmer <- function(is.slow){
+  sleepstudy$is.slow <- is.slow
+  fit <- 
+  coef(summary(fit))["Days", "Pr(>|z|)"]
+}
+
+pvals <- sapply(sim, get_pval)
+summary(pvals<0.05)
+ks.test(pvals, "punif", 0, 1)
+# hist(pvals, breaks=20, col="grey", border="white", xlab="p-value", main="Histogram of p-values")
+```
+
+We conclude that in this setting, the coverage is correct.
