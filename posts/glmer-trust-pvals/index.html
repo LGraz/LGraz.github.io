@@ -185,13 +185,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>IDEA:</p>
+<p><strong>IDEA</strong>:</p>
 <ul>
 <li>Use sleepstudy data-structure</li>
 <li>to use the logistic regression consider the binary response <code>is.slow &lt;- Reaction &gt; 300</code><br>
 </li>
-<li>to simulate under the NULL if the p-values are uniform.</li>
+<li>to simulate under the NULL</li>
+<li>test if the p-values are uniform.</li>
 </ul>
+<p><strong>Conclusion</strong> that in this setting, the coverage is correct.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot sleepstudy data w ggplot</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -217,49 +219,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> nullfit <span class="ot">&lt;-</span> <span class="fu">glmer</span>(is.slow <span class="sc">~</span> Days <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>Subject), <span class="at">data=</span>sleepstudy, <span class="at">family=</span>binomial)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>lfit <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Reaction <span class="sc">~</span> Days <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>Subject), <span class="at">data=</span>sleepstudy)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lfit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make nullfit actually null</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(simr)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(nullfit)[] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">simulate</span>(nullfit, <span class="at">nsim=</span><span class="dv">500</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>get_pval <span class="ot">&lt;-</span> <span class="cf">function</span>(is.slow){</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  sleepstudy<span class="sc">$</span>is.slow <span class="ot">&lt;-</span> is.slow</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">glmer</span>(is.slow <span class="sc">~</span> Days <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>Subject), <span class="at">data=</span>sleepstudy, <span class="at">family=</span>binomial)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coef</span>(<span class="fu">summary</span>(fit))[<span class="st">"Days"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>get_pval_nlmer <span class="ot">&lt;-</span> <span class="cf">function</span>(is.slow){</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  sleepstudy<span class="sc">$</span>is.slow <span class="ot">&lt;-</span> is.slow</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> </span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coef</span>(<span class="fu">summary</span>(fit))[<span class="st">"Days"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>pvals <span class="ot">&lt;-</span> <span class="fu">sapply</span>(sim, get_pval)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pvals<span class="sc">&lt;</span><span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(lfit)  # TA-plot</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># make nullfit actually null</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(simr)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(nullfit)[] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">simulate</span>(nullfit, <span class="at">nsim=</span><span class="dv">500</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>get_pval <span class="ot">&lt;-</span> <span class="cf">function</span>(is.slow){</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  sleepstudy<span class="sc">$</span>is.slow <span class="ot">&lt;-</span> is.slow</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">glmer</span>(is.slow <span class="sc">~</span> Days <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>Subject), <span class="at">data=</span>sleepstudy, <span class="at">family=</span>binomial)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coef</span>(<span class="fu">summary</span>(fit))[<span class="st">"Days"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>get_pval_nlmer <span class="ot">&lt;-</span> <span class="cf">function</span>(is.slow){</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  sleepstudy<span class="sc">$</span>is.slow <span class="ot">&lt;-</span> is.slow</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coef</span>(<span class="fu">summary</span>(fit))[<span class="st">"Days"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>pvals <span class="ot">&lt;-</span> <span class="fu">sapply</span>(sim, get_pval)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pvals<span class="sc">&lt;</span><span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   Mode   FALSE    TRUE 
-logical     471      29 </code></pre>
+logical     470      30 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ks.test</span>(pvals, <span class="st">"punif"</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ks.test</span>(pvals, <span class="st">"punif"</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Asymptotic one-sample Kolmogorov-Smirnov test
 
 data:  pvals
-D = 0.036289, p-value = 0.5256
+D = 0.02557, p-value = 0.8993
 alternative hypothesis: two-sided</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hist(pvals, breaks=20, col="grey", border="white", xlab="p-value", main="Histogram of p-values")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hist(pvals, breaks=20, col="grey", border="white", xlab="p-value", main="Histogram of p-values")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We conclude that in this setting, the coverage is correct.</p>
 
 
 

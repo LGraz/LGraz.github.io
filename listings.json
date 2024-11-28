@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/glmer-trust-pvals/index.html",
       "/posts/lmer-slopes-new/index.html",
       "/posts/r2-in-cv/index.html",
       "/posts/lmm-effect-of-block-variance/index.html",
