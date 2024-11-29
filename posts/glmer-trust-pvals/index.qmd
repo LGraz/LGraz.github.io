@@ -5,7 +5,6 @@ author: Lukas Graz
 note-type: quarto
 date: 2024-11-28    
 execute:  
-  cache: false  
   message: false  
   warning: false  
   toc: true  
@@ -18,14 +17,17 @@ tags:
   - simulation
   - power
   - lmm
-draft: true
+# draft: true
 ---
 
-IDEA: 
+**IDEA**: 
 
 - Use sleepstudy data-structure
 - to use the logistic regression consider the binary response `is.slow <- Reaction > 300`  
-- to simulate under the NULL if the p-values are uniform.
+- to simulate under the NULL
+- test if the p-values are uniform.
+
+**Conclusion** that in this setting, the coverage is correct.
 
 ```{r}
 # plot sleepstudy data w ggplot
@@ -46,7 +48,7 @@ sleepstudy$is.slow <- sleepstudy$Reaction > 300
 
 fit <- nullfit <- glmer(is.slow ~ Days + (1|Subject), data=sleepstudy, family=binomial)
 lfit <- lmer(Reaction ~ Days + (1|Subject), data=sleepstudy)
-plot(lfit)
+# plot(lfit)  # TA-plot
 
 # make nullfit actually null
 library(simr)
@@ -71,4 +73,3 @@ ks.test(pvals, "punif", 0, 1)
 # hist(pvals, breaks=20, col="grey", border="white", xlab="p-value", main="Histogram of p-values")
 ```
 
-We conclude that in this setting, the coverage is correct.
