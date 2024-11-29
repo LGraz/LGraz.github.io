@@ -661,34 +661,60 @@ repetition3 -0.646  0.000  0.500</code></pre>
 <h1>one-sided t-test</h1>
 <p>see <a href="https://stats.stackexchange.com/questions/325354/if-and-how-to-use-one-tailed-testing-in-multiple-regression">this stackoverflow post</a></p>
 <div class="cell" data-result="asis">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>COEFS <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit))</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># put here your names for the groups</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>group_A_name <span class="ot">&lt;-</span> <span class="fu">levels</span>(D<span class="sc">$</span>group)[<span class="dv">1</span>]</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>group_B_name <span class="ot">&lt;-</span> <span class="fu">levels</span>(D<span class="sc">$</span>group)[<span class="dv">2</span>]</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>t_val <span class="ot">&lt;-</span> COEFS[<span class="dv">2</span>, <span class="st">"t value"</span>]</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> COEFS[<span class="dv">2</span>, <span class="st">"df"</span>]</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># PVALUE: one-sided t-test for groupB &gt; groupA</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>p_val <span class="ot">&lt;-</span> <span class="fu">pt</span>(t_val, df, <span class="at">lower.tail=</span><span class="cn">FALSE</span>)</span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>one_sided_ttest <span class="ot">&lt;-</span> <span class="cf">function</span>(fit, <span class="at">which_term=</span><span class="st">"group"</span>, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>){</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  COEFS <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">any</span>(<span class="fu">grepl</span>(which_term, <span class="fu">names</span>(<span class="fu">fixef</span>(fit)))))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  which_term <span class="ot">&lt;-</span> <span class="fu">grep</span>(which_term, <span class="fu">rownames</span>(COEFS))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  t_val <span class="ot">&lt;-</span> COEFS[which_term, <span class="st">"t value"</span>]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> COEFS[which_term, <span class="st">"df"</span>]</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  p_val <span class="ot">&lt;-</span> <span class="fu">pt</span>(t_val, df, <span class="at">lower.tail=</span><span class="sc">!</span>greater_than_reference)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"p-value for one-sided t-test for the alternative hypothethis:</span><span class="sc">\n</span><span class="st">"</span>, </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">levels</span>(D<span class="sc">$</span>group)[<span class="dv">1</span>], <span class="cf">if</span>(greater_than_reference) <span class="st">"&lt;"</span> <span class="cf">else</span> <span class="st">"&gt;"</span>, <span class="fu">levels</span>(D<span class="sc">$</span>group)[<span class="dv">2</span>], <span class="st">":"</span>, p_val, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(p_val)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"p-value for one-sided t-test for the alternative hypothethis:</span><span class="sc">\n</span><span class="st">"</span>, </span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">levels</span>(D<span class="sc">$</span>group)[<span class="dv">2</span>], <span class="st">"&gt;"</span>, <span class="fu">levels</span>(D<span class="sc">$</span>group)[<span class="dv">1</span>], <span class="st">":"</span>, p_val, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># PVALUE: one-sided t-test for groupB &gt; groupA</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>p-value for one-sided t-test for the alternative hypothethis:
- B &gt; A : 0.02900157 </code></pre>
+ A &lt; B : 0.02900157 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PVALUE: one-sided t-test for groupB &lt; groupA</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>p_val <span class="ot">&lt;-</span> <span class="fu">pt</span>(t_val, df, <span class="at">lower.tail=</span><span class="cn">TRUE</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"p-value for one-sided t-test for the alternative hypothethis:</span><span class="sc">\n</span><span class="st">"</span>, </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">levels</span>(D<span class="sc">$</span>group)[<span class="dv">2</span>], <span class="st">"&gt;"</span>, <span class="fu">levels</span>(D<span class="sc">$</span>group)[<span class="dv">1</span>], <span class="st">":"</span>, p_val, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit, <span class="at">greater_than_reference=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>p-value for one-sided t-test for the alternative hypothethis:
- B &gt; A : 0.9709984 </code></pre>
+ A &gt; B : 0.9709984 </code></pre>
 </div>
 </div>
 <p>The one-sided p-value corresponds to half the two-sided p-value, if and only if the reference group is the one supposed to be smaller. The reference group is a term in R, and is (unless specified) the groupname that comes first in the alphabet. In this case, the reference group is groupA. So the one-sided p-value for groupB &gt; groupA is 0.029 which also equals 0.058/2.</p>
+</section>
+<section id="group-sequential-design" class="level1">
+<h1>Group Sequential Design</h1>
+<p>The consultancy case that has motivated this post, is doing a group sequential design. The idea is to stop the experiment early if the effect is very strong. The interim analysis is done after each repetition. The stopping rule is to stop if the one-sided p-value is smaller than 0,0221 (using the correction method described in Pocock (1977)).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(AUC <span class="sc">~</span> group <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">data=</span>D, <span class="at">subset=</span> repetition<span class="sc">==</span><span class="dv">1</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit1, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>p-value for one-sided t-test for the alternative hypothethis:
+ A &lt; B : 0.1206127 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(AUC <span class="sc">~</span> group <span class="sc">+</span> repetition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">data=</span>D, <span class="at">subset=</span> repetition <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit2, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>p-value for one-sided t-test for the alternative hypothethis:
+ A &lt; B : 0.03024551 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fit3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(AUC <span class="sc">~</span> group <span class="sc">+</span> repetition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">data=</span>D, <span class="at">subset=</span> repetition <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit3, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>p-value for one-sided t-test for the alternative hypothethis:
+ A &lt; B : 0.02900157 </code></pre>
+</div>
+</div>
+<p>The p-values are always greater than 0.0221, so we cannot reject the null hypothesis even after 3 repetitions.</p>
 
 
 </section>
