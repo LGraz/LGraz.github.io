@@ -600,7 +600,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>D<span class="sc">$</span>group <span class="ot">&lt;-</span> <span class="fu">factor</span>(D<span class="sc">$</span>group)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lmer</span>(AUC <span class="sc">~</span> group <span class="sc">+</span> repetition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), <span class="at">data=</span>D)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># if we only analyze the first repetition:</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># fit &lt;- lmer(AUC ~ group +        (1|cage), data=D)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># otherwise:</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lmer</span>(AUC <span class="sc">~</span> group <span class="sc">+</span> repetition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), <span class="at">data=</span>D)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="anova-and-two-sided-t-test" class="level1">
@@ -683,7 +688,7 @@ repetition3 -0.646  0.000  0.500</code></pre>
  B &gt; A : 0.9709984 </code></pre>
 </div>
 </div>
-<p>The one-sided p-value corresponds to half the two-sided p-value, if and only if the reference group is the one supposed to be smaller.</p>
+<p>The one-sided p-value corresponds to half the two-sided p-value, if and only if the reference group is the one supposed to be smaller. The reference group is a term in R, and is (unless specified) the groupname that comes first in the alphabet. In this case, the reference group is groupA. So the one-sided p-value for groupB &gt; groupA is 0.029 which also equals 0.058/2.</p>
 
 
 </section>
