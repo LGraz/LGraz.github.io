@@ -828,7 +828,7 @@ repetition 36.722  36.722     1 14.215 13.7702 0.002272 **
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit) <span class="co"># look at the p-value of groupB</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit) <span class="co"># look at the p-value of groupWT</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
 lmerModLmerTest]
@@ -861,7 +861,7 @@ groupWT    -0.403
 repetition -0.854  0.010</code></pre>
 </div>
 </div>
-<p>So groupB is 0.93 bigger than groupA. The p-value is 0.058.</p>
+<p>So groupWT is 1.276 bigger than groupKO. The p-value is 0.014.</p>
 </section>
 <section id="one-sided-t-test" class="level1">
 <h1>one-sided t-test</h1>
@@ -879,20 +879,20 @@ repetition -0.854  0.010</code></pre>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(p_val)</span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># PVALUE: one-sided t-test for groupB &gt; groupA</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># PVALUE: one-sided t-test for groupWT &gt; groupKO</span></span>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>p-value for one-sided t-test for the alternative hypothethis:
  KO &lt; WT : 0.007176008 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PVALUE: one-sided t-test for groupB &lt; groupA</span></span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PVALUE: one-sided t-test for groupWT &lt; groupKO</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit, <span class="at">greater_than_reference=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>p-value for one-sided t-test for the alternative hypothethis:
  KO &gt; WT : 0.992824 </code></pre>
 </div>
 </div>
-<p>The one-sided p-value corresponds to half the two-sided p-value, if and only if the reference group is the one supposed to be smaller. The reference group is a term in R, and is (unless specified) the groupname that comes first in the alphabet. In this case, the reference group is groupA. So the one-sided p-value for groupB &gt; groupA is 0.029 which also equals 0.058/2.</p>
+<p>The one-sided p-value corresponds to half the two-sided p-value, if and only if the reference group is the one supposed to be smaller. The reference group is a term in R, and is (unless specified) the groupname that comes first in the alphabet. In this case, the reference group is groupKO. So the one-sided p-value for groupWT &gt; groupKO is 0.007 which also equals 0.014/2.</p>
 </section>
 <section id="group-sequential-design" class="level1">
 <h1>Group Sequential Design</h1>
