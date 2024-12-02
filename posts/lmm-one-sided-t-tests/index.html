@@ -191,409 +191,617 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>anova and two-sided t-test</li>
 <li>one-sided t-test</li>
 </ol>
-<section id="simulate-data" class="level1">
-<h1>simulate data</h1>
-<p>Simulate data for 2 groups, 3 repetition, 5 cages per repetition, 2 mice of each group per cage</p>
+<!-- 
+# simulate data
+Simulate data for 2 groups, 3 repetition,  5 cages per repetition, 2 mice of each group per cage
+
+::: {.cell}
+
+```{.r .cell-code  code-fold="true"}
+group_effect <- 1
+
+set.seed(321)
+D <- data.frame(
+  repetition = rep(as.factor(1:3), each=20),
+  cage = factor(rep(1:15, each=4)),
+  group = rep(c("A", "B"), each=2, times=15)
+)
+
+# cage effect
+cage_effect <- data.frame(
+  cage = unique(D$cage),
+  cage_effect = rnorm(length(unique(D$cage)), sd=0.4) |> round(2)
+)
+
+D <- merge(cage_effect, D, by="cage", sort=FALSE)
+D$V13 <- rnorm(nrow(D), mean=10, sd=2) + D$cage_effect + 
+  ifelse(D$group == "B", group_effect, 0)
+D$cage_effect <- NULL
+
+knitr::kable(D)
+```
+
+::: {.cell-output-display}
+
+
+|cage |repetition |group |       V13|
+|:----|:----------|:-----|---------:|
+|1    |1          |A     |  9.070657|
+|1    |1          |A     | 11.592138|
+|1    |1          |B     | 12.520665|
+|1    |1          |B     | 12.835169|
+|2    |1          |A     | 10.612712|
+|2    |1          |A     | 11.554511|
+|2    |1          |B     | 10.505877|
+|2    |1          |B     | 12.696671|
+|3    |1          |A     |  7.745522|
+|3    |1          |A     |  8.373969|
+|3    |1          |B     | 11.080001|
+|3    |1          |B     |  6.228138|
+|4    |1          |A     | 10.785032|
+|4    |1          |A     |  7.709345|
+|4    |1          |B     | 10.000631|
+|4    |1          |B     |  7.889176|
+|5    |1          |A     | 10.781430|
+|5    |1          |A     | 11.218396|
+|5    |1          |B     | 13.411695|
+|5    |1          |B     | 10.640873|
+|6    |2          |A     | 10.339079|
+|6    |2          |A     |  5.657473|
+|6    |2          |B     | 14.381581|
+|6    |2          |B     | 10.791359|
+|7    |2          |A     | 10.346535|
+|7    |2          |A     |  7.216693|
+|7    |2          |B     | 11.446316|
+|7    |2          |B     | 11.790792|
+|8    |2          |A     | 10.578174|
+|8    |2          |A     | 11.689476|
+|8    |2          |B     | 11.772819|
+|8    |2          |B     | 11.607435|
+|9    |2          |A     | 12.047757|
+|9    |2          |A     | 12.412829|
+|9    |2          |B     |  9.171424|
+|9    |2          |B     |  9.320691|
+|10   |2          |A     |  8.001816|
+|10   |2          |A     |  9.281320|
+|10   |2          |B     | 11.421702|
+|10   |2          |B     |  9.449261|
+|11   |3          |A     |  8.122167|
+|11   |3          |A     | 10.822403|
+|11   |3          |B     | 11.916796|
+|11   |3          |B     | 14.680328|
+|12   |3          |A     | 11.015324|
+|12   |3          |A     | 13.514035|
+|12   |3          |B     | 11.700311|
+|12   |3          |B     | 14.086357|
+|13   |3          |A     |  8.083916|
+|13   |3          |A     | 12.421829|
+|13   |3          |B     |  6.086836|
+|13   |3          |B     | 10.293708|
+|14   |3          |A     | 10.653113|
+|14   |3          |A     | 12.397645|
+|14   |3          |B     |  9.655439|
+|14   |3          |B     |  9.994885|
+|15   |3          |A     |  8.795892|
+|15   |3          |A     |  9.361011|
+|15   |3          |B     | 11.279876|
+|15   |3          |B     | 11.528820|
+
+
+:::
+:::
+
+-->
+<section id="load-data" class="level1">
+<h1>Load Data</h1>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>group_effect <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">321</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">repetition =</span> <span class="fu">rep</span>(<span class="fu">as.factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>), <span class="at">each=</span><span class="dv">20</span>),</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">cage =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">15</span>, <span class="at">each=</span><span class="dv">4</span>)),</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>), <span class="at">each=</span><span class="dv">2</span>, <span class="at">times=</span><span class="dv">15</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># cage effect</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>cage_effect <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">cage =</span> <span class="fu">unique</span>(D<span class="sc">$</span>cage),</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">cage_effect =</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(<span class="fu">unique</span>(D<span class="sc">$</span>cage)), <span class="at">sd=</span><span class="fl">0.4</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">merge</span>(cage_effect, D, <span class="at">by=</span><span class="st">"cage"</span>, <span class="at">sort=</span><span class="cn">FALSE</span>)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>D<span class="sc">$</span>AUC <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(D), <span class="at">mean=</span><span class="dv">10</span>, <span class="at">sd=</span><span class="dv">2</span>) <span class="sc">+</span> D<span class="sc">$</span>cage_effect <span class="sc">+</span> </span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ifelse</span>(D<span class="sc">$</span>group <span class="sc">==</span> <span class="st">"B"</span>, group_effect, <span class="dv">0</span>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>D<span class="sc">$</span>cage_effect <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(D)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read 20241202_HT_MC38-tumor volume_last day.xlsx file</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">try</span>(<span class="fu">setwd</span>(<span class="st">"./posts/lmm-one-sided-t-tests"</span>), <span class="at">silent=</span><span class="cn">TRUE</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"20241202_HT_MC38-tumor volume_last day.xlsx"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>D<span class="sc">$</span>diameter <span class="ot">&lt;-</span> D<span class="sc">$</span>V13 <span class="sc">^</span> (<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(D)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <thead>
 <tr class="header">
-<th style="text-align: left;">cage</th>
-<th style="text-align: left;">repetition</th>
+<th style="text-align: right;">MiceID</th>
+<th style="text-align: right;">cage</th>
+<th style="text-align: left;">Sex</th>
+<th style="text-align: right;">Age</th>
 <th style="text-align: left;">group</th>
-<th style="text-align: right;">AUC</th>
+<th style="text-align: right;">repetition</th>
+<th style="text-align: right;">V13</th>
+<th style="text-align: right;">diameter</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">9.070657</td>
+<td style="text-align: right;">930</td>
+<td style="text-align: right;">515365</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">410.52384</td>
+<td style="text-align: right;">7.432121</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">11.592138</td>
+<td style="text-align: right;">932</td>
+<td style="text-align: right;">515365</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">579.40350</td>
+<td style="text-align: right;">8.336691</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">12.520665</td>
+<td style="text-align: right;">931</td>
+<td style="text-align: right;">515365</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1329.90461</td>
+<td style="text-align: right;">10.996982</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">12.835169</td>
+<td style="text-align: right;">938</td>
+<td style="text-align: right;">515366</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">830.65883</td>
+<td style="text-align: right;">9.400282</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">10.612712</td>
+<td style="text-align: right;">939</td>
+<td style="text-align: right;">515366</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">996.99995</td>
+<td style="text-align: right;">9.989990</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">11.554511</td>
+<td style="text-align: right;">933</td>
+<td style="text-align: right;">515366</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">372.07621</td>
+<td style="text-align: right;">7.192457</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">10.505877</td>
+<td style="text-align: right;">934</td>
+<td style="text-align: right;">515366</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">421.96415</td>
+<td style="text-align: right;">7.500528</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">12.696671</td>
+<td style="text-align: right;">935</td>
+<td style="text-align: right;">516557</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">776.17485</td>
+<td style="text-align: right;">9.190092</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">7.745522</td>
+<td style="text-align: right;">936</td>
+<td style="text-align: right;">516557</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1707.56800</td>
+<td style="text-align: right;">11.952516</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">8.373969</td>
+<td style="text-align: right;">952</td>
+<td style="text-align: right;">519341</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">967.74602</td>
+<td style="text-align: right;">9.891310</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">11.080001</td>
+<td style="text-align: right;">951</td>
+<td style="text-align: right;">519341</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">259.42441</td>
+<td style="text-align: right;">6.377791</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">6.228138</td>
+<td style="text-align: right;">950</td>
+<td style="text-align: right;">519341</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">438.63516</td>
+<td style="text-align: right;">7.598033</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">10.785032</td>
+<td style="text-align: right;">954</td>
+<td style="text-align: right;">519342</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">830.00991</td>
+<td style="text-align: right;">9.397834</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">7.709345</td>
+<td style="text-align: right;">953</td>
+<td style="text-align: right;">519342</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">903.94049</td>
+<td style="text-align: right;">9.668964</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">10.000631</td>
+<td style="text-align: right;">955</td>
+<td style="text-align: right;">519342</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1604.01668</td>
+<td style="text-align: right;">11.705850</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">7.889176</td>
+<td style="text-align: right;">888</td>
+<td style="text-align: right;">518516</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">849.40284</td>
+<td style="text-align: right;">9.470464</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">5</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">10.781430</td>
+<td style="text-align: right;">887</td>
+<td style="text-align: right;">518516</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">518.76835</td>
+<td style="text-align: right;">8.035098</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">5</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">11.218396</td>
+<td style="text-align: right;">894</td>
+<td style="text-align: right;">520161</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">306.81635</td>
+<td style="text-align: right;">6.744651</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">5</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">13.411695</td>
+<td style="text-align: right;">890</td>
+<td style="text-align: right;">520161</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">341.42484</td>
+<td style="text-align: right;">6.989268</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">5</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">10.640873</td>
+<td style="text-align: right;">895</td>
+<td style="text-align: right;">521046</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">293.99029</td>
+<td style="text-align: right;">6.649326</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">10.339079</td>
+<td style="text-align: right;">896</td>
+<td style="text-align: right;">521046</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">686.81700</td>
+<td style="text-align: right;">8.822947</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">5.657473</td>
+<td style="text-align: right;">897</td>
+<td style="text-align: right;">521047</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">503.68519</td>
+<td style="text-align: right;">7.956457</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">14.381581</td>
+<td style="text-align: right;">900</td>
+<td style="text-align: right;">521047</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">518.97852</td>
+<td style="text-align: right;">8.036183</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">10.791359</td>
+<td style="text-align: right;">898</td>
+<td style="text-align: right;">521047</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">35.89571</td>
+<td style="text-align: right;">3.298736</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">7</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">10.346535</td>
+<td style="text-align: right;">899</td>
+<td style="text-align: right;">521047</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">241.72566</td>
+<td style="text-align: right;">6.229324</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">7</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">7.216693</td>
+<td style="text-align: right;">901</td>
+<td style="text-align: right;">523672</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">348.53308</td>
+<td style="text-align: right;">7.037439</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">7</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">11.446316</td>
+<td style="text-align: right;">903</td>
+<td style="text-align: right;">523672</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">328.50457</td>
+<td style="text-align: right;">6.899969</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">7</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">11.790792</td>
+<td style="text-align: right;">902</td>
+<td style="text-align: right;">523672</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">312.02899</td>
+<td style="text-align: right;">6.782633</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">8</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">10.578174</td>
+<td style="text-align: right;">931</td>
+<td style="text-align: right;">524731</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1178.05030</td>
+<td style="text-align: right;">10.561395</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">8</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">11.689476</td>
+<td style="text-align: right;">930</td>
+<td style="text-align: right;">524731</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">796.13798</td>
+<td style="text-align: right;">9.268215</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">8</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">11.772819</td>
+<td style="text-align: right;">929</td>
+<td style="text-align: right;">524731</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">482.51191</td>
+<td style="text-align: right;">7.843370</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">8</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">11.607435</td>
+<td style="text-align: right;">905</td>
+<td style="text-align: right;">523673</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">134.89640</td>
+<td style="text-align: right;">5.128615</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">9</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">12.047757</td>
+<td style="text-align: right;">906</td>
+<td style="text-align: right;">523673</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">451.55379</td>
+<td style="text-align: right;">7.671904</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">9</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">12.412829</td>
+<td style="text-align: right;">920</td>
+<td style="text-align: right;">524714</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">49.31999</td>
+<td style="text-align: right;">3.667254</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">9</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">9.171424</td>
+<td style="text-align: right;">922</td>
+<td style="text-align: right;">524714</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">188.00473</td>
+<td style="text-align: right;">5.728702</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">9</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">9.320691</td>
+<td style="text-align: right;">921</td>
+<td style="text-align: right;">524714</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">358.24065</td>
+<td style="text-align: right;">7.102179</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">10</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">8.001816</td>
+<td style="text-align: right;">925</td>
+<td style="text-align: right;">524715</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">117.07240</td>
+<td style="text-align: right;">4.891982</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">10</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">9.281320</td>
+<td style="text-align: right;">923</td>
+<td style="text-align: right;">524715</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">235.87591</td>
+<td style="text-align: right;">6.178663</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">10</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">11.421702</td>
+<td style="text-align: right;">924</td>
+<td style="text-align: right;">524715</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">116.18825</td>
+<td style="text-align: right;">4.879636</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">10</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">9.449261</td>
+<td style="text-align: right;">913</td>
+<td style="text-align: right;">524737</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1127.79315</td>
+<td style="text-align: right;">10.409019</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">11</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">8.122167</td>
+<td style="text-align: right;">907</td>
+<td style="text-align: right;">524737</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">304.16803</td>
+<td style="text-align: right;">6.725189</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">11</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">10.822403</td>
+<td style="text-align: right;">908</td>
+<td style="text-align: right;">524737</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">505.34612</td>
+<td style="text-align: right;">7.965193</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">11</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">11.916796</td>
+<td style="text-align: right;">914</td>
+<td style="text-align: right;">524738</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1097.82540</td>
+<td style="text-align: right;">10.315994</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">11</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">14.680328</td>
+<td style="text-align: right;">910</td>
+<td style="text-align: right;">524738</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">130.89710</td>
+<td style="text-align: right;">5.077423</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">12</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">11.015324</td>
+<td style="text-align: right;">912</td>
+<td style="text-align: right;">524738</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">660.29680</td>
+<td style="text-align: right;">8.707893</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">12</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">13.514035</td>
+<td style="text-align: right;">916</td>
+<td style="text-align: right;">524739</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">KO</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">46.47149</td>
+<td style="text-align: right;">3.595248</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">12</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">11.700311</td>
+<td style="text-align: right;">915</td>
+<td style="text-align: right;">524739</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">389.76231</td>
+<td style="text-align: right;">7.304659</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">12</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">14.086357</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">13</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">8.083916</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">13</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">12.421829</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">13</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">6.086836</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">13</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">10.293708</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">10.653113</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">12.397645</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">9.655439</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">9.994885</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">8.795892</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">A</td>
-<td style="text-align: right;">9.361011</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">11.279876</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">B</td>
-<td style="text-align: right;">11.528820</td>
+<td style="text-align: right;">917</td>
+<td style="text-align: right;">524739</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">WT</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">557.56208</td>
+<td style="text-align: right;">8.230592</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
+<p>Since Volume is heavily right-skewed, we will use the cubic root of the volume as the response variable. The resulting variable approximately resembles the diameter.</p>
 </section>
 <section id="fit-linear-mixed-model" class="level1">
 <h1>fit linear mixed model</h1>
@@ -602,10 +810,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>D<span class="sc">$</span>group <span class="ot">&lt;-</span> <span class="fu">factor</span>(D<span class="sc">$</span>group)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># if we only analyze the first repetition:</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># fit &lt;- lmer(AUC ~ group +        (1|cage), data=D)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># fit &lt;- lmer(diameter ~ group +        (1|cage), data=D)</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># otherwise:</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lmer</span>(AUC <span class="sc">~</span> group <span class="sc">+</span> repetition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), <span class="at">data=</span>D)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lmer</span>(diameter <span class="sc">~</span> group <span class="sc">+</span> repetition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), <span class="at">data=</span>D)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="anova-and-two-sided-t-test" class="level1">
@@ -614,9 +822,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Type III Analysis of Variance Table with Satterthwaite's method
-            Sum Sq Mean Sq NumDF DenDF F value Pr(&gt;F)  
-group      13.0512 13.0512     1    44  3.7887 0.0580 .
-repetition  1.4311  0.7156     2    12  0.2077 0.8153  
+           Sum Sq Mean Sq NumDF  DenDF F value   Pr(&gt;F)   
+group      17.386  17.386     1 42.403  6.5197 0.014352 * 
+repetition 36.722  36.722     1 14.215 13.7702 0.002272 **
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -624,35 +832,33 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
 lmerModLmerTest]
-Formula: AUC ~ group + repetition + (1 | cage)
+Formula: diameter ~ group + repetition + (1 | cage)
    Data: D
 
-REML criterion at convergence: 246.2
+REML criterion at convergence: 185
 
 Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--2.4500 -0.6722  0.1466  0.6608  1.9061 
+     Min       1Q   Median       3Q      Max 
+-2.05849 -0.80721  0.05774  0.76071  1.86338 
 
 Random effects:
  Groups   Name        Variance Std.Dev.
- cage     (Intercept) 0.5942   0.7709  
- Residual             3.4448   1.8560  
-Number of obs: 60, groups:  cage, 15
+ cage     (Intercept) 0.2457   0.4957  
+ Residual             2.6668   1.6330  
+Number of obs: 48, groups:  cage, 17
 
 Fixed effects:
             Estimate Std. Error      df t value Pr(&gt;|t|)    
-(Intercept)   9.8962     0.5903 17.0200  16.764 5.14e-12 ***
-groupB        0.9328     0.4792 44.0000   1.946    0.058 .  
-repetition2   0.0736     0.7630 12.0000   0.096    0.925    
-repetition3   0.4579     0.7630 12.0000   0.600    0.560    
+(Intercept)   9.4218     0.7860 18.6525  11.987 3.32e-10 ***
+groupWT       1.2757     0.4996 42.4025   2.553  0.01435 *  
+repetition   -1.2116     0.3265 14.2151  -3.711  0.00227 ** 
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Correlation of Fixed Effects:
-            (Intr) groupB rpttn2
-groupB      -0.406              
-repetition2 -0.646  0.000       
-repetition3 -0.646  0.000  0.500</code></pre>
+           (Intr) gropWT
+groupWT    -0.403       
+repetition -0.854  0.010</code></pre>
 </div>
 </div>
 <p>So groupB is 0.93 bigger than groupA. The p-value is 0.058.</p>
@@ -677,13 +883,13 @@ repetition3 -0.646  0.000  0.500</code></pre>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>p-value for one-sided t-test for the alternative hypothethis:
- A &lt; B : 0.02900157 </code></pre>
+ KO &lt; WT : 0.007176008 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PVALUE: one-sided t-test for groupB &lt; groupA</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit, <span class="at">greater_than_reference=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>p-value for one-sided t-test for the alternative hypothethis:
- A &gt; B : 0.9709984 </code></pre>
+ KO &gt; WT : 0.992824 </code></pre>
 </div>
 </div>
 <p>The one-sided p-value corresponds to half the two-sided p-value, if and only if the reference group is the one supposed to be smaller. The reference group is a term in R, and is (unless specified) the groupname that comes first in the alphabet. In this case, the reference group is groupA. So the one-sided p-value for groupB &gt; groupA is 0.029 which also equals 0.058/2.</p>
@@ -692,29 +898,33 @@ repetition3 -0.646  0.000  0.500</code></pre>
 <h1>Group Sequential Design</h1>
 <p>The consultancy case that has motivated this post, is doing a group sequential design. The idea is to stop the experiment early if the effect is very strong. The interim analysis is done after each repetition. The stopping rule is to stop if the one-sided p-value is smaller than 0,0221 (using the correction method described in Pocock (1977)).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(AUC <span class="sc">~</span> group <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">data=</span>D, <span class="at">subset=</span> repetition<span class="sc">==</span><span class="dv">1</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit1, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model with only the first repetition</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(diameter <span class="sc">~</span> group <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">data=</span>D, <span class="at">subset=</span> repetition<span class="sc">==</span><span class="dv">1</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit1, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>p-value for one-sided t-test for the alternative hypothethis:
- A &lt; B : 0.1206127 </code></pre>
+ KO &lt; WT : 0.004332269 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(AUC <span class="sc">~</span> group <span class="sc">+</span> repetition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">data=</span>D, <span class="at">subset=</span> repetition <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit2, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model with the first two repetitions</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(diameter <span class="sc">~</span> group <span class="sc">+</span> repetition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">data=</span>D, <span class="at">subset=</span> repetition <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit2, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>p-value for one-sided t-test for the alternative hypothethis:
- A &lt; B : 0.03024551 </code></pre>
+ KO &lt; WT : 0.01616867 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fit3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(AUC <span class="sc">~</span> group <span class="sc">+</span> repetition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">data=</span>D, <span class="at">subset=</span> repetition <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit3, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model with all three repetitions</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>fit3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(diameter <span class="sc">~</span> group <span class="sc">+</span> repetition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>cage), </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">data=</span>D, <span class="at">subset=</span> repetition <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">one_sided_ttest</span>(fit3, <span class="at">greater_than_reference=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>p-value for one-sided t-test for the alternative hypothethis:
- A &lt; B : 0.02900157 </code></pre>
+ KO &lt; WT : 0.007176008 </code></pre>
 </div>
 </div>
-<p>The p-values are always greater than 0.0221, so we cannot reject the null hypothesis even after 3 repetitions.</p>
+<!-- The p-values are always greater than 0.0221, so we cannot reject the null hypothesis even after 3 repetitions. -->
+<p>The first p-value is smaller than 0.0221, so we could have stopped the experiment after the first repetition.</p>
 
 
 </section>
