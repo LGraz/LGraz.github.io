@@ -10,9 +10,9 @@ date: 2024-11-29
 3. anova and two-sided t-test
 4. one-sided t-test
 
+<!-- 
 # simulate data
 Simulate data for 2 groups, 3 repetition,  5 cages per repetition, 2 mice of each group per cage
-
 ```{r}
 #| code-fold: true
 group_effect <- 1
@@ -31,12 +31,25 @@ cage_effect <- data.frame(
 )
 
 D <- merge(cage_effect, D, by="cage", sort=FALSE)
-D$AUC <- rnorm(nrow(D), mean=10, sd=2) + D$cage_effect + 
+D$V13 <- rnorm(nrow(D), mean=10, sd=2) + D$cage_effect + 
   ifelse(D$group == "B", group_effect, 0)
 D$cage_effect <- NULL
 
 knitr::kable(D)
+``` 
+-->
+
+# Load Data
+```{r}
+# read 20241202_HT_MC38-tumor volume_last day.xlsx file
+library(readxl)
+try(setwd("./posts/lmm-one-sided-t-tests"), silent=TRUE)
+
+D <- read_excel("20241202_HT_MC38-tumor volume_last day.xlsx")
+D$diameter <- D$V13 ^ (1/3) 
+knitr::kable(D)
 ```
+Since Volume is heavily right-skewed, we will use the cubic root of the volume as the response variable. The resulting variable approximately resembles the diameter. 
 
 # fit linear mixed model
 ```{r}
@@ -46,10 +59,10 @@ library(lmerTest)
 D$group <- factor(D$group)
 
 # if we only analyze the first repetition:
-# fit <- lmer(AUC ~ group +        (1|cage), data=D)
+# fit <- lmer(diameter ~ group +        (1|cage), data=D)
 
 # otherwise:
-fit <- lmer(AUC ~ group + repetition + (1|cage), data=D)
+fit <- lmer(diameter ~ group + repetition + (1|cage), data=D)
 ```
 
 # anova and two-sided t-test
@@ -90,16 +103,20 @@ The one-sided p-value corresponds to half the two-sided p-value, if and only if 
 The consultancy case that has motivated this post, is doing a group sequential design. The idea is to stop the experiment early if the effect is very strong. The interim analysis is done after each repetition. The stopping rule is to stop if the one-sided p-value is smaller than 0,0221 (using the correction method described in Pocock (1977)).
 
 ```{r}
-fit1 <- lmer(AUC ~ group + (1|cage), 
+# model with only the first repetition
+fit1 <- lmer(diameter ~ group + (1|cage), 
              data=D, subset= repetition==1)
 one_sided_ttest(fit1, greater_than_reference=TRUE)
 
-fit2 <- lmer(AUC ~ group + repetition + (1|cage), 
+# model with the first two repetitions
+fit2 <- lmer(diameter ~ group + repetition + (1|cage), 
              data=D, subset= repetition %in% 1:2)
 one_sided_ttest(fit2, greater_than_reference=TRUE)
 
-fit3 <- lmer(AUC ~ group + repetition + (1|cage), 
+# model with all three repetitions
+fit3 <- lmer(diameter ~ group + repetition + (1|cage), 
              data=D, subset= repetition %in% 1:3)
 one_sided_ttest(fit3, greater_than_reference=TRUE)
 ```
-The p-values are always greater than 0.0221, so we cannot reject the null hypothesis even after 3 repetitions.
+<!-- The p-values are always greater than 0.0221, so we cannot reject the null hypothesis even after 3 repetitions. -->
+The first p-value is smaller than 0.0221, so we could have stopped the experiment after the first repetition. 
