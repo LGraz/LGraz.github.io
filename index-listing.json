@@ -1,0 +1,15 @@
+{
+  "listing": "/index.html",
+  "items": [
+    "/posts/lmm-one-sided-t-tests/index.html",
+    "/posts/glmer-trust-pvals/index.html",
+    "/posts/lmer-slopes-new/index.html",
+    "/posts/r2-in-cv/index.html",
+    "/posts/lmm-effect-of-block-variance/index.html",
+    "/posts/ttest-vs-wilcoxon-vs-median-test/index.md",
+    "/posts/exponential-glm-coverage/index.html",
+    "/posts/lmm-slope-aggregate/index.html",
+    "/posts/dunnet-vs-holm-vs-tukeyhsd/index.html",
+    "/posts/improve-t-test-w-lm-using-more-groups/index.html"
+  ]
+}

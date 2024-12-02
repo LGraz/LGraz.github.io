@@ -68,10 +68,10 @@ fit <- lmer(diameter ~ group + repetition + (1|cage), data=D)
 # anova and two-sided t-test
 ```{r}
 anova(fit)
-summary(fit) # look at the p-value of groupB
+summary(fit) # look at the p-value of groupWT
 ```
 
-So groupB is 0.93 bigger than groupA. The p-value is 0.058.
+So groupWT is 1.276 bigger than groupKO. The p-value is 0.014.
 
 # one-sided t-test
 see [this stackoverflow post](https://stats.stackexchange.com/questions/325354/if-and-how-to-use-one-tailed-testing-in-multiple-regression)
@@ -89,15 +89,15 @@ one_sided_ttest <- function(fit, which_term="group", greater_than_reference=TRUE
   invisible(p_val)
 }
 
-# PVALUE: one-sided t-test for groupB > groupA
+# PVALUE: one-sided t-test for groupWT > groupKO
 one_sided_ttest(fit, greater_than_reference=TRUE)
 
-# PVALUE: one-sided t-test for groupB < groupA
+# PVALUE: one-sided t-test for groupWT < groupKO
 one_sided_ttest(fit, greater_than_reference=FALSE)
 ```
 
 
-The one-sided p-value corresponds to half the two-sided p-value, if and only if the reference group is the one supposed to be smaller. The reference group is a term in R, and is (unless specified) the groupname that comes first in the alphabet. In this case, the reference group is groupA. So the one-sided p-value for groupB > groupA is 0.029 which also equals 0.058/2.
+The one-sided p-value corresponds to half the two-sided p-value, if and only if the reference group is the one supposed to be smaller. The reference group is a term in R, and is (unless specified) the groupname that comes first in the alphabet. In this case, the reference group is groupKO. So the one-sided p-value for groupWT > groupKO is 0.007 which also equals 0.014/2.
 
 # Group Sequential Design
 The consultancy case that has motivated this post, is doing a group sequential design. The idea is to stop the experiment early if the effect is very strong. The interim analysis is done after each repetition. The stopping rule is to stop if the one-sided p-value is smaller than 0,0221 (using the correction method described in Pocock (1977)).
