@@ -1,0 +1,127 @@
+---
+title: |
+  Heteroskedastic Linear Mixed Models with 
+  `glmmTMB` and the argument `dispformula`
+author: Lukas Graz  
+date: 2024-12-04  
+# tags:
+#   - simulation
+#   - power
+#   - lmm
+---
+
+**TLDR**: `glmmTMB` can handle heteroskedastic data via the `dispformula` argument. Type I error rate is inflated regardless (with and without `dispformula`). 
+
+**Example**: 
+```
+glmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)
+```
+
+**Note**: Before modelling heteroskedastic LMM try:
+
+- fixing heteroskedasticity by transforming the response variable (log, sqrt, etc.)
+- Simplify mixed model structure by aggregating data like done in [this post](../lmer-slopes-new)
+
+## Structure
+1. Setup Data Simulation
+2. Visualize Data
+   1. Raw
+   2. Simulated from glmmTMB with Dispersion
+   3. Simulated from glmmTMB without Dispersion
+3. Simulate Data and test Type I error rate
+   1. Check ratio of significant p-values (Anova and coefficients)
+   2. Check if distribution of p-values is uniform
+      1. kolmogorov-smirnov test
+      2. histogram
+
+## Setup Data Simulation
+```{r}
+#| code-fold: true
+library(simr)
+library(glmmTMB) 
+library(ggplot2)
+library(lmerTest)
+library(car)
+library(mcreplicate)
+
+# set contrast sum:
+options(contrasts = c("contr.sum", "contr.poly"))
+
+# Design Matrix
+X <- data.frame(
+  id  = as.factor(rep(1:20, each = 10)),
+  trt = as.factor(rep(c("A", "B", "C", "D"), each = 50))
+)
+
+# create NULL-lmer-model
+model <- makeLmer(y ~ trt + (1|id), 
+  fixef=  c(0,0,0,0),
+  VarCorr = 2,
+  data = X, 
+  sigma = 1
+  )
+
+# heteroscedastic response
+get_data <- function(n) {
+  D <- X
+  D$y <- simulate(model, 1)[[1]]
+  D$y[D$trt %in% c("C", "D")] <- D$y[D$trt %in% c("C", "D")] + rnorm(nrow(D)/2, 0, 3)
+  return(D)
+}
+```
+
+
+## Visualize Data
+### Raw Data
+```{r}
+set.seed(123)
+Dat <- get_data()
+ggplot(Dat, aes(x=trt, y=y, color=id)) + geom_boxplot()
+```
+
+### Simulated Data from glmmTMB with Dispersion
+```{r}
+Dat$y_disp <- simulate(
+  glmmTMB(y ~ 0+trt + (1|id), data = Dat, dispformula = ~trt), 1)[[1]]
+ggplot(Dat, aes(x=trt, y=y_disp, color=id)) + geom_boxplot()
+```
+
+### Simulated Data from glmmTMB without Dispersion
+```{r}
+Dat$y_nodisp <- simulate(
+  glmmTMB(y ~ 0+trt + (1|id), data = Dat                    ), 1)[[1]]
+ggplot(Dat, aes(x=trt, y=y_nodisp, color=id)) + geom_boxplot()
+```
+
+## Simulate Data and test Type I error rate (on heteroskedastic data)
+### Modeld With Dispersion
+```{r}
+nsim <- 500
+set.seed(123)
+
+PVALs <- mc_replicate(nsim, {
+  D <- get_data()
+  fit <- glmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)
+  c(Anova=Anova(fit)[1,"Pr(>Chisq)"], coef(summary(fit))$cond[,"Pr(>|z|)"])
+})
+rowMeans(PVALs < 0.05)
+apply(PVALs, 1, function(x) ks.test(x, punif)$p.value) |> signif(2)
+hist(PVALs)
+```
+
+
+### Model Without Dispersion
+```{r}
+PVALs_nodisp <- mc_replicate(nsim, {
+  D <- get_data()
+  fit <- glmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)
+  c(Anova=Anova(fit)[1,"Pr(>Chisq)"], coef(summary(fit))$cond[,"Pr(>|z|)"])
+})
+
+rowMeans(PVALs_nodisp < 0.05)
+apply(PVALs_nodisp, 1, function(x) ks.test(x, punif)$p.value) |> signif(2)
+hist(PVALs_nodisp)
+```
+
+## Conclusion
+`glmmTMB` models dispersion as expected. **BUT** the Type I error rate is inflated for both (with and without `dispformula`)!

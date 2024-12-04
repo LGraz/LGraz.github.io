@@ -5,8 +5,8 @@
 freeze: auto
 cache: true
 # echo: true
-# warning: false
-# message: false
+warning: false
+message: false
 
 # page-navigation: true # next/previous page
 
