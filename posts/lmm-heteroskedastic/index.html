@@ -9,7 +9,7 @@
 <meta name="author" content="Lukas Graz">
 <meta name="dcterms.date" content="2024-12-04">
 
-<title>Lukas Graz - Heteroskedastic Linear Mixed Models with glmmTMB and the argument dispformula</title>
+<title>Lukas Graz - Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -149,7 +149,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title"><p>Heteroskedastic Linear Mixed Models with <code>glmmTMB</code> and the argument <code>dispformula</code></p></h1>
+      <h1 class="title"><p>Heteroscedastic Linear Mixed Models with <code>glmmTMB</code> and the argument <code>dispformula</code></p></h1>
                       </div>
   </div>
     
@@ -190,7 +190,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#sec-sim-dat-vis-w-disp" id="toc-sec-sim-dat-vis-w-disp" class="nav-link" data-scroll-target="#sec-sim-dat-vis-w-disp">Simulated Data from glmmTMB with Dispersion</a></li>
   <li><a href="#simulated-data-from-glmmtmb-without-dispersion" id="toc-simulated-data-from-glmmtmb-without-dispersion" class="nav-link" data-scroll-target="#simulated-data-from-glmmtmb-without-dispersion">Simulated Data from glmmTMB without Dispersion</a></li>
   </ul></li>
-  <li><a href="#type-i-error-rate-on-heteroskedastic-data" id="toc-type-i-error-rate-on-heteroskedastic-data" class="nav-link" data-scroll-target="#type-i-error-rate-on-heteroskedastic-data">Type I error rate (on heteroskedastic data)</a>
+  <li><a href="#type-i-error-rate-on-heteroscedastic-data" id="toc-type-i-error-rate-on-heteroscedastic-data" class="nav-link" data-scroll-target="#type-i-error-rate-on-heteroscedastic-data">Type I error rate (on heteroscedastic data)</a>
   <ul class="collapse">
   <li><a href="#glmmtmby-trt-1id-dispformula-trt" id="toc-glmmtmby-trt-1id-dispformula-trt" class="nav-link" data-scroll-target="#glmmtmby-trt-1id-dispformula-trt"><code>glmmTMB(y ~ trt + (1|id), dispformula = ~trt)</code></a></li>
   <li><a href="#glmmtmby-trt-1id" id="toc-glmmtmby-trt-1id" class="nav-link" data-scroll-target="#glmmtmby-trt-1id"><code>glmmTMB(y ~ trt + (1|id))</code></a></li>
@@ -219,14 +219,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="abstract" class="level1">
 <h1>Abstract</h1>
 <ul>
-<li><code>glmmTMB</code> can model heteroskedastic data via the <code>dispformula</code> argument (c.f. section <a href="#sec-sim-dat-vis-w-disp" class="quarto-xref">Section&nbsp;3.3</a>).</li>
-<li>Type I error rate is slightly inflated. Regardless if modeled on homo-/heteroskedastic data accounting/ignoring heteroskedasticity with lmer and glmmTMB</li>
+<li><code>glmmTMB</code> can model heteroscedastic data via the <code>dispformula</code> argument (c.f. section <a href="#sec-sim-dat-vis-w-disp" class="quarto-xref">Section&nbsp;3.3</a>).</li>
+<li>Type I error rate is slightly inflated. Regardless if modeled on homo-/heteroscedastic data accounting/ignoring heteroscedasticity with lmer and glmmTMB</li>
 </ul>
 <p><strong>Example</strong>:</p>
 <pre><code>glmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)</code></pre>
-<p><strong>Note</strong>: Before modelling heteroskedastic LMM try:</p>
+<p><strong>Note</strong>: Before modelling heteroscedastic LMM try:</p>
 <ul>
-<li>fixing heteroskedasticity by transforming the response variable (log, sqrt, etc.)</li>
+<li>fixing heteroscedasticity by transforming the response variable (log, sqrt, etc.)</li>
 <li>Simplify mixed model structure by aggregating data like done in <a href="../lmer-slopes-new">this post</a></li>
 </ul>
 </section>
@@ -337,8 +337,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
-<section id="type-i-error-rate-on-heteroskedastic-data" class="level1">
-<h1>Type I error rate (on heteroskedastic data)</h1>
+<section id="type-i-error-rate-on-heteroscedastic-data" class="level1">
+<h1>Type I error rate (on heteroscedastic data)</h1>
 <div class="cell">
 <details class="code-fold">
 <summary>analysis functions code</summary>
