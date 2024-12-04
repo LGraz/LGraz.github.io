@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/lmm-heteroskedastic/index.html",
       "/posts/lmm-one-sided-t-tests/index.html",
       "/posts/glmer-trust-pvals/index.html",
       "/posts/lmer-slopes-new/index.html",
