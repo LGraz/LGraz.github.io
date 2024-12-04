@@ -4,13 +4,23 @@ title: |
   `glmmTMB` and the argument `dispformula`
 author: Lukas Graz  
 date: 2024-12-04  
+format:
+  html:
+    toc: true
+    toc-location: left
+    toc-expand: true
 # tags:
 #   - simulation
 #   - power
 #   - lmm
 ---
 
-**TLDR**: `glmmTMB` can handle heteroskedastic data via the `dispformula` argument. Type I error rate is inflated regardless (with and without `dispformula`). 
+# Abstract
+- `glmmTMB` can model heteroskedastic data via the `dispformula` argument (c.f. section @sec-sim-dat-vis-w-disp). 
+- Type I error rate is slightly inflated. Regardless if modeled on homo-/heteroskedastic data accounting/ignoring heteroskedasticity with lmer and glmmTMB
+
+`glmmTMB` models dispersion as expected. **BUT** the Type I error rate is inflated for both (with and without `dispformula`)!
+
 
 **Example**: 
 ```
@@ -22,19 +32,8 @@ glmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)
 - fixing heteroskedasticity by transforming the response variable (log, sqrt, etc.)
 - Simplify mixed model structure by aggregating data like done in [this post](../lmer-slopes-new)
 
-## Structure
-1. Setup Data Simulation
-2. Visualize Data
-   1. Raw
-   2. Simulated from glmmTMB with Dispersion
-   3. Simulated from glmmTMB without Dispersion
-3. Simulate Data and test Type I error rate
-   1. Check ratio of significant p-values (Anova and coefficients)
-   2. Check if distribution of p-values is uniform
-      1. kolmogorov-smirnov test
-      2. histogram
 
-## Setup Data Simulation
+# Setup Data Simulation
 ```{r}
 #| code-fold: true
 library(simr)
@@ -62,66 +61,131 @@ model <- makeLmer(y ~ trt + (1|id),
   )
 
 # heteroscedastic response
-get_data <- function(n) {
+get_hetero_data <- function(n) {
   D <- X
   D$y <- simulate(model, 1)[[1]]
   D$y[D$trt %in% c("C", "D")] <- D$y[D$trt %in% c("C", "D")] + rnorm(nrow(D)/2, 0, 3)
   return(D)
 }
+
+# homoscedastic response
+get_homo_data <- function(n) {
+  D <- X
+  D$y <- simulate(model, 1)[[1]]
+  return(D)
+}
 ```
 
 
-## Visualize Data
-### Raw Data
+# Visualize Data
+## Raw heteroscedastic Data
 ```{r}
 set.seed(123)
-Dat <- get_data()
-ggplot(Dat, aes(x=trt, y=y, color=id)) + geom_boxplot()
+Dat_hetero <- get_hetero_data()
+ggplot(Dat_hetero, aes(x=trt, y=y, color=id)) + geom_boxplot()
 ```
 
-### Simulated Data from glmmTMB with Dispersion
+## Raw homoscedastic Data
 ```{r}
-Dat$y_disp <- simulate(
-  glmmTMB(y ~ 0+trt + (1|id), data = Dat, dispformula = ~trt), 1)[[1]]
-ggplot(Dat, aes(x=trt, y=y_disp, color=id)) + geom_boxplot()
+ggplot(get_homo_data(), aes(x=trt, y=y, color=id)) + geom_boxplot()
 ```
 
-### Simulated Data from glmmTMB without Dispersion
+## Simulated Data from glmmTMB with Dispersion {#sec-sim-dat-vis-w-disp}
 ```{r}
-Dat$y_nodisp <- simulate(
-  glmmTMB(y ~ 0+trt + (1|id), data = Dat                    ), 1)[[1]]
-ggplot(Dat, aes(x=trt, y=y_nodisp, color=id)) + geom_boxplot()
+Dat_hetero$y_disp <- simulate(
+  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero, dispformula = ~trt), 1)[[1]]
+ggplot(Dat_hetero, aes(x=trt, y=y_disp, color=id)) + geom_boxplot()
 ```
 
-## Simulate Data and test Type I error rate (on heteroskedastic data)
-### Modeld With Dispersion
+## Simulated Data from glmmTMB without Dispersion
 ```{r}
+Dat_hetero$y_nodisp <- simulate(
+  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero                    ), 1)[[1]]
+ggplot(Dat_hetero, aes(x=trt, y=y_nodisp, color=id)) + geom_boxplot()
+```
+
+# Type I error rate (on heteroskedastic data)
+```{r}
+#| code-fold: true
+#| code-summary: analysis functions code
+anova.glmmTMB <- glmmTMB:::Anova.glmmTMB
+
+PVAL_fun <- function(data_fun = get_hetero_data, 
+                     model_fun = glmmTMB::glmmTMB, 
+                     dispersion = FALSE){
+  D <- data_fun()
+  if(dispersion){
+    fit <- model_fun(y ~ trt + (1|id), data = D,  dispformula = ~trt)
+  } else {
+    fit <- model_fun(y ~ trt + (1|id), data = D)
+  }
+  A <- anova(fit)
+  C <- coef(summary(fit))$cond
+  return(c(anova=A[1, ncol(A)], C[, ncol(C)]))
+}
+
+analysis <- function(nsim, ...){
+  PVALs <- mc_replicate(nsim, PVAL_fun(...))
+  cat("Ratio of significant p-values (Anova and coefficients):\n")
+  print(rowMeans(PVALs < 0.05))
+  cat("Kolmogorov-Smirnov test for uniform distribution of p-values:\n")
+  print(apply(PVALs, 1, function(x) ks.test(x, punif)$p.value) |> signif(2))
+  hist(PVALs, main="Histogram of (all pooled) p-values")
+}
+
+set.seed(123)
 nsim <- 500
-set.seed(123)
-
-PVALs <- mc_replicate(nsim, {
-  D <- get_data()
-  fit <- glmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)
-  c(Anova=Anova(fit)[1,"Pr(>Chisq)"], coef(summary(fit))$cond[,"Pr(>|z|)"])
-})
-rowMeans(PVALs < 0.05)
-apply(PVALs, 1, function(x) ks.test(x, punif)$p.value) |> signif(2)
-hist(PVALs)
 ```
 
-
-### Model Without Dispersion
+## `glmmTMB(y ~ trt + (1|id), dispformula = ~trt)` 
 ```{r}
-PVALs_nodisp <- mc_replicate(nsim, {
-  D <- get_data()
-  fit <- glmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)
-  c(Anova=Anova(fit)[1,"Pr(>Chisq)"], coef(summary(fit))$cond[,"Pr(>|z|)"])
-})
-
-rowMeans(PVALs_nodisp < 0.05)
-apply(PVALs_nodisp, 1, function(x) ks.test(x, punif)$p.value) |> signif(2)
-hist(PVALs_nodisp)
+analysis(
+  nsim = nsim, 
+  data_fun = get_hetero_data, 
+  model_fun = glmmTMB::glmmTMB, 
+  dispersion = TRUE)
 ```
 
-## Conclusion
-`glmmTMB` models dispersion as expected. **BUT** the Type I error rate is inflated for both (with and without `dispformula`)!
+
+## `glmmTMB(y ~ trt + (1|id))`
+```{r}
+analysis(
+  nsim = nsim, 
+  data_fun = get_hetero_data, 
+  model_fun = glmmTMB::glmmTMB)
+```
+
+## `lmerTest::lmer(y ~ trt + (1|id))`
+```{r}
+analysis(
+  nsim = nsim, 
+  data_fun = get_hetero_data, 
+  model_fun = lmerTest::lmer)
+```
+
+# Type I error rate (on homoskedastic data)
+## `glmmTMB(y ~ trt + (1|id), dispformula = ~trt)`
+```{r}
+analysis(
+  nsim = nsim, 
+  data_fun = get_homo_data, 
+  model_fun = glmmTMB::glmmTMB, 
+  dispersion = TRUE)
+```
+
+
+## `glmmTMB(y ~ trt + (1|id))`
+```{r}
+analysis(
+  nsim = nsim, 
+  data_fun = get_homo_data, 
+  model_fun = glmmTMB::glmmTMB)
+```
+
+## `lmerTest::lmer(y ~ trt + (1|id))`
+```{r}
+analysis(
+  nsim = nsim, 
+  data_fun = get_homo_data, 
+  model_fun = lmerTest::lmer)
+```
