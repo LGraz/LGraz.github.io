@@ -284,7 +284,7 @@
     "href": "posts/lmm-heteroskedastic/index.html",
     "title": "Heteroskedastic Linear Mixed Models with glmmTMB and the argument dispformula",
     "section": "",
-    "text": "glmmTMB can model heteroskedastic data via the dispformula argument (c.f. section Section 3.3).\nType I error rate is slightly inflated. Regardless if modeled on homo-/heteroskedastic data accounting/ignoring heteroskedasticity with lmer and glmmTMB\n\nglmmTMB models dispersion as expected. BUT the Type I error rate is inflated for both (with and without dispformula)!\nExample:\nglmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)\nNote: Before modelling heteroskedastic LMM try:\n\nfixing heteroskedasticity by transforming the response variable (log, sqrt, etc.)\nSimplify mixed model structure by aggregating data like done in this post"
+    "text": "glmmTMB can model heteroskedastic data via the dispformula argument (c.f. section Section 3.3).\nType I error rate is slightly inflated. Regardless if modeled on homo-/heteroskedastic data accounting/ignoring heteroskedasticity with lmer and glmmTMB\n\nExample:\nglmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)\nNote: Before modelling heteroskedastic LMM try:\n\nfixing heteroskedasticity by transforming the response variable (log, sqrt, etc.)\nSimplify mixed model structure by aggregating data like done in this post"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#raw-heteroscedastic-data",

@@ -222,7 +222,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><code>glmmTMB</code> can model heteroskedastic data via the <code>dispformula</code> argument (c.f. section <a href="#sec-sim-dat-vis-w-disp" class="quarto-xref">Section&nbsp;3.3</a>).</li>
 <li>Type I error rate is slightly inflated. Regardless if modeled on homo-/heteroskedastic data accounting/ignoring heteroskedasticity with lmer and glmmTMB</li>
 </ul>
-<p><code>glmmTMB</code> models dispersion as expected. <strong>BUT</strong> the Type I error rate is inflated for both (with and without <code>dispformula</code>)!</p>
 <p><strong>Example</strong>:</p>
 <pre><code>glmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)</code></pre>
 <p><strong>Note</strong>: Before modelling heteroskedastic LMM try:</p>
