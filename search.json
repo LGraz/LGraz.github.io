@@ -282,107 +282,121 @@
   {
     "objectID": "posts/lmm-heteroskedastic/index.html",
     "href": "posts/lmm-heteroskedastic/index.html",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "",
-    "text": "glmmTMB can model heteroscedastic data via the dispformula argument (c.f. section Section 3.3).\nType I error rate is slightly inflated. Regardless if modeled on homo-/heteroscedastic data accounting/ignoring heteroscedasticity with lmer and glmmTMB\n\nExample:\nglmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)\nNote: Before modelling heteroscedastic LMM try:\n\nfixing heteroscedasticity by transforming the response variable (log, sqrt, etc.)\nSimplify mixed model structure by aggregating data like done in this post"
+    "text": "Summary:\n- glmmTMB can model heteroscedastic data via the dispformula argument (c.f. section Section 2.3). But Type I error rate is significantly inflated. P-values are not valid - nlme::lme models give valid p-values when accounting for heteroscedasticity with weights=varIdent(form=). They cannot handly corssed random effects afaik. - lmerTest::lmer has only slightly inflated Type I error rate. I suspect it is less powerful on heteroscedastic data though than nlme::lme.\nExample:\nNote: Before modelling heteroscedastic LMM try:\n- fixing heteroscedasticity by transforming the response variable (log, sqrt, etc.) - Simplify mixed model structure by aggregating data like done in this post"
+  },
+  {
+    "objectID": "posts/lmm-heteroskedastic/index.html#data-simulation",
+    "href": "posts/lmm-heteroskedastic/index.html#data-simulation",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "section": "Data Simulation",
+    "text": "Data Simulation\n\n\nCode\nlibrary(simr)\nlibrary(glmmTMB) \nlibrary(nlme)\nlibrary(lmerTest)\nlibrary(car)\nlibrary(ggplot2)\n\n\n# Design Matrix\nX &lt;- data.frame(\n  id  = as.factor(rep(1:40, each = 10)),\n  trt = as.factor(rep(c(\"A\", \"B\", \"C\", \"D\"), each = 100))\n)\n\n# Make it unbalanced\nset.seed(123)\nX &lt;- X[-sample(101:300, 130, replace=FALSE),]\n# xtabs(~id+trt,X)\n\n# create NULL-lmer-model\nmodel &lt;- makeLmer(y ~ trt + (1|id), \n  fixef=  c(0,0,0,0),\n  VarCorr = 9,\n  data = X, \n  sigma = 1\n  )\n\n# heteroscedastic response\nget_hetero_data &lt;- function(n) {\n  D &lt;- X\n  D$y &lt;- simulate(model, 1)[[1]]\n  grpCD &lt;- D$trt %in% c(\"C\", \"D\")\n  D$y[grpCD] &lt;- D$y[grpCD] + rnorm(sum(grpCD), 0, 4)\n  return(D)\n}\n\n# homoscedastic response\nget_homo_data &lt;- function(n) {\n  D &lt;- X\n  D$y &lt;- simulate(model, 1)[[1]]\n  return(D)\n}"
+  },
+  {
+    "objectID": "posts/lmm-heteroskedastic/index.html#analysis",
+    "href": "posts/lmm-heteroskedastic/index.html#analysis",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "section": "Analysis",
+    "text": "Analysis\n\n\nanalysis functions code\nanova.glmmTMB &lt;- glmmTMB:::Anova.glmmTMB\n\nanalysis &lt;- function(nsim = 500, \n                    data_fun = get_hetero_data, \n                    model_fun = glmmTMB, \n                    disp = FALSE){\n  # seed &lt;- 123\n  PVALs &lt;- parallel::mclapply(1:nsim, \\(seed){\n      set.seed(seed)\n      D &lt;- data_fun()\n      if(disp){\n        if(identical(model_fun,nlme::lme)){\n          fit &lt;- lme(y ~ trt, random = ~1|id, data = D, weights = varIdent(form = ~1|trt))\n        } else {\n          fit &lt;- model_fun(y ~ trt + (1|id), data = D,  dispformula = ~trt)\n        }\n      } else {\n        if(identical(model_fun,nlme::lme)){\n          fit &lt;- lme(y ~ trt, random = ~1|id, data = D)\n        } else {\n          fit &lt;- model_fun(y ~ trt + (1|id), data = D)\n        }\n      }\n      A &lt;- anova(fit)\n      C &lt;- if(identical(model_fun, glmmTMB)) coef(summary(fit))$cond else coef(summary(fit))\n      c(anova=A[\"trt\", ncol(A)], `trt(C-A)`=C[\"trtC\", ncol(C)])\n  }) |&gt; simplify2array()\n  print(knitr::kable(as.data.frame(rbind(\n    `fraction(PVALs &lt; .05)` = rowMeans(PVALs &lt; 0.05),\n    `binom.test(p = .05)` = apply(PVALs &lt; 0.05, 1, function(x) binom.test(sum(x), nsim, 0.05)$p.value) |&gt; signif(2)\n  ))))\n  \n  PVALS_long &lt;- tidyr::pivot_longer(as.data.frame(t(PVALs)), cols = everything(), names_to = \"test\", values_to = \"PVALs\")\n  ggplot(PVALS_long, aes(PVALs, group=test, col=test)) + \n    stat_ecdf() + geom_abline(slope=1, intercept=0, col=\"black\") +\n    geom_vline(xintercept = 0.05, col=\"black\", linetype=\"dashed\") + scale_x_sqrt() +\n     scale_y_sqrt() + ggtitle(\"ECDF of p-values (sqrt-sqrt scale)\")\n}"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#raw-heteroscedastic-data",
     "href": "posts/lmm-heteroskedastic/index.html#raw-heteroscedastic-data",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "Raw heteroscedastic Data",
     "text": "Raw heteroscedastic Data\n\nset.seed(123)\nDat_hetero &lt;- get_hetero_data()\nggplot(Dat_hetero, aes(x=trt, y=y, group=id)) + geom_boxplot()"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#raw-homoscedastic-data",
     "href": "posts/lmm-heteroskedastic/index.html#raw-homoscedastic-data",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "Raw homoscedastic Data",
     "text": "Raw homoscedastic Data\n\nggplot(get_homo_data(), aes(x=trt, y=y, group=id)) + geom_boxplot()"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#sec-sim-dat-vis-w-disp",
     "href": "posts/lmm-heteroskedastic/index.html#sec-sim-dat-vis-w-disp",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "Simulated Data from glmmTMB with Dispersion",
     "text": "Simulated Data from glmmTMB with Dispersion\n\nDat_hetero$y_disp &lt;- simulate(\n  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero, dispformula = ~trt), 1)[[1]]\nggplot(Dat_hetero, aes(x=trt, y=y_disp, group=id)) + geom_boxplot()"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#simulated-data-from-glmmtmb-without-dispersion",
     "href": "posts/lmm-heteroskedastic/index.html#simulated-data-from-glmmtmb-without-dispersion",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "Simulated Data from glmmTMB without Dispersion",
     "text": "Simulated Data from glmmTMB without Dispersion\n\nDat_hetero$y_nodisp &lt;- simulate(\n  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero                    ), 1)[[1]]\nggplot(Dat_hetero, aes(x=trt, y=y_nodisp, group=id)) + geom_boxplot()"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-dispformula-trt",
     "href": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-dispformula-trt",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)",
-    "text": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)\n\nanalysis(data_fun = get_hetero_data, model_fun = glmmTMB, disp = TRUE)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.108       0.080       0.090       0.084       0.084 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n    3.3e-05     1.5e-01     1.3e-02     8.2e-02     4.0e-03"
+    "text": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)\nanalysis(data_fun = get_hetero_data, model_fun = glmmTMB, disp = TRUE)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n1.02e-01\n0.072\n\n\nbinom.test(p = .05)\n2.60e-06\n0.030"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id",
     "href": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "glmmTMB(y ~ trt + (1|id))",
-    "text": "glmmTMB(y ~ trt + (1|id))\n\nanalysis(data_fun = get_hetero_data, model_fun = glmmTMB)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.110       0.064       0.074       0.084       0.072 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n    0.00075     0.88000     0.69000     0.04400     0.07500"
+    "text": "glmmTMB(y ~ trt + (1|id))\nanalysis(data_fun = get_hetero_data, model_fun = glmmTMB)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n1.04e-01\n0.09600\n\n\nbinom.test(p = .05)\n9.00e-07\n0.00002"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmertestlmery-trt-1id",
     "href": "posts/lmm-heteroskedastic/index.html#lmertestlmery-trt-1id",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "lmerTest::lmer(y ~ trt + (1|id))",
-    "text": "lmerTest::lmer(y ~ trt + (1|id))\n\nanalysis(data_fun = get_hetero_data, model_fun = lmerTest::lmer)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.068       0.040       0.048       0.046       0.056 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n      0.130       0.340       0.110       0.740       0.027"
+    "text": "lmerTest::lmer(y ~ trt + (1|id))\nanalysis(data_fun = get_hetero_data, model_fun = lmerTest::lmer)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.058\n0.074\n\n\nbinom.test(p = .05)\n0.410\n0.018"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmeytrtrandom1idweightsvaridentform1trt",
     "href": "posts/lmm-heteroskedastic/index.html#lmeytrtrandom1idweightsvaridentform1trt",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))",
-    "text": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))\n\nanalysis(data_fun = get_hetero_data, model_fun = nlme::lme, disp = TRUE)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trt1        trt2        trt3 \n      0.060       0.048       0.038       0.074       0.048 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trt1        trt2        trt3 \n     0.1100      0.0027      0.9500      0.0430      0.1300"
+    "text": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))\nanalysis(data_fun = get_hetero_data, model_fun = nlme::lme, disp = TRUE)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.064\n0.056\n\n\nbinom.test(p = .05)\n0.150\n0.540"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmey-trt-random-1id",
     "href": "posts/lmm-heteroskedastic/index.html#lmey-trt-random-1id",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "lme(y ~ trt, random = ~1|id)",
-    "text": "lme(y ~ trt, random = ~1|id)\n\nanalysis(data_fun = get_hetero_data, model_fun = nlme::lme)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trt1        trt2        trt3 \n      0.046       0.070       0.058       0.032       0.056 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trt1        trt2        trt3 \n      0.320       0.056       0.840       0.460       0.520"
+    "text": "lme(y ~ trt, random = ~1|id)\nanalysis(data_fun = get_hetero_data, model_fun = nlme::lme)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.058\n0.074\n\n\nbinom.test(p = .05)\n0.410\n0.018"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-dispformula-trt-1",
     "href": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-dispformula-trt-1",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)",
-    "text": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)\n\nanalysis(data_fun = get_homo_data, model_fun = glmmTMB, disp = TRUE)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.080       0.094       0.062       0.074       0.084 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n    0.00110     0.01500     0.06700     0.00057     0.21000"
+    "text": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)\nanalysis(data_fun = get_homo_data, model_fun = glmmTMB, disp = TRUE)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.112\n0.082\n\n\nbinom.test(p = .05)\n0.000\n0.002"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-1",
     "href": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-1",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "glmmTMB(y ~ trt + (1|id))",
-    "text": "glmmTMB(y ~ trt + (1|id))\n\nanalysis(data_fun = get_homo_data, model_fun = glmmTMB)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.120       0.078       0.088       0.084       0.080 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n    0.00005     0.00270     0.00084     0.05400     0.00200"
+    "text": "glmmTMB(y ~ trt + (1|id))\nanalysis(data_fun = get_homo_data, model_fun = glmmTMB)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.114\n0.08600\n\n\nbinom.test(p = .05)\n0.000\n0.00064"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmertestlmery-trt-1id-1",
     "href": "posts/lmm-heteroskedastic/index.html#lmertestlmery-trt-1id-1",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "lmerTest::lmer(y ~ trt + (1|id))",
-    "text": "lmerTest::lmer(y ~ trt + (1|id))\n\nanalysis(data_fun = get_homo_data, model_fun = lmerTest::lmer)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.058       0.048       0.066       0.060       0.066 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n       0.48        0.77        0.61        0.86        0.74"
+    "text": "lmerTest::lmer(y ~ trt + (1|id))\nanalysis(data_fun = get_homo_data, model_fun = lmerTest::lmer)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.07\n0.054\n\n\nbinom.test(p = .05)\n0.05\n0.680"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmeytrtrandom1idweightsvaridentform1trt-1",
     "href": "posts/lmm-heteroskedastic/index.html#lmeytrtrandom1idweightsvaridentform1trt-1",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))",
-    "text": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))\n\nanalysis(data_fun = get_homo_data, model_fun = nlme::lme, disp = TRUE)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.052       0.050       0.046       0.054       0.048 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n      0.430       0.710       0.098       0.190       0.850"
+    "text": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))\nanalysis(data_fun = get_homo_data, model_fun = nlme::lme, disp = TRUE)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.068\n0.054\n\n\nbinom.test(p = .05)\n0.080\n0.680"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmey-trt-random-1id-1",
     "href": "posts/lmm-heteroskedastic/index.html#lmey-trt-random-1id-1",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "lme(y ~ trt, random = ~1|id)",
-    "text": "lme(y ~ trt, random = ~1|id)\n\nanalysis(data_fun = get_homo_data, model_fun = nlme::lme)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.042       0.060       0.050       0.052       0.054 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n       0.56        0.63        0.82        0.50        0.68"
+    "text": "lme(y ~ trt, random = ~1|id)\nanalysis(data_fun = get_homo_data, model_fun = nlme::lme)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.07\n0.054\n\n\nbinom.test(p = .05)\n0.05\n0.680"
   },
   {
     "objectID": "posts/lmm-slope-aggregate/index.html",
