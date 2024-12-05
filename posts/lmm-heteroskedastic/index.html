@@ -223,13 +223,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p><strong>Summary</strong>:<br>
-- <code>glmmTMB</code> can model heteroscedastic data via the <code>dispformula</code> argument (c.f. section <a href="#sec-sim-dat-vis-w-disp" class="quarto-xref">Section&nbsp;2.3</a>). But Type I error rate is significantly inflated. P-values are not valid - <code>nlme::lme</code> models give valid p-values when accounting for heteroscedasticity with <code>weights=varIdent(form=)</code>. They cannot handly corssed random effects afaik. - <code>lmerTest::lmer</code> has only slightly inflated Type I error rate. I suspect it is less powerful on heteroscedastic data though than <code>nlme::lme</code>.</p>
+<p><strong>Summary</strong>:</p>
+<ul>
+<li><code>glmmTMB</code> can model heteroscedastic data via the <code>dispformula</code> argument (c.f. section <a href="#sec-sim-dat-vis-w-disp" class="quarto-xref">Section&nbsp;2.3</a>). But Type I error rate is significantly inflated. P-values are not valid</li>
+<li><code>nlme::lme</code> models give valid p-values when accounting for heteroscedasticity with <code>weights=varIdent(form=)</code>. They cannot handly corssed random effects afaik.</li>
+<li><code>lmerTest::lmer</code> has only slightly inflated Type I error rate. I suspect it is less powerful on heteroscedastic data though than <code>nlme::lme</code>.</li>
+</ul>
 <p><strong>Example</strong>:</p>
 <pre><code>glmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)
 nlme::lme(y ~ trt, random = ~1|id, weights = varIdent(form = ~1|trt))</code></pre>
-<p><strong>Note</strong>: Before modelling heteroscedastic LMM try:<br>
-- fixing heteroscedasticity by transforming the response variable (log, sqrt, etc.) - Simplify mixed model structure by aggregating data like done in <a href="../lmer-slopes-new">this post</a></p>
+<p><strong>Note</strong>: Before modelling heteroscedastic LMM try:</p>
+<ul>
+<li>fixing heteroscedasticity by transforming the response variable (log, sqrt, etc.)</li>
+<li>Simplify mixed model structure by aggregating data like done in <a href="../lmer-slopes-new">this post</a></li>
+</ul>
 <section id="r-functions" class="level1">
 <h1>R Functions</h1>
 <section id="data-simulation" class="level2">

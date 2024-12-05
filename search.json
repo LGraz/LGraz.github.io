@@ -284,7 +284,7 @@
     "href": "posts/lmm-heteroskedastic/index.html",
     "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
     "section": "",
-    "text": "Summary:\n- glmmTMB can model heteroscedastic data via the dispformula argument (c.f. section Section 2.3). But Type I error rate is significantly inflated. P-values are not valid - nlme::lme models give valid p-values when accounting for heteroscedasticity with weights=varIdent(form=). They cannot handly corssed random effects afaik. - lmerTest::lmer has only slightly inflated Type I error rate. I suspect it is less powerful on heteroscedastic data though than nlme::lme.\nExample:\nNote: Before modelling heteroscedastic LMM try:\n- fixing heteroscedasticity by transforming the response variable (log, sqrt, etc.) - Simplify mixed model structure by aggregating data like done in this post"
+    "text": "Summary:\nExample:\nNote: Before modelling heteroscedastic LMM try:"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#data-simulation",
