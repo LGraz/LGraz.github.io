@@ -231,7 +231,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p><strong>Example</strong>:</p>
 <pre><code>glmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)
-nlme::lme(y ~ trt, random = ~1|id, weights = varIdent(form = ~1|trt))</code></pre>
+
+nlme::lme(y ~ trt, random = ~1|id, 
+          weights = varIdent(form = ~1|trt))</code></pre>
 <p><strong>Note</strong>: Before modelling heteroscedastic LMM try:</p>
 <ul>
 <li>fixing heteroscedasticity by transforming the response variable (log, sqrt, etc.)</li>
