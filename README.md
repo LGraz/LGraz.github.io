@@ -8,6 +8,7 @@
 
 # To Do
 - [ ] set up "google search console" 
+- [ ] Add a favicon (icon for tabs)
 
 ## Stats
 

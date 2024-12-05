@@ -1,7 +1,7 @@
 ---
 title: |
   Heteroscedastic Linear Mixed Models with 
-  `glmmTMB` and the argument `dispformula`
+  `glmmTMB(dispformula=)` and nlme::lme(weights=varIdent(form=))
 author: Lukas Graz  
 date: 2024-12-04  
 format:
@@ -9,23 +9,26 @@ format:
     toc: true
     toc-location: left
     toc-expand: true
+    fig-height: 3
+    
 # tags:
 #   - simulation
 #   - power
 #   - lmm
 ---
 
-# Abstract
-- `glmmTMB` can model heteroscedastic data via the `dispformula` argument (c.f. section @sec-sim-dat-vis-w-disp). 
-- Type I error rate is slightly inflated. Regardless if modeled on homo-/heteroscedastic data accounting/ignoring heteroscedasticity with lmer and glmmTMB
+**Summary**:  
+- `glmmTMB` can model heteroscedastic data via the `dispformula` argument (c.f. section @sec-sim-dat-vis-w-disp). But Type I error rate is significantly inflated. P-values are not valid
+- `nlme::lme` models give valid p-values when accounting for heteroscedasticity with `weights=varIdent(form=)`. They cannot handly corssed random effects afaik.
+- `lmerTest::lmer` has only slightly inflated Type I error rate. I suspect it is less powerful on heteroscedastic data though than `nlme::lme`.
 
-**Example**: 
+**Example**:  
 ```
 glmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)
+nlme::lme(y ~ trt, random = ~1|id, weights = varIdent(form = ~1|trt))
 ```
 
-**Note**: Before modelling heteroscedastic LMM try:
-
+**Note**: Before modelling heteroscedastic LMM try:  
 - fixing heteroscedasticity by transforming the response variable (log, sqrt, etc.)
 - Simplify mixed model structure by aggregating data like done in [this post](../lmer-slopes-new)
 
@@ -35,24 +38,27 @@ glmmTMB(y ~ trt + (1|id), data = D, dispformula = ~trt)
 #| code-fold: true
 library(simr)
 library(glmmTMB) 
-library(ggplot2)
+library(nlme)
 library(lmerTest)
 library(car)
-library(mcreplicate)
+library(ggplot2)
 
-# set contrast sum:
-options(contrasts = c("contr.sum", "contr.poly"))
 
 # Design Matrix
 X <- data.frame(
-  id  = as.factor(rep(1:20, each = 10)),
-  trt = as.factor(rep(c("A", "B", "C", "D"), each = 50))
+  id  = as.factor(rep(1:40, each = 10)),
+  trt = as.factor(rep(c("A", "B", "C", "D"), each = 100))
 )
+
+# Make it unbalanced
+set.seed(123)
+X <- X[-sample(101:300, 130, replace=FALSE),]
+# xtabs(~id+trt,X)
 
 # create NULL-lmer-model
 model <- makeLmer(y ~ trt + (1|id), 
   fixef=  c(0,0,0,0),
-  VarCorr = 2,
+  VarCorr = 9,
   data = X, 
   sigma = 1
   )
@@ -61,7 +67,8 @@ model <- makeLmer(y ~ trt + (1|id),
 get_hetero_data <- function(n) {
   D <- X
   D$y <- simulate(model, 1)[[1]]
-  D$y[D$trt %in% c("C", "D")] <- D$y[D$trt %in% c("C", "D")] + rnorm(nrow(D)/2, 0, 3)
+  grpCD <- D$trt %in% c("C", "D")
+  D$y[grpCD] <- D$y[grpCD] + rnorm(sum(grpCD), 0, 4)
   return(D)
 }
 
@@ -79,26 +86,26 @@ get_homo_data <- function(n) {
 ```{r}
 set.seed(123)
 Dat_hetero <- get_hetero_data()
-ggplot(Dat_hetero, aes(x=trt, y=y, color=id)) + geom_boxplot()
+ggplot(Dat_hetero, aes(x=trt, y=y, group=id)) + geom_boxplot()
 ```
 
 ## Raw homoscedastic Data
 ```{r}
-ggplot(get_homo_data(), aes(x=trt, y=y, color=id)) + geom_boxplot()
+ggplot(get_homo_data(), aes(x=trt, y=y, group=id)) + geom_boxplot()
 ```
 
 ## Simulated Data from glmmTMB with Dispersion {#sec-sim-dat-vis-w-disp}
 ```{r}
 Dat_hetero$y_disp <- simulate(
   glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero, dispformula = ~trt), 1)[[1]]
-ggplot(Dat_hetero, aes(x=trt, y=y_disp, color=id)) + geom_boxplot()
+ggplot(Dat_hetero, aes(x=trt, y=y_disp, group=id)) + geom_boxplot()
 ```
 
 ## Simulated Data from glmmTMB without Dispersion
 ```{r}
 Dat_hetero$y_nodisp <- simulate(
   glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero                    ), 1)[[1]]
-ggplot(Dat_hetero, aes(x=trt, y=y_nodisp, color=id)) + geom_boxplot()
+ggplot(Dat_hetero, aes(x=trt, y=y_nodisp, group=id)) + geom_boxplot()
 ```
 
 # Type I error rate (on heteroscedastic data)
@@ -107,82 +114,92 @@ ggplot(Dat_hetero, aes(x=trt, y=y_nodisp, color=id)) + geom_boxplot()
 #| code-summary: analysis functions code
 anova.glmmTMB <- glmmTMB:::Anova.glmmTMB
 
-PVAL_fun <- function(data_fun = get_hetero_data, 
-                     model_fun = glmmTMB::glmmTMB, 
-                     dispersion = FALSE){
-  D <- data_fun()
-  if(dispersion){
-    fit <- model_fun(y ~ trt + (1|id), data = D,  dispformula = ~trt)
-  } else {
-    fit <- model_fun(y ~ trt + (1|id), data = D)
-  }
-  A <- anova(fit)
-  C <- coef(summary(fit))$cond
-  return(c(anova=A[1, ncol(A)], C[, ncol(C)]))
+analysis <- function(nsim = 500, 
+                    data_fun = get_hetero_data, 
+                    model_fun = glmmTMB, 
+                    disp = FALSE){
+  # seed <- 123
+  PVALs <- parallel::mclapply(1:nsim, \(seed){
+      set.seed(seed)
+      D <- data_fun()
+      if(disp){
+        if(identical(model_fun,nlme::lme)){
+          fit <- lme(y ~ trt, random = ~1|id, data = D, weights = varIdent(form = ~1|trt))
+        } else {
+          fit <- model_fun(y ~ trt + (1|id), data = D,  dispformula = ~trt)
+        }
+      } else {
+        if(identical(model_fun,nlme::lme)){
+          fit <- lme(y ~ trt, random = ~1|id, data = D)
+        } else {
+          fit <- model_fun(y ~ trt + (1|id), data = D)
+        }
+      }
+      A <- anova(fit)
+      C <- if(identical(model_fun, glmmTMB)) coef(summary(fit))$cond else coef(summary(fit))
+      c(anova=A["trt", ncol(A)], `trt(C-A)`=C["trtC", ncol(C)])
+  }) |> simplify2array()
+  print(knitr::kable(as.data.frame(rbind(
+    `fraction(PVALs < .05)` = rowMeans(PVALs < 0.05),
+    `binom.test(p = .05)` = apply(PVALs < 0.05, 1, function(x) binom.test(sum(x), nsim, 0.05)$p.value) |> signif(2)
+  ))))
+  
+  PVALS_long <- tidyr::pivot_longer(as.data.frame(t(PVALs)), cols = everything(), names_to = "test", values_to = "PVALs")
+  ggplot(PVALS_long, aes(PVALs, group=test, col=test)) + 
+    stat_ecdf() + geom_abline(slope=1, intercept=0, col="black") +
+    geom_vline(xintercept = 0.05, col="black", linetype="dashed") + scale_x_sqrt() +
+     scale_y_sqrt() + ggtitle("ECDF of p-values (sqrt-sqrt scale)")
 }
-
-analysis <- function(nsim, ...){
-  PVALs <- mc_replicate(nsim, PVAL_fun(...))
-  cat("Ratio of significant p-values (Anova and coefficients):\n")
-  print(rowMeans(PVALs < 0.05))
-  cat("Kolmogorov-Smirnov test for uniform distribution of p-values:\n")
-  print(apply(PVALs, 1, function(x) ks.test(x, punif)$p.value) |> signif(2))
-  hist(PVALs, main="Histogram of (all pooled) p-values")
-}
-
-set.seed(123)
-nsim <- 500
 ```
 
 ## `glmmTMB(y ~ trt + (1|id), dispformula = ~trt)` 
-```{r}
-analysis(
-  nsim = nsim, 
-  data_fun = get_hetero_data, 
-  model_fun = glmmTMB::glmmTMB, 
-  dispersion = TRUE)
+```{r, results="asis"}
+analysis(data_fun = get_hetero_data, model_fun = glmmTMB, disp = TRUE)
 ```
 
-
 ## `glmmTMB(y ~ trt + (1|id))`
-```{r}
-analysis(
-  nsim = nsim, 
-  data_fun = get_hetero_data, 
-  model_fun = glmmTMB::glmmTMB)
+```{r, results="asis"}
+analysis(data_fun = get_hetero_data, model_fun = glmmTMB)
 ```
 
 ## `lmerTest::lmer(y ~ trt + (1|id))`
-```{r}
-analysis(
-  nsim = nsim, 
-  data_fun = get_hetero_data, 
-  model_fun = lmerTest::lmer)
+```{r, results="asis"}
+analysis(data_fun = get_hetero_data, model_fun = lmerTest::lmer)
 ```
+
+## `lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))`
+```{r, results="asis"}
+analysis(data_fun = get_hetero_data, model_fun = nlme::lme, disp = TRUE)
+```
+
+## `lme(y ~ trt, random = ~1|id)`
+```{r, results="asis"}
+analysis(data_fun = get_hetero_data, model_fun = nlme::lme)
+```
+
 
 # Type I error rate (on homoskedastic data)
-## `glmmTMB(y ~ trt + (1|id), dispformula = ~trt)`
-```{r}
-analysis(
-  nsim = nsim, 
-  data_fun = get_homo_data, 
-  model_fun = glmmTMB::glmmTMB, 
-  dispersion = TRUE)
+## `glmmTMB(y ~ trt + (1|id), dispformula = ~trt)` 
+```{r, results="asis"}
+analysis(data_fun = get_homo_data, model_fun = glmmTMB, disp = TRUE)
 ```
 
-
 ## `glmmTMB(y ~ trt + (1|id))`
-```{r}
-analysis(
-  nsim = nsim, 
-  data_fun = get_homo_data, 
-  model_fun = glmmTMB::glmmTMB)
+```{r, results="asis"}
+analysis(data_fun = get_homo_data, model_fun = glmmTMB)
 ```
 
 ## `lmerTest::lmer(y ~ trt + (1|id))`
-```{r}
-analysis(
-  nsim = nsim, 
-  data_fun = get_homo_data, 
-  model_fun = lmerTest::lmer)
+```{r, results="asis"}
+analysis(data_fun = get_homo_data, model_fun = lmerTest::lmer)
+```
+
+## `lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))`
+```{r, results="asis"}
+analysis(data_fun = get_homo_data, model_fun = nlme::lme, disp = TRUE)
+```
+
+## `lme(y ~ trt, random = ~1|id)`
+```{r, results="asis"}
+analysis(data_fun = get_homo_data, model_fun = nlme::lme)
 ```
