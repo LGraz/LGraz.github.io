@@ -291,70 +291,98 @@
     "href": "posts/lmm-heteroskedastic/index.html#raw-heteroscedastic-data",
     "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
     "section": "Raw heteroscedastic Data",
-    "text": "Raw heteroscedastic Data\n\nset.seed(123)\nDat_hetero &lt;- get_hetero_data()\nggplot(Dat_hetero, aes(x=trt, y=y, color=id)) + geom_boxplot()"
+    "text": "Raw heteroscedastic Data\n\nset.seed(123)\nDat_hetero &lt;- get_hetero_data()\nggplot(Dat_hetero, aes(x=trt, y=y, group=id)) + geom_boxplot()"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#raw-homoscedastic-data",
     "href": "posts/lmm-heteroskedastic/index.html#raw-homoscedastic-data",
     "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
     "section": "Raw homoscedastic Data",
-    "text": "Raw homoscedastic Data\n\nggplot(get_homo_data(), aes(x=trt, y=y, color=id)) + geom_boxplot()"
+    "text": "Raw homoscedastic Data\n\nggplot(get_homo_data(), aes(x=trt, y=y, group=id)) + geom_boxplot()"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#sec-sim-dat-vis-w-disp",
     "href": "posts/lmm-heteroskedastic/index.html#sec-sim-dat-vis-w-disp",
     "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
     "section": "Simulated Data from glmmTMB with Dispersion",
-    "text": "Simulated Data from glmmTMB with Dispersion\n\nDat_hetero$y_disp &lt;- simulate(\n  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero, dispformula = ~trt), 1)[[1]]\nggplot(Dat_hetero, aes(x=trt, y=y_disp, color=id)) + geom_boxplot()"
+    "text": "Simulated Data from glmmTMB with Dispersion\n\nDat_hetero$y_disp &lt;- simulate(\n  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero, dispformula = ~trt), 1)[[1]]\nggplot(Dat_hetero, aes(x=trt, y=y_disp, group=id)) + geom_boxplot()"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#simulated-data-from-glmmtmb-without-dispersion",
     "href": "posts/lmm-heteroskedastic/index.html#simulated-data-from-glmmtmb-without-dispersion",
     "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
     "section": "Simulated Data from glmmTMB without Dispersion",
-    "text": "Simulated Data from glmmTMB without Dispersion\n\nDat_hetero$y_nodisp &lt;- simulate(\n  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero                    ), 1)[[1]]\nggplot(Dat_hetero, aes(x=trt, y=y_nodisp, color=id)) + geom_boxplot()"
+    "text": "Simulated Data from glmmTMB without Dispersion\n\nDat_hetero$y_nodisp &lt;- simulate(\n  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero                    ), 1)[[1]]\nggplot(Dat_hetero, aes(x=trt, y=y_nodisp, group=id)) + geom_boxplot()"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-dispformula-trt",
     "href": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-dispformula-trt",
     "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
     "section": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)",
-    "text": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)\n\nanalysis(\n  nsim = nsim, \n  data_fun = get_hetero_data, \n  model_fun = glmmTMB::glmmTMB, \n  dispersion = TRUE)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trt1        trt2        trt3 \n      0.128       0.074       0.072       0.072       0.116 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trt1        trt2        trt3 \n    3.1e-10     1.3e-01     9.2e-04     1.3e-03     1.5e-02"
+    "text": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)\n\nanalysis(data_fun = get_hetero_data, model_fun = glmmTMB, disp = TRUE)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.108       0.080       0.090       0.084       0.084 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n    3.3e-05     1.5e-01     1.3e-02     8.2e-02     4.0e-03"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id",
     "href": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id",
     "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
     "section": "glmmTMB(y ~ trt + (1|id))",
-    "text": "glmmTMB(y ~ trt + (1|id))\n\nanalysis(\n  nsim = nsim, \n  data_fun = get_hetero_data, \n  model_fun = glmmTMB::glmmTMB)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trt1        trt2        trt3 \n      0.170       0.110       0.072       0.100       0.136 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trt1        trt2        trt3 \n    2.1e-12     1.7e-02     3.0e-01     1.5e-02     1.7e-08"
+    "text": "glmmTMB(y ~ trt + (1|id))\n\nanalysis(data_fun = get_hetero_data, model_fun = glmmTMB)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.110       0.064       0.074       0.084       0.072 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n    0.00075     0.88000     0.69000     0.04400     0.07500"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmertestlmery-trt-1id",
     "href": "posts/lmm-heteroskedastic/index.html#lmertestlmery-trt-1id",
     "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
     "section": "lmerTest::lmer(y ~ trt + (1|id))",
-    "text": "lmerTest::lmer(y ~ trt + (1|id))\n\nanalysis(\n  nsim = nsim, \n  data_fun = get_hetero_data, \n  model_fun = lmerTest::lmer)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trt1        trt2        trt3 \n      0.132       0.108       0.070       0.058       0.114 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trt1        trt2        trt3 \n    1.8e-05     3.0e-04     3.6e-02     5.4e-01     4.9e-07"
+    "text": "lmerTest::lmer(y ~ trt + (1|id))\n\nanalysis(data_fun = get_hetero_data, model_fun = lmerTest::lmer)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.068       0.040       0.048       0.046       0.056 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n      0.130       0.340       0.110       0.740       0.027"
+  },
+  {
+    "objectID": "posts/lmm-heteroskedastic/index.html#lmeytrtrandom1idweightsvaridentform1trt",
+    "href": "posts/lmm-heteroskedastic/index.html#lmeytrtrandom1idweightsvaridentform1trt",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "section": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))",
+    "text": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))\n\nanalysis(data_fun = get_hetero_data, model_fun = nlme::lme, disp = TRUE)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trt1        trt2        trt3 \n      0.060       0.048       0.038       0.074       0.048 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trt1        trt2        trt3 \n     0.1100      0.0027      0.9500      0.0430      0.1300"
+  },
+  {
+    "objectID": "posts/lmm-heteroskedastic/index.html#lmey-trt-random-1id",
+    "href": "posts/lmm-heteroskedastic/index.html#lmey-trt-random-1id",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "section": "lme(y ~ trt, random = ~1|id)",
+    "text": "lme(y ~ trt, random = ~1|id)\n\nanalysis(data_fun = get_hetero_data, model_fun = nlme::lme)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trt1        trt2        trt3 \n      0.046       0.070       0.058       0.032       0.056 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trt1        trt2        trt3 \n      0.320       0.056       0.840       0.460       0.520"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-dispformula-trt-1",
     "href": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-dispformula-trt-1",
     "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
     "section": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)",
-    "text": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)\n\nanalysis(\n  nsim = nsim, \n  data_fun = get_homo_data, \n  model_fun = glmmTMB::glmmTMB, \n  dispersion = TRUE)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trt1        trt2        trt3 \n      0.148       0.092       0.084       0.084       0.106 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trt1        trt2        trt3 \n    1.0e-08     1.8e-04     1.3e-01     5.9e-03     1.0e-07"
+    "text": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)\n\nanalysis(data_fun = get_homo_data, model_fun = glmmTMB, disp = TRUE)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.080       0.094       0.062       0.074       0.084 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n    0.00110     0.01500     0.06700     0.00057     0.21000"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-1",
     "href": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-1",
     "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
     "section": "glmmTMB(y ~ trt + (1|id))",
-    "text": "glmmTMB(y ~ trt + (1|id))\n\nanalysis(\n  nsim = nsim, \n  data_fun = get_homo_data, \n  model_fun = glmmTMB::glmmTMB)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trt1        trt2        trt3 \n      0.162       0.122       0.090       0.080       0.136 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trt1        trt2        trt3 \n    5.9e-14     6.3e-05     4.7e-02     2.6e-03     1.2e-06"
+    "text": "glmmTMB(y ~ trt + (1|id))\n\nanalysis(data_fun = get_homo_data, model_fun = glmmTMB)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.120       0.078       0.088       0.084       0.080 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n    0.00005     0.00270     0.00084     0.05400     0.00200"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmertestlmery-trt-1id-1",
     "href": "posts/lmm-heteroskedastic/index.html#lmertestlmery-trt-1id-1",
     "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
     "section": "lmerTest::lmer(y ~ trt + (1|id))",
-    "text": "lmerTest::lmer(y ~ trt + (1|id))\n\nanalysis(\n  nsim = nsim, \n  data_fun = get_homo_data, \n  model_fun = lmerTest::lmer)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trt1        trt2        trt3 \n      0.116       0.098       0.076       0.064       0.116 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trt1        trt2        trt3 \n    2.4e-07     1.8e-02     1.1e-01     9.5e-02     3.0e-03"
+    "text": "lmerTest::lmer(y ~ trt + (1|id))\n\nanalysis(data_fun = get_homo_data, model_fun = lmerTest::lmer)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.058       0.048       0.066       0.060       0.066 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n       0.48        0.77        0.61        0.86        0.74"
+  },
+  {
+    "objectID": "posts/lmm-heteroskedastic/index.html#lmeytrtrandom1idweightsvaridentform1trt-1",
+    "href": "posts/lmm-heteroskedastic/index.html#lmeytrtrandom1idweightsvaridentform1trt-1",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "section": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))",
+    "text": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))\n\nanalysis(data_fun = get_homo_data, model_fun = nlme::lme, disp = TRUE)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.052       0.050       0.046       0.054       0.048 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n      0.430       0.710       0.098       0.190       0.850"
+  },
+  {
+    "objectID": "posts/lmm-heteroskedastic/index.html#lmey-trt-random-1id-1",
+    "href": "posts/lmm-heteroskedastic/index.html#lmey-trt-random-1id-1",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and the argument dispformula",
+    "section": "lme(y ~ trt, random = ~1|id)",
+    "text": "lme(y ~ trt, random = ~1|id)\n\nanalysis(data_fun = get_homo_data, model_fun = nlme::lme)\n\n\nRatio of significant p-values (Anova and coefficients):\n      anova (Intercept)        trtB        trtC        trtD \n      0.042       0.060       0.050       0.052       0.054 \nKolmogorov-Smirnov test for uniform distribution of p-values:\n      anova (Intercept)        trtB        trtC        trtD \n       0.56        0.63        0.82        0.50        0.68"
   },
   {
     "objectID": "posts/lmm-slope-aggregate/index.html",

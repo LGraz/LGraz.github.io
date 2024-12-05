@@ -195,12 +195,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#glmmtmby-trt-1id-dispformula-trt" id="toc-glmmtmby-trt-1id-dispformula-trt" class="nav-link" data-scroll-target="#glmmtmby-trt-1id-dispformula-trt"><code>glmmTMB(y ~ trt + (1|id), dispformula = ~trt)</code></a></li>
   <li><a href="#glmmtmby-trt-1id" id="toc-glmmtmby-trt-1id" class="nav-link" data-scroll-target="#glmmtmby-trt-1id"><code>glmmTMB(y ~ trt + (1|id))</code></a></li>
   <li><a href="#lmertestlmery-trt-1id" id="toc-lmertestlmery-trt-1id" class="nav-link" data-scroll-target="#lmertestlmery-trt-1id"><code>lmerTest::lmer(y ~ trt + (1|id))</code></a></li>
+  <li><a href="#lmeytrtrandom1idweightsvaridentform1trt" id="toc-lmeytrtrandom1idweightsvaridentform1trt" class="nav-link" data-scroll-target="#lmeytrtrandom1idweightsvaridentform1trt"><code>lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))</code></a></li>
+  <li><a href="#lmey-trt-random-1id" id="toc-lmey-trt-random-1id" class="nav-link" data-scroll-target="#lmey-trt-random-1id"><code>lme(y ~ trt, random = ~1|id)</code></a></li>
   </ul></li>
   <li><a href="#type-i-error-rate-on-homoskedastic-data" id="toc-type-i-error-rate-on-homoskedastic-data" class="nav-link" data-scroll-target="#type-i-error-rate-on-homoskedastic-data">Type I error rate (on homoskedastic data)</a>
   <ul class="collapse">
   <li><a href="#glmmtmby-trt-1id-dispformula-trt-1" id="toc-glmmtmby-trt-1id-dispformula-trt-1" class="nav-link" data-scroll-target="#glmmtmby-trt-1id-dispformula-trt-1"><code>glmmTMB(y ~ trt + (1|id), dispformula = ~trt)</code></a></li>
   <li><a href="#glmmtmby-trt-1id-1" id="toc-glmmtmby-trt-1id-1" class="nav-link" data-scroll-target="#glmmtmby-trt-1id-1"><code>glmmTMB(y ~ trt + (1|id))</code></a></li>
   <li><a href="#lmertestlmery-trt-1id-1" id="toc-lmertestlmery-trt-1id-1" class="nav-link" data-scroll-target="#lmertestlmery-trt-1id-1"><code>lmerTest::lmer(y ~ trt + (1|id))</code></a></li>
+  <li><a href="#lmeytrtrandom1idweightsvaridentform1trt-1" id="toc-lmeytrtrandom1idweightsvaridentform1trt-1" class="nav-link" data-scroll-target="#lmeytrtrandom1idweightsvaridentform1trt-1"><code>lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))</code></a></li>
+  <li><a href="#lmey-trt-random-1id-1" id="toc-lmey-trt-random-1id-1" class="nav-link" data-scroll-target="#lmey-trt-random-1id-1"><code>lme(y ~ trt, random = ~1|id)</code></a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/LGraz/LGraz.github.io/edit/main/posts/lmm-heteroskedastic/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/LGraz/LGraz.github.io/blob/main/posts/lmm-heteroskedastic/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/LGraz/LGraz.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -237,42 +241,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(simr)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmmTMB) </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mcreplicate)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># set contrast sum:</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">contrasts =</span> <span class="fu">c</span>(<span class="st">"contr.sum"</span>, <span class="st">"contr.poly"</span>))</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Design Matrix</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">id  =</span> <span class="fu">as.factor</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>, <span class="at">each =</span> <span class="dv">10</span>)),</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">trt =</span> <span class="fu">as.factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span>), <span class="at">each =</span> <span class="dv">50</span>))</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># create NULL-lmer-model</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">makeLmer</span>(y <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>id), </span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixef=</span>  <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>),</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">VarCorr =</span> <span class="dv">2</span>,</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> X, </span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma =</span> <span class="dv">1</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co"># heteroscedastic response</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>get_hetero_data <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  D <span class="ot">&lt;-</span> X</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  D<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">simulate</span>(model, <span class="dv">1</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  D<span class="sc">$</span>y[D<span class="sc">$</span>trt <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"C"</span>, <span class="st">"D"</span>)] <span class="ot">&lt;-</span> D<span class="sc">$</span>y[D<span class="sc">$</span>trt <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"C"</span>, <span class="st">"D"</span>)] <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(D)<span class="sc">/</span><span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">3</span>)</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(D)</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co"># homoscedastic response</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>get_homo_data <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  D <span class="ot">&lt;-</span> X</span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  D<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">simulate</span>(model, <span class="dv">1</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(D)</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mcreplicate)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Design Matrix</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">id  =</span> <span class="fu">as.factor</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">40</span>, <span class="at">each =</span> <span class="dv">10</span>)),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">trt =</span> <span class="fu">as.factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span>), <span class="at">each =</span> <span class="dv">100</span>))</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># create NULL-lmer-model</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">makeLmer</span>(y <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>id), </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixef=</span>  <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>),</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">VarCorr =</span> <span class="dv">9</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> X, </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma =</span> <span class="dv">1</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># heteroscedastic response</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>get_hetero_data <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  D <span class="ot">&lt;-</span> X</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  D<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">simulate</span>(model, <span class="dv">1</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  D<span class="sc">$</span>y[D<span class="sc">$</span>trt <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"C"</span>, <span class="st">"D"</span>)] <span class="ot">&lt;-</span> D<span class="sc">$</span>y[D<span class="sc">$</span>trt <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"C"</span>, <span class="st">"D"</span>)] <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(D)<span class="sc">/</span><span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">4</span>)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(D)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co"># homoscedastic response</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>get_homo_data <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  D <span class="ot">&lt;-</span> X</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  D<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">simulate</span>(model, <span class="dv">1</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(D)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -283,7 +286,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Dat_hetero <span class="ot">&lt;-</span> <span class="fu">get_hetero_data</span>()</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Dat_hetero, <span class="fu">aes</span>(<span class="at">x=</span>trt, <span class="at">y=</span>y, <span class="at">color=</span>id)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Dat_hetero, <span class="fu">aes</span>(<span class="at">x=</span>trt, <span class="at">y=</span>y, <span class="at">group=</span>id)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -296,7 +299,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="raw-homoscedastic-data" class="level2">
 <h2 class="anchored" data-anchor-id="raw-homoscedastic-data">Raw homoscedastic Data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">get_homo_data</span>(), <span class="fu">aes</span>(<span class="at">x=</span>trt, <span class="at">y=</span>y, <span class="at">color=</span>id)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">get_homo_data</span>(), <span class="fu">aes</span>(<span class="at">x=</span>trt, <span class="at">y=</span>y, <span class="at">group=</span>id)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -311,7 +314,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Dat_hetero<span class="sc">$</span>y_disp <span class="ot">&lt;-</span> <span class="fu">simulate</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glmmTMB</span>(y <span class="sc">~</span> <span class="dv">0</span><span class="sc">+</span>trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>id), <span class="at">data =</span> Dat_hetero, <span class="at">dispformula =</span> <span class="sc">~</span>trt), <span class="dv">1</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Dat_hetero, <span class="fu">aes</span>(<span class="at">x=</span>trt, <span class="at">y=</span>y_disp, <span class="at">color=</span>id)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Dat_hetero, <span class="fu">aes</span>(<span class="at">x=</span>trt, <span class="at">y=</span>y_disp, <span class="at">group=</span>id)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -326,7 +329,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Dat_hetero<span class="sc">$</span>y_nodisp <span class="ot">&lt;-</span> <span class="fu">simulate</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glmmTMB</span>(y <span class="sc">~</span> <span class="dv">0</span><span class="sc">+</span>trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>id), <span class="at">data =</span> Dat_hetero                    ), <span class="dv">1</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Dat_hetero, <span class="fu">aes</span>(<span class="at">x=</span>trt, <span class="at">y=</span>y_nodisp, <span class="at">color=</span>id)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Dat_hetero, <span class="fu">aes</span>(<span class="at">x=</span>trt, <span class="at">y=</span>y_nodisp, <span class="at">group=</span>id)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -344,49 +347,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <summary>analysis functions code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>anova.glmmTMB <span class="ot">&lt;-</span> glmmTMB<span class="sc">:::</span>Anova.glmmTMB</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>PVAL_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">data_fun =</span> get_hetero_data, </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">model_fun =</span> glmmTMB<span class="sc">::</span>glmmTMB, </span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">dispersion =</span> <span class="cn">FALSE</span>){</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  D <span class="ot">&lt;-</span> <span class="fu">data_fun</span>()</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(dispersion){</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    fit <span class="ot">&lt;-</span> <span class="fu">model_fun</span>(y <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>id), <span class="at">data =</span> D,  <span class="at">dispformula =</span> <span class="sc">~</span>trt)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    fit <span class="ot">&lt;-</span> <span class="fu">model_fun</span>(y <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>id), <span class="at">data =</span> D)</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">anova</span>(fit)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  C <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit))<span class="sc">$</span>cond</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">c</span>(<span class="at">anova=</span>A[<span class="dv">1</span>, <span class="fu">ncol</span>(A)], C[, <span class="fu">ncol</span>(C)]))</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>analysis <span class="ot">&lt;-</span> <span class="cf">function</span>(nsim, ...){</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  PVALs <span class="ot">&lt;-</span> <span class="fu">mc_replicate</span>(nsim, <span class="fu">PVAL_fun</span>(...))</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Ratio of significant p-values (Anova and coefficients):</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">rowMeans</span>(PVALs <span class="sc">&lt;</span> <span class="fl">0.05</span>))</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Kolmogorov-Smirnov test for uniform distribution of p-values:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">apply</span>(PVALs, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">ks.test</span>(x, punif)<span class="sc">$</span>p.value) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">2</span>))</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hist</span>(PVALs, <span class="at">main=</span><span class="st">"Histogram of (all pooled) p-values"</span>)</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>nsim <span class="ot">&lt;-</span> <span class="dv">500</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>analysis <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">nsim =</span> <span class="dv">500</span>, </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data_fun =</span> get_hetero_data, </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">model_fun =</span> glmmTMB, </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">disp =</span> <span class="cn">FALSE</span>){</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  PVALs <span class="ot">&lt;-</span> <span class="fu">mc_replicate</span>(nsim, {</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>      D <span class="ot">&lt;-</span> <span class="fu">data_fun</span>()</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(disp){</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="fu">identical</span>(model_fun,nlme<span class="sc">::</span>lme)){</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>          fit <span class="ot">&lt;-</span> <span class="fu">lme</span>(y <span class="sc">~</span> trt, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>id, <span class="at">data =</span> D, <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>trt))</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>          fit <span class="ot">&lt;-</span> <span class="fu">model_fun</span>(y <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>id), <span class="at">data =</span> D,  <span class="at">dispformula =</span> <span class="sc">~</span>trt)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="fu">identical</span>(model_fun,nlme<span class="sc">::</span>lme)){</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>          fit <span class="ot">&lt;-</span> <span class="fu">lme</span>(y <span class="sc">~</span> trt, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>id, <span class="at">data =</span> D)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>          fit <span class="ot">&lt;-</span> <span class="fu">model_fun</span>(y <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>id), <span class="at">data =</span> D)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>      A <span class="ot">&lt;-</span> <span class="fu">anova</span>(fit)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>      C <span class="ot">&lt;-</span> <span class="cf">if</span>(<span class="fu">identical</span>(model_fun, glmmTMB)) <span class="fu">coef</span>(<span class="fu">summary</span>(fit))<span class="sc">$</span>cond <span class="cf">else</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit))</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c</span>(<span class="at">anova=</span>A[<span class="st">"trt"</span>, <span class="fu">ncol</span>(A)], C[<span class="st">"trtB"</span>, <span class="fu">ncol</span>(C)])</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Ratio of significant p-values (Anova and coefficients):</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">rowMeans</span>(PVALs <span class="sc">&lt;</span> <span class="fl">0.05</span>))</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Kolmogorov-Smirnov test for uniform distribution of p-values:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">apply</span>(PVALs, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">ks.test</span>(x, punif)<span class="sc">$</span>p.value) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">2</span>))</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  PVALS_long <span class="ot">&lt;-</span> tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="fu">as.data.frame</span>(<span class="fu">t</span>(PVALs)), <span class="at">cols =</span> <span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"test"</span>, <span class="at">values_to =</span> <span class="st">"PVALs"</span>)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(PVALS_long, <span class="fu">aes</span>(PVALs, <span class="at">group=</span>test, <span class="at">col=</span>test)) <span class="sc">+</span> </span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_ecdf</span>() <span class="sc">+</span> <span class="fu">geom_abline</span>(<span class="at">slope=</span><span class="dv">1</span>, <span class="at">intercept=</span><span class="dv">0</span>, <span class="at">col=</span><span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.05</span>, <span class="at">col=</span><span class="st">"black"</span>, <span class="at">linetype=</span><span class="st">"dashed"</span>) <span class="sc">+</span> <span class="fu">scale_x_log10</span>() <span class="sc">+</span> <span class="fu">scale_y_log10</span>()</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <section id="glmmtmby-trt-1id-dispformula-trt" class="level2">
 <h2 class="anchored" data-anchor-id="glmmtmby-trt-1id-dispformula-trt"><code>glmmTMB(y ~ trt + (1|id), dispformula = ~trt)</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsim =</span> nsim, </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_fun =</span> get_hetero_data, </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_fun =</span> glmmTMB<span class="sc">::</span>glmmTMB, </span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dispersion =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(<span class="at">data_fun =</span> get_hetero_data, <span class="at">model_fun =</span> glmmTMB, <span class="at">disp =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Ratio of significant p-values (Anova and coefficients):
-      anova (Intercept)        trt1        trt2        trt3 
-      0.128       0.074       0.072       0.072       0.116 
+      anova (Intercept)        trtB        trtC        trtD 
+      0.108       0.080       0.090       0.084       0.084 
 Kolmogorov-Smirnov test for uniform distribution of p-values:
-      anova (Intercept)        trt1        trt2        trt3 
-    3.1e-10     1.3e-01     9.2e-04     1.3e-03     1.5e-02 </code></pre>
+      anova (Intercept)        trtB        trtC        trtD 
+    3.3e-05     1.5e-01     1.3e-02     8.2e-02     4.0e-03 </code></pre>
 </div>
 <div class="cell-output-display">
 <div>
@@ -400,18 +408,15 @@ Kolmogorov-Smirnov test for uniform distribution of p-values:
 <section id="glmmtmby-trt-1id" class="level2">
 <h2 class="anchored" data-anchor-id="glmmtmby-trt-1id"><code>glmmTMB(y ~ trt + (1|id))</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsim =</span> nsim, </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_fun =</span> get_hetero_data, </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_fun =</span> glmmTMB<span class="sc">::</span>glmmTMB)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(<span class="at">data_fun =</span> get_hetero_data, <span class="at">model_fun =</span> glmmTMB)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Ratio of significant p-values (Anova and coefficients):
-      anova (Intercept)        trt1        trt2        trt3 
-      0.170       0.110       0.072       0.100       0.136 
+      anova (Intercept)        trtB        trtC        trtD 
+      0.110       0.064       0.074       0.084       0.072 
 Kolmogorov-Smirnov test for uniform distribution of p-values:
-      anova (Intercept)        trt1        trt2        trt3 
-    2.1e-12     1.7e-02     3.0e-01     1.5e-02     1.7e-08 </code></pre>
+      anova (Intercept)        trtB        trtC        trtD 
+    0.00075     0.88000     0.69000     0.04400     0.07500 </code></pre>
 </div>
 <div class="cell-output-display">
 <div>
@@ -425,23 +430,64 @@ Kolmogorov-Smirnov test for uniform distribution of p-values:
 <section id="lmertestlmery-trt-1id" class="level2">
 <h2 class="anchored" data-anchor-id="lmertestlmery-trt-1id"><code>lmerTest::lmer(y ~ trt + (1|id))</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsim =</span> nsim, </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_fun =</span> get_hetero_data, </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_fun =</span> lmerTest<span class="sc">::</span>lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(<span class="at">data_fun =</span> get_hetero_data, <span class="at">model_fun =</span> lmerTest<span class="sc">::</span>lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Ratio of significant p-values (Anova and coefficients):
-      anova (Intercept)        trt1        trt2        trt3 
-      0.132       0.108       0.070       0.058       0.114 
+      anova (Intercept)        trtB        trtC        trtD 
+      0.068       0.040       0.048       0.046       0.056 
 Kolmogorov-Smirnov test for uniform distribution of p-values:
-      anova (Intercept)        trt1        trt2        trt3 
-    1.8e-05     3.0e-04     3.6e-02     5.4e-01     4.9e-07 </code></pre>
+      anova (Intercept)        trtB        trtC        trtD 
+      0.130       0.340       0.110       0.740       0.027 </code></pre>
 </div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
 <p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="lmeytrtrandom1idweightsvaridentform1trt" class="level2">
+<h2 class="anchored" data-anchor-id="lmeytrtrandom1idweightsvaridentform1trt"><code>lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(<span class="at">data_fun =</span> get_hetero_data, <span class="at">model_fun =</span> nlme<span class="sc">::</span>lme, <span class="at">disp =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Ratio of significant p-values (Anova and coefficients):
+      anova (Intercept)        trt1        trt2        trt3 
+      0.060       0.048       0.038       0.074       0.048 
+Kolmogorov-Smirnov test for uniform distribution of p-values:
+      anova (Intercept)        trt1        trt2        trt3 
+     0.1100      0.0027      0.9500      0.0430      0.1300 </code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="lmey-trt-random-1id" class="level2">
+<h2 class="anchored" data-anchor-id="lmey-trt-random-1id"><code>lme(y ~ trt, random = ~1|id)</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(<span class="at">data_fun =</span> get_hetero_data, <span class="at">model_fun =</span> nlme<span class="sc">::</span>lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Ratio of significant p-values (Anova and coefficients):
+      anova (Intercept)        trt1        trt2        trt3 
+      0.046       0.070       0.058       0.032       0.056 
+Kolmogorov-Smirnov test for uniform distribution of p-values:
+      anova (Intercept)        trt1        trt2        trt3 
+      0.320       0.056       0.840       0.460       0.520 </code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -453,24 +499,20 @@ Kolmogorov-Smirnov test for uniform distribution of p-values:
 <section id="glmmtmby-trt-1id-dispformula-trt-1" class="level2">
 <h2 class="anchored" data-anchor-id="glmmtmby-trt-1id-dispformula-trt-1"><code>glmmTMB(y ~ trt + (1|id), dispformula = ~trt)</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsim =</span> nsim, </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_fun =</span> get_homo_data, </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_fun =</span> glmmTMB<span class="sc">::</span>glmmTMB, </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dispersion =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(<span class="at">data_fun =</span> get_homo_data, <span class="at">model_fun =</span> glmmTMB, <span class="at">disp =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Ratio of significant p-values (Anova and coefficients):
-      anova (Intercept)        trt1        trt2        trt3 
-      0.148       0.092       0.084       0.084       0.106 
+      anova (Intercept)        trtB        trtC        trtD 
+      0.080       0.094       0.062       0.074       0.084 
 Kolmogorov-Smirnov test for uniform distribution of p-values:
-      anova (Intercept)        trt1        trt2        trt3 
-    1.0e-08     1.8e-04     1.3e-01     5.9e-03     1.0e-07 </code></pre>
+      anova (Intercept)        trtB        trtC        trtD 
+    0.00110     0.01500     0.06700     0.00057     0.21000 </code></pre>
 </div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -479,23 +521,20 @@ Kolmogorov-Smirnov test for uniform distribution of p-values:
 <section id="glmmtmby-trt-1id-1" class="level2">
 <h2 class="anchored" data-anchor-id="glmmtmby-trt-1id-1"><code>glmmTMB(y ~ trt + (1|id))</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsim =</span> nsim, </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_fun =</span> get_homo_data, </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_fun =</span> glmmTMB<span class="sc">::</span>glmmTMB)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(<span class="at">data_fun =</span> get_homo_data, <span class="at">model_fun =</span> glmmTMB)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Ratio of significant p-values (Anova and coefficients):
-      anova (Intercept)        trt1        trt2        trt3 
-      0.162       0.122       0.090       0.080       0.136 
+      anova (Intercept)        trtB        trtC        trtD 
+      0.120       0.078       0.088       0.084       0.080 
 Kolmogorov-Smirnov test for uniform distribution of p-values:
-      anova (Intercept)        trt1        trt2        trt3 
-    5.9e-14     6.3e-05     4.7e-02     2.6e-03     1.2e-06 </code></pre>
+      anova (Intercept)        trtB        trtC        trtD 
+    0.00005     0.00270     0.00084     0.05400     0.00200 </code></pre>
 </div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -504,23 +543,64 @@ Kolmogorov-Smirnov test for uniform distribution of p-values:
 <section id="lmertestlmery-trt-1id-1" class="level2">
 <h2 class="anchored" data-anchor-id="lmertestlmery-trt-1id-1"><code>lmerTest::lmer(y ~ trt + (1|id))</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsim =</span> nsim, </span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_fun =</span> get_homo_data, </span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_fun =</span> lmerTest<span class="sc">::</span>lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(<span class="at">data_fun =</span> get_homo_data, <span class="at">model_fun =</span> lmerTest<span class="sc">::</span>lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Ratio of significant p-values (Anova and coefficients):
-      anova (Intercept)        trt1        trt2        trt3 
-      0.116       0.098       0.076       0.064       0.116 
+      anova (Intercept)        trtB        trtC        trtD 
+      0.058       0.048       0.066       0.060       0.066 
 Kolmogorov-Smirnov test for uniform distribution of p-values:
-      anova (Intercept)        trt1        trt2        trt3 
-    2.4e-07     1.8e-02     1.1e-01     9.5e-02     3.0e-03 </code></pre>
+      anova (Intercept)        trtB        trtC        trtD 
+       0.48        0.77        0.61        0.86        0.74 </code></pre>
 </div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="lmeytrtrandom1idweightsvaridentform1trt-1" class="level2">
+<h2 class="anchored" data-anchor-id="lmeytrtrandom1idweightsvaridentform1trt-1"><code>lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(<span class="at">data_fun =</span> get_homo_data, <span class="at">model_fun =</span> nlme<span class="sc">::</span>lme, <span class="at">disp =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Ratio of significant p-values (Anova and coefficients):
+      anova (Intercept)        trtB        trtC        trtD 
+      0.052       0.050       0.046       0.054       0.048 
+Kolmogorov-Smirnov test for uniform distribution of p-values:
+      anova (Intercept)        trtB        trtC        trtD 
+      0.430       0.710       0.098       0.190       0.850 </code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="lmey-trt-random-1id-1" class="level2">
+<h2 class="anchored" data-anchor-id="lmey-trt-random-1id-1"><code>lme(y ~ trt, random = ~1|id)</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">analysis</span>(<span class="at">data_fun =</span> get_homo_data, <span class="at">model_fun =</span> nlme<span class="sc">::</span>lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Ratio of significant p-values (Anova and coefficients):
+      anova (Intercept)        trtB        trtC        trtD 
+      0.042       0.060       0.050       0.052       0.054 
+Kolmogorov-Smirnov test for uniform distribution of p-values:
+      anova (Intercept)        trtB        trtC        trtD 
+       0.56        0.63        0.82        0.50        0.68 </code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
