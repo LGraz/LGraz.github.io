@@ -32,8 +32,8 @@ nlme::lme(y ~ trt, random = ~1|id, weights = varIdent(form = ~1|trt))
 - fixing heteroscedasticity by transforming the response variable (log, sqrt, etc.)
 - Simplify mixed model structure by aggregating data like done in [this post](../lmer-slopes-new)
 
-
-# Setup Data Simulation
+# R Functions
+## Data Simulation
 ```{r}
 #| code-fold: true
 library(simr)
@@ -80,35 +80,7 @@ get_homo_data <- function(n) {
 }
 ```
 
-
-# Visualize Data
-## Raw heteroscedastic Data
-```{r}
-set.seed(123)
-Dat_hetero <- get_hetero_data()
-ggplot(Dat_hetero, aes(x=trt, y=y, group=id)) + geom_boxplot()
-```
-
-## Raw homoscedastic Data
-```{r}
-ggplot(get_homo_data(), aes(x=trt, y=y, group=id)) + geom_boxplot()
-```
-
-## Simulated Data from glmmTMB with Dispersion {#sec-sim-dat-vis-w-disp}
-```{r}
-Dat_hetero$y_disp <- simulate(
-  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero, dispformula = ~trt), 1)[[1]]
-ggplot(Dat_hetero, aes(x=trt, y=y_disp, group=id)) + geom_boxplot()
-```
-
-## Simulated Data from glmmTMB without Dispersion
-```{r}
-Dat_hetero$y_nodisp <- simulate(
-  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero                    ), 1)[[1]]
-ggplot(Dat_hetero, aes(x=trt, y=y_nodisp, group=id)) + geom_boxplot()
-```
-
-# Type I error rate (on heteroscedastic data)
+## Analysis
 ```{r}
 #| code-fold: true
 #| code-summary: analysis functions code
@@ -152,6 +124,34 @@ analysis <- function(nsim = 500,
 }
 ```
 
+# Visualize Data
+## Raw heteroscedastic Data
+```{r}
+set.seed(123)
+Dat_hetero <- get_hetero_data()
+ggplot(Dat_hetero, aes(x=trt, y=y, group=id)) + geom_boxplot()
+```
+
+## Raw homoscedastic Data
+```{r}
+ggplot(get_homo_data(), aes(x=trt, y=y, group=id)) + geom_boxplot()
+```
+
+## Simulated Data from glmmTMB with Dispersion {#sec-sim-dat-vis-w-disp}
+```{r}
+Dat_hetero$y_disp <- simulate(
+  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero, dispformula = ~trt), 1)[[1]]
+ggplot(Dat_hetero, aes(x=trt, y=y_disp, group=id)) + geom_boxplot()
+```
+
+## Simulated Data from glmmTMB without Dispersion
+```{r}
+Dat_hetero$y_nodisp <- simulate(
+  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero                    ), 1)[[1]]
+ggplot(Dat_hetero, aes(x=trt, y=y_nodisp, group=id)) + geom_boxplot()
+```
+
+# Type I error rate (on heteroscedastic data)
 ## `glmmTMB(y ~ trt + (1|id), dispformula = ~trt)` 
 ```{r, results="asis"}
 analysis(data_fun = get_hetero_data, model_fun = glmmTMB, disp = TRUE)
