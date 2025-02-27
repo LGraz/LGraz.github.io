@@ -18,7 +18,7 @@
     "href": "statistical-consulting.html#services",
     "title": "Statistical Consulting",
     "section": "Services",
-    "text": "Services\n\nResearch Planning & Support\n\nResearch question formulation and statistical hypotheses\nStudy preregistration\nExperimental design selection\nSample size and power analysis, requiring:\n\nClear statistical hypotheses\nDefined experimental design\nPlanned analysis approach\n\nResponse to reviewer comments\nIndividual coaching\nCustom workshops and seminars\n\n\n\nStatistical Modeling & Analysis\n\nMultiple regression\nANOVA/ANCOVA/MANOVA (including repeated measures)\nMixed effects models (LMM/GLMM)\nGeneralized linear models (GLM)\nGeneralized additive models (GAM)\nStructural equation models (SEM)\nPath and mediation analysis\nCausal inference\nTime series analysis\nGaussian process regression\nMultivariate analysis\nBootstrap and permutation tests\nNon-parametric tests\nRandom forests\n\n\n\nReproducible Research & Reporting:\n\nR programming (Zurich R Courses lecturer)\nLinux, bash, git, and Docker\nDocumentation formats:\n\nInteractive dashboards (Shiny)\nReports (Rmarkdown)\nReproducible manuscripts (example XXX)\nQuarto websites (like this one)"
+    "text": "Services\n\nResearch Planning & Support\n\nResearch question formulation and statistical hypotheses\nStudy preregistration\nExperimental design selection\nSample size and power analysis, requiring:\n\nClear statistical hypotheses\nDefined experimental design\nPlanned analysis approach\n\nResponse to reviewer comments\nIndividual coaching\nCustom workshops and seminars\n\n\n\nStatistical Modeling & Analysis\n\nMultiple regression\nANOVA/ANCOVA/MANOVA (including repeated measures)\nMixed effects models (LMM/GLMM)\nGeneralized linear models (GLM)\nGeneralized additive models (GAM)\nStructural equation models (SEM)\nPath and mediation analysis\nCausal inference\nTime series analysis\nGaussian process regression\nMultivariate analysis\nBootstrap and permutation tests\nNon-parametric tests\nRandom forests\n\n\n\nReproducible Research & Reporting:\n\nR programming (Zurich R Courses lecturer)\nLinux, bash, git, and Docker\nDocumentation formats:\n\nInteractive dashboards (Shiny)\nReports (Rmarkdown)\nReproducible manuscripts (e.g. past collaboration)\nQuarto websites (like this one)"
   },
   {
     "objectID": "statistical-consulting.html#pricing",
@@ -144,7 +144,7 @@
     "href": "index.html#statistical-consulting",
     "title": "Lukas Graz",
     "section": "Statistical Consulting",
-    "text": "Statistical Consulting\nI have consulted over 200 clients, primarily PhD and master’s students along with industry professionals. Regular discussions of these cases in the Seminar for Statistics at ETH Zurich have broadened my understanding of the statistical landscape and deepened my mathematical insights. This comprehensive experience means I can deliver effective solutions for most statistical challenges. Learn more about my services.\nBook a free 30-minute online consultation or contact me via email at stat.consulting.graz@REMOVETHISgmail.com"
+    "text": "Statistical Consulting\nI have consulted over 200 clients, primarily PhD and master’s students along with industry professionals. Regular discussions of these cases in the Seminar for Statistics at ETH Zurich have broadened my understanding of the statistical landscape and deepened my mathematical insights. This comprehensive experience means I can deliver effective solutions for most statistical challenges. Learn more about my services.\nBook a free 30-minute online consultation or contact me via email at stat.consulting.graz@gmail.com"
   },
   {
     "objectID": "index.html#some-statistical-investigations",
@@ -282,119 +282,119 @@
   {
     "objectID": "posts/lmm-heteroskedastic/index.html",
     "href": "posts/lmm-heteroskedastic/index.html",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "",
     "text": "Summary:\nExample:\nNote: Before modelling heteroscedastic LMM try:"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#data-simulation",
     "href": "posts/lmm-heteroskedastic/index.html#data-simulation",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "Data Simulation",
     "text": "Data Simulation\n\n\nCode\nlibrary(simr)\nlibrary(glmmTMB) \nlibrary(nlme)\nlibrary(lmerTest)\nlibrary(car)\nlibrary(ggplot2)\n\n\n# Design Matrix\nX &lt;- data.frame(\n  id  = as.factor(rep(1:40, each = 10)),\n  trt = as.factor(rep(c(\"A\", \"B\", \"C\", \"D\"), each = 100))\n)\n\n# Make it unbalanced\nset.seed(123)\nX &lt;- X[-sample(101:300, 130, replace=FALSE),]\n# xtabs(~id+trt,X)\n\n# create NULL-lmer-model\nmodel &lt;- makeLmer(y ~ trt + (1|id), \n  fixef=  c(0,0,0,0),\n  VarCorr = 9,\n  data = X, \n  sigma = 1\n  )\n\n# heteroscedastic response\nget_hetero_data &lt;- function(n) {\n  D &lt;- X\n  D$y &lt;- simulate(model, 1)[[1]]\n  grpCD &lt;- D$trt %in% c(\"C\", \"D\")\n  D$y[grpCD] &lt;- D$y[grpCD] + rnorm(sum(grpCD), 0, 4)\n  return(D)\n}\n\n# homoscedastic response\nget_homo_data &lt;- function(n) {\n  D &lt;- X\n  D$y &lt;- simulate(model, 1)[[1]]\n  return(D)\n}"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#analysis",
     "href": "posts/lmm-heteroskedastic/index.html#analysis",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "Analysis",
     "text": "Analysis\n\n\nanalysis functions code\nanova.glmmTMB &lt;- glmmTMB:::Anova.glmmTMB\n\nanalysis &lt;- function(nsim = 500, \n                    data_fun = get_hetero_data, \n                    model_fun = glmmTMB, \n                    disp = FALSE){\n  # seed &lt;- 123\n  PVALs &lt;- parallel::mclapply(1:nsim, \\(seed){\n      set.seed(seed)\n      D &lt;- data_fun()\n      if(disp){\n        if(identical(model_fun,nlme::lme)){\n          fit &lt;- lme(y ~ trt, random = ~1|id, data = D, weights = varIdent(form = ~1|trt))\n        } else {\n          fit &lt;- model_fun(y ~ trt + (1|id), data = D,  dispformula = ~trt)\n        }\n      } else {\n        if(identical(model_fun,nlme::lme)){\n          fit &lt;- lme(y ~ trt, random = ~1|id, data = D)\n        } else {\n          fit &lt;- model_fun(y ~ trt + (1|id), data = D)\n        }\n      }\n      A &lt;- anova(fit)\n      C &lt;- if(identical(model_fun, glmmTMB)) coef(summary(fit))$cond else coef(summary(fit))\n      c(anova=A[\"trt\", ncol(A)], `trt(C-A)`=C[\"trtC\", ncol(C)])\n  }) |&gt; simplify2array()\n  print(knitr::kable(as.data.frame(rbind(\n    `fraction(PVALs &lt; .05)` = rowMeans(PVALs &lt; 0.05),\n    `binom.test(p = .05)` = apply(PVALs &lt; 0.05, 1, function(x) binom.test(sum(x), nsim, 0.05)$p.value) |&gt; signif(2)\n  ))))\n  \n  PVALS_long &lt;- tidyr::pivot_longer(as.data.frame(t(PVALs)), cols = everything(), names_to = \"test\", values_to = \"PVALs\")\n  ggplot(PVALS_long, aes(PVALs, group=test, col=test)) + \n    stat_ecdf() + geom_abline(slope=1, intercept=0, col=\"black\") +\n    geom_vline(xintercept = 0.05, col=\"black\", linetype=\"dashed\") + scale_x_sqrt() +\n     scale_y_sqrt() + ggtitle(\"ECDF of p-values (sqrt-sqrt scale)\")\n}"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#raw-heteroscedastic-data",
     "href": "posts/lmm-heteroskedastic/index.html#raw-heteroscedastic-data",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "Raw heteroscedastic Data",
     "text": "Raw heteroscedastic Data\n\nset.seed(123)\nDat_hetero &lt;- get_hetero_data()\nggplot(Dat_hetero, aes(x=trt, y=y, group=id)) + geom_boxplot()"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#raw-homoscedastic-data",
     "href": "posts/lmm-heteroskedastic/index.html#raw-homoscedastic-data",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "Raw homoscedastic Data",
     "text": "Raw homoscedastic Data\n\nggplot(get_homo_data(), aes(x=trt, y=y, group=id)) + geom_boxplot()"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#sec-sim-dat-vis-w-disp",
     "href": "posts/lmm-heteroskedastic/index.html#sec-sim-dat-vis-w-disp",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "Simulated Data from glmmTMB with Dispersion",
     "text": "Simulated Data from glmmTMB with Dispersion\n\nDat_hetero$y_disp &lt;- simulate(\n  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero, dispformula = ~trt), 1)[[1]]\nggplot(Dat_hetero, aes(x=trt, y=y_disp, group=id)) + geom_boxplot()"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#simulated-data-from-glmmtmb-without-dispersion",
     "href": "posts/lmm-heteroskedastic/index.html#simulated-data-from-glmmtmb-without-dispersion",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "Simulated Data from glmmTMB without Dispersion",
     "text": "Simulated Data from glmmTMB without Dispersion\n\nDat_hetero$y_nodisp &lt;- simulate(\n  glmmTMB(y ~ 0+trt + (1|id), data = Dat_hetero                    ), 1)[[1]]\nggplot(Dat_hetero, aes(x=trt, y=y_nodisp, group=id)) + geom_boxplot()"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-dispformula-trt",
     "href": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-dispformula-trt",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)",
     "text": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)\nanalysis(data_fun = get_hetero_data, model_fun = glmmTMB, disp = TRUE)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n1.02e-01\n0.072\n\n\nbinom.test(p = .05)\n2.60e-06\n0.030"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id",
     "href": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "glmmTMB(y ~ trt + (1|id))",
     "text": "glmmTMB(y ~ trt + (1|id))\nanalysis(data_fun = get_hetero_data, model_fun = glmmTMB)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n1.04e-01\n0.09600\n\n\nbinom.test(p = .05)\n9.00e-07\n0.00002"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmertestlmery-trt-1id",
     "href": "posts/lmm-heteroskedastic/index.html#lmertestlmery-trt-1id",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "lmerTest::lmer(y ~ trt + (1|id))",
     "text": "lmerTest::lmer(y ~ trt + (1|id))\nanalysis(data_fun = get_hetero_data, model_fun = lmerTest::lmer)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.058\n0.074\n\n\nbinom.test(p = .05)\n0.410\n0.018"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmeytrtrandom1idweightsvaridentform1trt",
     "href": "posts/lmm-heteroskedastic/index.html#lmeytrtrandom1idweightsvaridentform1trt",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))",
     "text": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))\nanalysis(data_fun = get_hetero_data, model_fun = nlme::lme, disp = TRUE)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.064\n0.056\n\n\nbinom.test(p = .05)\n0.150\n0.540"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmey-trt-random-1id",
     "href": "posts/lmm-heteroskedastic/index.html#lmey-trt-random-1id",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "lme(y ~ trt, random = ~1|id)",
     "text": "lme(y ~ trt, random = ~1|id)\nanalysis(data_fun = get_hetero_data, model_fun = nlme::lme)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.058\n0.074\n\n\nbinom.test(p = .05)\n0.410\n0.018"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-dispformula-trt-1",
     "href": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-dispformula-trt-1",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)",
     "text": "glmmTMB(y ~ trt + (1|id), dispformula = ~trt)\nanalysis(data_fun = get_homo_data, model_fun = glmmTMB, disp = TRUE)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.112\n0.082\n\n\nbinom.test(p = .05)\n0.000\n0.002"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-1",
     "href": "posts/lmm-heteroskedastic/index.html#glmmtmby-trt-1id-1",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "glmmTMB(y ~ trt + (1|id))",
     "text": "glmmTMB(y ~ trt + (1|id))\nanalysis(data_fun = get_homo_data, model_fun = glmmTMB)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.114\n0.08600\n\n\nbinom.test(p = .05)\n0.000\n0.00064"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmertestlmery-trt-1id-1",
     "href": "posts/lmm-heteroskedastic/index.html#lmertestlmery-trt-1id-1",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "lmerTest::lmer(y ~ trt + (1|id))",
     "text": "lmerTest::lmer(y ~ trt + (1|id))\nanalysis(data_fun = get_homo_data, model_fun = lmerTest::lmer)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.07\n0.054\n\n\nbinom.test(p = .05)\n0.05\n0.680"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmeytrtrandom1idweightsvaridentform1trt-1",
     "href": "posts/lmm-heteroskedastic/index.html#lmeytrtrandom1idweightsvaridentform1trt-1",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))",
     "text": "lme(y~trt,random=~1|id,weights=varIdent(form=~1|trt))\nanalysis(data_fun = get_homo_data, model_fun = nlme::lme, disp = TRUE)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.068\n0.054\n\n\nbinom.test(p = .05)\n0.080\n0.680"
   },
   {
     "objectID": "posts/lmm-heteroskedastic/index.html#lmey-trt-random-1id-1",
     "href": "posts/lmm-heteroskedastic/index.html#lmey-trt-random-1id-1",
-    "title": "Heteroscedastic Linear Mixed Models with glmmTMB(dispformula=) and nlme::lme(weights=varIdent(form=))",
+    "title": "Heteroscedastic Linear Mixed Models with glmmTMB and nlme::lme",
     "section": "lme(y ~ trt, random = ~1|id)",
     "text": "lme(y ~ trt, random = ~1|id)\nanalysis(data_fun = get_homo_data, model_fun = nlme::lme)\n\n\n\n\nanova\ntrt(C-A)\n\n\n\n\nfraction(PVALs &lt; .05)\n0.07\n0.054\n\n\nbinom.test(p = .05)\n0.05\n0.680"
   },
@@ -404,6 +404,20 @@
     "title": "Testing Slopes in a LMM – Should we Simplify?",
     "section": "",
     "text": "TLDR: Given a dataset as shown in the last plot, we consider the following analyses:\n1. For each subject extract the slope and perform a simple t-test on the slopes\n2. Fit lmer(salery ~ slope + (1|subject)) and test if \\(\\beta_{slope} =0\\)\n3. Fit lmer(salery ~ slope + (slope|subject)) and test if \\(\\beta_{slope} =0\\)\nThen: 1 & 3 are valid (if data balanced, they are equally powerful) approaches and 2 is only valid if there is no individual slope.\n\nSimulate Data\nSalary of subject \\(s\\) at time \\(t\\):\n\\[ salary_{t}^{(s)} = t \\cdot (slope + d_s) + intercept_s + \\varepsilon_{t,s} \\]\n\n\\(d_s \\sim \\mathcal N(0, subjSlopeSD^2)\\)\n\n\\(intercept_s \\sim \\mathcal N(0, subjSD^2)\\)\n\n\\(\\varepsilon_{t,s} \\sim \\mathcal N(0, obsSD^2)\\)\n\n\nnsim &lt;- 2000\n\nlibrary(mcreplicate) # for parallelization\nlibrary(ggplot2)\nlibrary(lmerTest)\n\nLoading required package: lme4\n\n\nLoading required package: Matrix\n\n\n\nAttaching package: 'lmerTest'\n\n\nThe following object is masked from 'package:lme4':\n\n    lmer\n\n\nThe following object is masked from 'package:stats':\n\n    step\n\n#' `nsub`: how many subjects (default: 6)\n#' `nyears`: how many years(default: 10)\n#' `obsSD`: standard deviation of noise (observation-level) (default: 15)\n#' `subjSD`: standard deviation of individual effect (default: 4)\n#' `slope`: shared increase of income per year (default: 5)\n#' `subjSlopeSD`: subject specific standard deviation from slope (default: 2)\nget_data &lt;- function(nsub=6, nyears=10, \n                     obsSD=15, subjSD=4, \n                     slope=5, subjSlopeSD=2){\n  subj_intercept &lt;- rep(rnorm(nsub, 0, subjSD), each=nyears)\n  subj_slope &lt;- rep(rnorm(nsub, slope, subjSlopeSD), each=nyears)\n  data.frame(\n    subject = as.factor(rep(1:nsub, each = nyears)),\n    year = rep(1:nyears, times = nsub),\n    salary =  subj_intercept +  # subject effect\n              subj_slope*(1:nyears) + # individual slope\n              rnorm(nyears*nsub, 0, obsSD) # obsSD\n  )\n}\n\n\n\nPlot Data\n\nplot_data &lt;- function(main, ...){\n  ggplot(get_data(...), aes(x = year, y = salary, group = subject, color = subject)) +\n    geom_line() +\n    geom_point() +\n    labs(x = \"Year\", y = \"Salary\") +\n    theme_minimal() +\n    ggtitle(main)\n}\n\n\nset.seed(123)\nplot_data(\"Noisless, equal subjects\", obsSD=0, subjSD=0, subjSlopeSD=0)\n\n\n\n\n\n\n\nplot_data(\"Noisless, equal slopes\", obsSD=0, subjSlopeSD=0)\n\n\n\n\n\n\n\nplot_data(\"Noisless\", obsSD=0)\n\n\n\n\n\n\n\nplot_data(\"General case\")\n\n\n\n\n\n\n\n\n\n\nAnalysis Methods\n\nslopeTTest &lt;- function(data){\n  fits &lt;- lmList(salary ~ year | subject, data)\n  slopes &lt;- coef(fits)[,\"year\"]\n  t_test &lt;- t.test(slopes, mu = 0)\n  t_test$p.value\n}\n\nlmmRandItcpt &lt;- function(data){\n  lmm &lt;- lmer(salary ~ year + (1|subject), data = data)\n    summary(lmm)$coefficients[2, \"Pr(&gt;|t|)\"]\n}\n\nlmmRandSlope &lt;- function(data){\n  lmm &lt;- lmer(salary ~ year + (year|subject), data = data)\n    summary(lmm)$coefficients[2, \"Pr(&gt;|t|)\"]\n}\n\np_values &lt;- function(...){\n  data &lt;- get_data(...)\n  c(\n    slopeTTest = slopeTTest(data),\n    lmmRandItcpt = lmmRandItcpt(data),\n    lmmRandSlope = lmmRandSlope(data)\n  ) # if you cange the amount of arguments, change also the object \"Power\"\n}\n\nget_power &lt;- function(...){\n  args &lt;- list(...)\n  PVALS &lt;- as.data.frame(t(\n  mc_replicate(nsim, do.call(p_values, args))\n  ))\n  # POWER:\n  sapply(lapply(PVALS, function(x) x&lt;0.05), mean)\n}\n\n\n\nPower Calculations\n\nset.seed(123)\nARGS &lt;- as.data.frame(rbind(\n  # NULL:\n  expand.grid( \n    nsub=6, \n    nyears=10, \n    obsSD=5, \n    subjSD=4, \n    slope=0, \n    subjSlopeSD=c(0,4)),\n  # Change standard deviations and effects:\n  expand.grid(\n    nsub=6, \n    nyears=10, \n    obsSD=c(5,15), \n    subjSD=c(4, 12), \n    slope=c(2,4), \n    subjSlopeSD=c(1,4)),\n  # Change samplesize (allocation):\n  expand.grid(\n    nsub=c(6,10,20), \n    nyears=c(10,20), \n    obsSD=5, \n    subjSD=4, \n    slope=2, \n    subjSlopeSD=1)[-1,]\n))\nrownames(ARGS) &lt;- NULL\n\nPower &lt;- matrix(NA, nrow=nrow(ARGS), ncol=3)\ncolnames(Power) &lt;- c(\"slopeTTest\", \n  \"lmmRandItcpt\", \"lmmRandSlope\")\n\nfor (i in 1:nrow(ARGS)){\n  args &lt;- as.list(ARGS[i,])\n  Power[i,] &lt;- do.call(get_power, args)\n}\n\n\n\nShow Results:\n\nas.data.frame(cbind(ARGS, Power)) |&gt; knitr::kable()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nnsub\nnyears\nobsSD\nsubjSD\nslope\nsubjSlopeSD\nslopeTTest\nlmmRandItcpt\nlmmRandSlope\n\n\n\n\n6\n10\n5\n4\n0\n0\n0.0440\n0.0435\n0.0170\n\n\n6\n10\n5\n4\n0\n4\n0.0520\n0.5415\n0.0515\n\n\n6\n10\n5\n4\n2\n1\n0.9200\n0.9985\n0.9185\n\n\n6\n10\n15\n4\n2\n1\n0.5385\n0.7970\n0.5120\n\n\n6\n10\n5\n12\n2\n1\n0.9175\n0.9995\n0.9170\n\n\n6\n10\n15\n12\n2\n1\n0.5500\n0.7880\n0.5335\n\n\n6\n10\n5\n4\n4\n1\n1.0000\n1.0000\n1.0000\n\n\n6\n10\n15\n4\n4\n1\n0.9775\n0.9995\n0.9780\n\n\n6\n10\n5\n12\n4\n1\n1.0000\n1.0000\n1.0000\n\n\n6\n10\n15\n12\n4\n1\n0.9805\n0.9995\n0.9805\n\n\n6\n10\n5\n4\n2\n4\n0.1820\n0.7715\n0.1820\n\n\n6\n10\n15\n4\n2\n4\n0.1515\n0.5910\n0.1475\n\n\n6\n10\n5\n12\n2\n4\n0.1570\n0.7380\n0.1570\n\n\n6\n10\n15\n12\n2\n4\n0.1510\n0.5815\n0.1480\n\n\n6\n10\n5\n4\n4\n4\n0.5000\n0.9630\n0.5015\n\n\n6\n10\n15\n4\n4\n4\n0.4555\n0.9010\n0.4470\n\n\n6\n10\n5\n12\n4\n4\n0.4905\n0.9680\n0.4905\n\n\n6\n10\n15\n12\n4\n4\n0.4405\n0.9165\n0.4350\n\n\n10\n10\n5\n4\n2\n1\n0.9990\n1.0000\n0.9990\n\n\n20\n10\n5\n4\n2\n1\n1.0000\n1.0000\n1.0000\n\n\n6\n20\n5\n4\n2\n1\n0.9655\n1.0000\n0.9655\n\n\n10\n20\n5\n4\n2\n1\n1.0000\n1.0000\n1.0000\n\n\n20\n20\n5\n4\n2\n1\n1.0000\n1.0000\n1.0000"
+  },
+  {
+    "objectID": "posts/ttest-vs-wilcoxon-vs-median-test/index.html",
+    "href": "posts/ttest-vs-wilcoxon-vs-median-test/index.html",
+    "title": "T-test vs Wilcoxon vs Median Test",
+    "section": "",
+    "text": "Define a list of laws (i.e., distributions) with mean and sd.\nnsim &lt;- 200\nlibrary(coin)\n\n# functions \nn &lt;- 40 # per group\nlaws &lt;- list(\n  norm = function(mean=0, sd=1) mean + sd *  rnorm(n, 0, 1),\n  logn = function(mean=0, sd=1) mean + sd * (rlnorm(n, sdlog=1) - 1.65) / 1.95,\n  exp1 = function(mean=0, sd=1) mean + sd * (rexp(n) - 1),\n  exp2 = function(mean=0, sd=1) mean + sd * (rexp(n)^2 - 2) / 3.94,\n  emix = function(mean=0, sd=1) mean + sd * (c(rep(0, n/2), rexp(n/2)) - 0.5) / 0.84\n)\nset.seed(123)\noptions(digits=3)\n\nget_data_all_laws &lt;- function(){\n  dat &lt;- lapply(names(laws), function(fname){\n    f &lt;- laws[[fname]]\n    data.frame(y=f(), fun=fname)\n  }) \n  dat &lt;- do.call(rbind, dat)\n  dat\n}\nboxplot(y ~ fun, get_data_all_laws(), main= \"Laws illustrated\")\nVerify mean and standard deviation\nsapply(laws, function(f) mean(replicate(10000, mean(f(0, 1)))))\n\n     norm      logn      exp1      exp2      emix \n 1.55e-03 -2.89e-03 -1.66e-03 -8.53e-05 -1.32e-03 \n\nsapply(laws, function(f) mean(replicate(10000, mean(f(1, 2)))))\n\n norm  logn  exp1  exp2  emix \n1.003 1.002 0.998 0.994 0.997 \n\nsapply(laws, function(f) mean(replicate(10000,   sd(f(0, 1)))))\n\n norm  logn  exp1  exp2  emix \n0.994 1.008 0.977 0.999 1.000 \n\nsapply(laws, function(f) mean(replicate(10000,   sd(f(1, 2)))))\n\nnorm logn exp1 exp2 emix \n1.99 2.01 1.96 1.99 2.00\nDefine the tests used\npval_t &lt;- function(d) t.test(y ~ group,d)$p.value\npval_w &lt;- function(d) coin::pvalue(coin::wilcox_test(y ~ group, d))\npval_m &lt;- function(d) coin::pvalue(coin::median_test(y ~ group, d))\n# retuns data with f1() for group \"A\" and f2(mean2, sd2) for group \"B\"\nget_data &lt;- function(f1, f2, mean2=0, sd2=1){\n  d &lt;- rbind(\n    data.frame(\n      y=f1(),\n      group=\"A\"\n    ),\n    data.frame(\n      y=f2(mean2, sd2),\n      group=\"B\"\n    ))\n  d$group &lt;- as.factor(d$group)\n  d\n}\n\n# get power of tests\nget_power &lt;- function(f1, f2, nsim=1000, mean2=0, sd2=1) {\n  data_list &lt;- replicate(nsim, get_data(f1, f2, mean2=mean2, sd2=sd2), simplify = FALSE)\n  c(t = mean(sapply(data_list, pval_t) &lt; 0.05),\n    w = mean(sapply(data_list, pval_w) &lt; 0.05),\n    m = mean(sapply(data_list, pval_m) &lt; 0.05))\n}\n\n# get all combinations of functions\nfun_comb &lt;- expand.grid(names(laws), names(laws)) |&gt; as.matrix()\nrnames &lt;- apply(fun_comb, 1, paste0, collapse=\"_\")\n\nsim &lt;- function(nsim=1000, mean2=0, sd2=1) {\n  fun_comb_list &lt;- split(fun_comb, row(fun_comb))\n  coverage &lt;- parallel::mclapply(fun_comb_list, function(f_names){\n    f1 &lt;- laws[[f_names[1]]]\n    f2 &lt;- laws[[f_names[2]]]\n    get_power(f1, f2, nsim=nsim, mean2=mean2, sd2=sd2)\n  })\n  coverage &lt;- do.call(rbind, coverage) \n  rownames(coverage) &lt;- rnames\n  colnames(coverage) &lt;- paste0(\n    colnames(coverage), \" \", as.character(mean2), \" \", as.character(sd2))\n  coverage |&gt; as.data.frame()\n}"
+  },
+  {
+    "objectID": "posts/ttest-vs-wilcoxon-vs-median-test/index.html#confidence-intervals-of-ratios",
+    "href": "posts/ttest-vs-wilcoxon-vs-median-test/index.html#confidence-intervals-of-ratios",
+    "title": "T-test vs Wilcoxon vs Median Test",
+    "section": "Confidence intervals of ratios",
+    "text": "Confidence intervals of ratios\n\nprop &lt;- function(ratio, nsim){\n  confint_ &lt;- prop.test(round(ratio*nsim), nsim)$conf.int[1:2]\n  names(confint_) &lt;- c(\"lower\", \"upper\")\n   c( \n    ratio= ratio,\n    confint_\n)}\nsapply(c(0:4/40, 3:10/20), prop, nsim) |&gt; as.data.frame() * 100\n\n        V1    V2   V3    V4    V5   V6   V7   V8   V9  V10  V11  V12  V13\nratio 0.00 2.500 5.00  7.50 10.00 15.0 20.0 25.0 30.0 35.0 40.0 45.0 50.0\nlower 0.00 0.924 2.56  4.41  6.37 10.5 14.8 19.3 23.8 28.5 33.2 38.0 43.1\nupper 2.35 6.056 9.27 12.30 15.23 20.9 26.4 31.7 36.9 42.1 47.2 52.2 56.9\n\n\nthis gives an idea of the uncertainty of a ratio given 200 simulations"
   },
   {
     "objectID": "website/about.html",
