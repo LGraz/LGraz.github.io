@@ -2,20 +2,6 @@
 title: T-test vs Wilcoxon vs Median Test
 author: Lukas Graz
 date: 2023-09-20
-format:
-  gfm+yaml_metadata_block: 
-    df-print: kable
-    comment: '#>'
-  # pdf:
-  #   df-print: kable
-  #   toc: false
-  #   toc-depth: 2
-  #   number-sections: false
-  #   fig-width: 6.5
-  #   fig-height: 4.5
-  #   fig-caption: true
-  #   keep-tex: false
-  #   keep-md: false
 tags: 
   - simulation
   - power
@@ -23,6 +9,7 @@ tags:
 ---
 
 Define a list of laws (i.e., distributions) with `mean` and `sd`. 
+
 ```{r}
 nsim <- 200
 library(coin)
@@ -54,6 +41,7 @@ boxplot(y ~ fun, get_data_all_laws(), main= "Laws illustrated")
 ```
 
 Verify mean and standard deviation
+
 ```{r}
 sapply(laws, function(f) mean(replicate(10000, mean(f(0, 1)))))
 sapply(laws, function(f) mean(replicate(10000, mean(f(1, 2)))))
@@ -62,6 +50,7 @@ sapply(laws, function(f) mean(replicate(10000,   sd(f(1, 2)))))
 ```
 
 Define the tests used
+
 ```{r}
 pval_t <- function(d) t.test(y ~ group,d)$p.value
 pval_w <- function(d) coin::pvalue(coin::wilcox_test(y ~ group, d))
@@ -167,10 +156,13 @@ prop <- function(ratio, nsim){
 sapply(c(0:4/40, 3:10/20), prop, nsim) |> as.data.frame() * 100
 
 ```
+
 this gives an idea of the uncertainty of a ratio given `r nsim` simulations
 
 # redo analysis but with groupwise equal medians
+
 Define a list of laws (i.e., distributions) with `median` and `sd`
+
 ```{r}
 # functions 
 n <- 40 # per group
@@ -185,6 +177,7 @@ laws <- list(
 ```
 
 verify **median** and standard deviation
+
 ```{r}
 sapply(laws, function(f) mean(replicate(10000, median(f(0, 1)))))
 sapply(laws, function(f) mean(replicate(10000, median(f(1, 2)))))

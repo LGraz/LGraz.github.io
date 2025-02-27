@@ -5,7 +5,7 @@ project:
 
 website:
   title: "Lukas Graz"
-  page-footer: "Copyright 2024, Lukas Graz" 
+  page-footer: "Lukas Graz, Funkwiesenstrasse 81, 8050 Zürich, [stat.consulting.graz@gmail.com](mailto:stat.consulting.graz@gmail.com)" 
   repo-url: https://github.com/LGraz/LGraz.github.io/
   repo-actions: [edit, source, issue]
   navbar:

@@ -47,7 +47,7 @@ Want to challenge me? Contact me via email at [stat.consulting.graz@gmail.com](m
 - Documentation formats:
   - Interactive dashboards (Shiny)
   - Reports (Rmarkdown)
-  - Reproducible manuscripts (example XXX)
+  - Reproducible manuscripts ([e.g. past collaboration](https://lgraz.com/wsl--prs-analysis/))
   - Quarto websites (like this one)
 
 ## Pricing
