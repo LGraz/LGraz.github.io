@@ -1,6 +1,6 @@
 ---
 # title: "mytitle"
-image: assets/images/MATH_foto.jpg
+image: assets/images/transparent-small.png
 about:
   template: trestles
   id: my-about-id

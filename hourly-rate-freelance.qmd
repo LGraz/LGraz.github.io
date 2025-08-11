@@ -1,0 +1,159 @@
+# Swiss Freelancer vs. Employee Compensation Calculator
+
+This script calculates the hourly rate a freelancer should charge to maintain the same living standard as a comparably compensated employee in Switzerland. The analysis accounts for differences in:
+
+- Social security contributions (AHV/IV/EO, BVG, ALV)
+- Insurance costs
+- Non-billable time
+- Fixed operational expenses
+- Risk compensation for inconsistent work
+- Tax implications (VAT)
+
+## Key Assumptions:
+- Base annual salary: CHF 110,000
+- Working days: 227 days per year (after vacation)
+- Freelancer occupancy rate: 80% (accounting for gaps between contracts)
+- Three productivity scenarios (low/mid/high) with different non-billable time estimates
+- Freelancer works primarily from home (low coworking expense)
+
+```{r}
+#| code-fold: true
+#| code-summary: "Exact Computation"
+
+# Define base scenario
+FullTimeSalary <- 110000  # Annual salary
+WeeklyHours <- 42
+
+# Define constants
+WorkingDaysPerYear <- 252 - 25  # Work days minus vacation (https://www.arbeitstage.ch/EN/arbeitstage_2024.html)
+OccupancyRate <- 0.75           # Expected billable rate for freelancer
+
+# Social security rates (https://www.bsv.admin.ch/bsv/en/home/social-insurance/ahv/contributions.html)
+AHV_IV_EO_Rate_Employee <- 0.1050  # 10.5% for employees
+AHV_IV_EO_Rate_SelfEmployed <- 0.095  # 9.5% for self-employed
+ALV_Rate <- 0.0225              # 2.25% for employees
+BVG_Rate_Employee <- 0.09       # 9% for employees
+BVG_Rate_SelfEmployed <- 0.13   # 13% for self-employed
+
+# Insurance rates
+AccidentInsurance_Employee <- 130.80  # Annual cost (10.90 * 12)
+AccidentInsurance_SelfEmployed <- 130.80  # Annual cost
+SicknessInsurance_Rate <- 0.015    # 1.5% of salary
+LiabilityInsurance_SelfEmployed <- 700  # Professional liability
+
+# Fixed costs
+CoworkingSpace <- 200 * 12  # Working primarily from home
+HardwareAmortization <- 2000  # Computing server, notebook, monitor, printer amortization
+SoftwareSubscriptions <- 1200  # 100 CHF per month
+InternetPhone <- 1800  # Internet + phone + mobile internet
+MiscOfficeExpenses <- 200 * 12  # Office supplies, utilities
+AccountingServices <- 1000  # Basic accounting/tax filing assistance
+
+# Total fixed costs
+FixedCosts <- CoworkingSpace + HardwareAmortization + SoftwareSubscriptions + 
+              InternetPhone + MiscOfficeExpenses + AccountingServices
+
+# Additional freelancer costs - c(low, mid, high)
+MarketingCosts <- c(2000, 3000, 4000)  # Website, networking, client acquisition
+EducationCosts <- c(1500, 2000, 3000)  # Courses, conferences, books
+
+# VAT rate in Switzerland
+VAT_Rate <- 0.081  # 8.1%
+
+# Calculate daily and annual billable hours - c(low, mid, high) productivity scenarios
+HoursPerDay <- WeeklyHours/5 - c(1.9, 2, 2.2)  # Non-billable time: breaks, admin, learning
+BillableHoursPerYear <- WorkingDaysPerYear * HoursPerDay
+
+# EMPLOYEE CALCULATIONS
+# Employee's contribution to social security
+EmployeeSocialSecurity <- (AHV_IV_EO_Rate_Employee / 2) * FullTimeSalary + 
+                         (ALV_Rate / 2) * FullTimeSalary + 
+                         (BVG_Rate_Employee / 2) * FullTimeSalary
+
+# Employer's contribution (social security + insurances)
+EmployerContribution <- (AHV_IV_EO_Rate_Employee / 2) * FullTimeSalary + 
+                       (ALV_Rate / 2) * FullTimeSalary + 
+                       (BVG_Rate_Employee / 2) * FullTimeSalary + 
+                       AccidentInsurance_Employee + 
+                       FullTimeSalary * SicknessInsurance_Rate
+
+# Total employer cost
+TotalEmployerCost <- FullTimeSalary + EmployerContribution
+
+# Real hourly cost to employer
+RealHourlyEmployeeCost <- TotalEmployerCost / BillableHoursPerYear
+
+# FREELANCER CALCULATIONS
+# Additional social security costs for self-employed compared to employee
+FreelancerSocialSecurityDifference <- AHV_IV_EO_Rate_SelfEmployed * FullTimeSalary + 
+                           BVG_Rate_SelfEmployed * FullTimeSalary - EmployeeSocialSecurity
+
+# Insurance costs
+FreelancerInsurance <- AccidentInsurance_SelfEmployed + 
+                      FullTimeSalary * SicknessInsurance_Rate + 
+                      LiabilityInsurance_SelfEmployed
+
+# Risk compensation (need higher base income to account for downtime)
+RiskCompensation <- (FullTimeSalary / OccupancyRate) - FullTimeSalary
+
+# Total needed income before VAT
+TotalNeededIncome <- FullTimeSalary + FixedCosts + FreelancerSocialSecurityDifference + 
+                    FreelancerInsurance + RiskCompensation + 
+                    MarketingCosts + EducationCosts
+
+# Freelancer billable hours (affected by occupancy rate)
+FreelancerBillableHours <- BillableHoursPerYear * OccupancyRate
+
+# Required hourly rate without and with VAT
+FreelancerHourlyRate <- TotalNeededIncome / FreelancerBillableHours
+FreelancerHourlyRateWithVAT <- FreelancerHourlyRate * (1 + VAT_Rate)
+```
+
+
+```{r}
+#| code-fold: true
+#| code-summary: "Results presentation"
+
+# Create detailed results data.frame
+results_detailed <- data.frame(
+  BillableHoursPerDay = round(HoursPerDay, 1),
+  BillableHoursPerYear = round(BillableHoursPerYear),
+  TotalEmployerCost = round(TotalEmployerCost),
+  RealHourlyEmployeeCost = round(RealHourlyEmployeeCost),
+  FixedCosts = FixedCosts,
+  MarketingCosts = MarketingCosts,
+  EducationCosts = EducationCosts,
+  FreelancerSocialSecurityDifference = round(FreelancerSocialSecurityDifference),
+  FreelancerInsurance = round(FreelancerInsurance),
+  RiskCompensation = round(RiskCompensation),
+  TotalNeededIncome = round(TotalNeededIncome),
+  FreelancerBillableHours = round(FreelancerBillableHours),
+  FreelancerHourlyRate = round(FreelancerHourlyRate),
+  FreelancerHourlyRateWithVAT = round(FreelancerHourlyRateWithVAT)
+  )
+rownames(results_detailed) <- c("Low productivity", "Medium productivity", "High productivity")
+
+# Create summary data.frame with key insights
+results_summary <- data.frame(
+  Scenario = c("Low productivity", "Medium productivity", "High productivity"),
+  BillableHours_Employee = round(BillableHoursPerYear),
+  BillableHours_Freelancer = round(FreelancerBillableHours),
+  EmployerHourlyCost_CHF = round(RealHourlyEmployeeCost),
+  FreelancerRate_CHF = round(FreelancerHourlyRate),
+  FreelancerRateWithVAT_CHF = round(FreelancerHourlyRateWithVAT)
+  )
+rownames(results_summary) <- c("Low", "Medium", "High")
+
+cat("\n## RESULTS\n")
+print(t(as.matrix(results_detailed)))
+
+cat("\n## Fixed Costs Breakdown\n")
+fixed_costs <- data.frame(
+  Category = c("Coworking Space", "Hardware Amortization", "Software Subscriptions", 
+               "Internet & Phone", "Office Expenses", "Accounting Services", "Total"),
+  Annual_Cost_CHF = c(CoworkingSpace, HardwareAmortization, SoftwareSubscriptions,
+                      InternetPhone, MiscOfficeExpenses, AccountingServices, FixedCosts)
+)
+print(fixed_costs)
+```
+
